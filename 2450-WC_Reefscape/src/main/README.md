@@ -12,10 +12,18 @@
 - [ ] Throughbore encoder (hardware and software)
 - [ ] Beam break (hardware and software)
 - [ ] CANdle LED (hardware and software)
+- [x] Set up default autonomous
+- [ ] Convert swerve drive motors (not angle motors) to krakens
+
+
 
 ## Current checklist
 
-- Hardware bring-up
+- Autonomous:
+  - Create AutoMethodHelpers file (would include methods like autoBackUp())
+  - Make sequential command in Main auto that includes movement and coral functionality
+
+- Hardware bring-up:
   - Throughbore Encoder
   - Distance sensor
   - Kraken
@@ -24,14 +32,13 @@
   - Beam break
   - Update radio
 
-- Set up custom controller
+- Set up custom controller:
   - Figure out how to have computer respond to buttons
   - Wiring schematic
   - Serial communication from pc to controller
   - Finish designing the housing
-- Set up default autonomous
+
 - Convert limelight code to photonvision (marked in TODO tree)
-- Convert swerve drive motors (not angle motors) to krakens
 - Add camera limitations for competitions
 
 ## Backlog
