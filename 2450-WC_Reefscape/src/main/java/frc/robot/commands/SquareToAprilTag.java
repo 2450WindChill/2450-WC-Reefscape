@@ -13,42 +13,30 @@ public class SquareToAprilTag extends Command {
 
     ProfiledPIDController controller = new ProfiledPIDController(5, 0, 0, new Constraints(Constants.maxAngularVelocity, 4));
 
-    VisionSubsystem m_VisionSubsystem;
+    VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
 
     double tolerance = Math.toRadians(3);
-
     double currAngle;
-
     double rotSpeed;
 
-    public SquareToAprilTag(VisionSubsystem poseEstimatorSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
-        m_VisionSubsystem = poseEstimatorSubsystem;
+    public SquareToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+        m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
 
         addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {
-        // TODO: Convert to photonvision
-        // controller.reset(m_VisionSubsystem.getAprilTagPoseToBot3d().getRotation().getY());
+        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getRotation().getRadians());
         controller.setGoal(0);
         controller.setTolerance(tolerance);
     }
 
     public void execute() {
-        // rotSpeed = 0;
-
-        // TODO: Convert to photonvision
-        // currAngle = m_VisionSubsystem.getAprilTagPoseToBot3d().getRotation().getY();
-        
-        // if (LimelightHelpers.getTV("limelight") && !controller.atGoal()) {
-            rotSpeed = -controller.calculate(currAngle);
-        // }
-
+        currAngle = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getRotation().getRadians();
+        rotSpeed = controller.calculate(currAngle);
         m_drivetrainSubsystem.drive(new Translation2d(), rotSpeed, true, false);
-        SmartDashboard.putNumber("rotSpeed", rotSpeed);
-        SmartDashboard.putNumber("currAngle", currAngle);
     }
 
     public void end(boolean interrupted) {
@@ -56,9 +44,6 @@ public class SquareToAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        return false;
-
-        // TODO: Convert to photonvision
-        // return (!LimelightHelpers.getTV("limelight") || controller.atGoal());
+        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
     }
 }

@@ -14,7 +14,7 @@ public class ApproachAprilTag extends Command {
 
     ProfiledPIDController controller = new ProfiledPIDController(3, 0, 0, new Constraints(Constants.maxSpeed, 2));
 
-    VisionSubsystem m_VisionSubsystem;
+    VisionSubsystem m_visionSubsystem;
 
     DrivetrainSubsystem m_drivetrainSubsystem;
 
@@ -24,32 +24,22 @@ public class ApproachAprilTag extends Command {
 
     double approachSpeed;
 
-    public ApproachAprilTag(VisionSubsystem VisionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
-        m_VisionSubsystem = VisionSubsystem;
+    public ApproachAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+        m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
         addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {
-        // TODO: Convert to photonvision
-        // controller.reset(m_VisionSubsystem.getAprilTagPoseToBot3d().getZ());
+        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest);
         controller.setGoal(1.3);
         controller.setTolerance(tolerance);
     }
 
     public void execute() {
-        // approachSpeed = 0;
-
-        // TODO: Convert to photonvision
-        // currError = m_VisionSubsystem.getAprilTagPoseToBot3d().getZ();
-        
-        // if (LimelightHelpers.getTV("limelight") && !controller.atGoal()) {
-            approachSpeed = controller.calculate(currError);
-        // }
-
+        currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest;
+        approachSpeed = controller.calculate(currError);
         m_drivetrainSubsystem.drive(new Translation2d(approachSpeed, 0), 0, true, false);
-        SmartDashboard.putNumber("strafeSpeed", approachSpeed);
-        SmartDashboard.putNumber("currError", currError);
     }
 
     public void end(boolean interrupted) {
@@ -57,8 +47,6 @@ public class ApproachAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        return false;
-        // TODO: Convert to photonvision
-        // return (!LimelightHelpers.getTV("limelight") || controller.atGoal());
+        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
     }
 }

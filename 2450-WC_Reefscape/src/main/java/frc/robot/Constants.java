@@ -165,18 +165,13 @@ public final class Constants {
   public static final double moveToPoseSpeed = 0.05;
   public static final double moveToPoseRotationSpeed = 0.5;
 
-  public static final class AutoConstants {
-    public static final TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(Math.PI, 2 / Math.PI);
-    public static final double THETA_kP = 6.0;
-    public static final double THETA_kI = 0.02;
-    public static final double THETA_kD = 0.0;
+  public static final class VisionConstants {
+    public static final double frontCameraForwardOffest = 0;
+    public static final double frontCameraLeftOffest = 0;
+    public static final double frontCameraUpOffest = 0;
 
-    public static final double X_kP = 5.0;
-    public static final double X_kI = 0.0;
-    public static final double X_kD = 0.0;
-
-    public static final double Y_kP = 5.0;
-    public static final double Y_kI = 0.0;
-    public static final double Y_kD = 0.0;
+    public static final double backCameraForwardOffest = 0;
+    public static final double backCameraLeftOffest = 0;
+    public static final double backCameraUpOffest = 0;
   }
 }

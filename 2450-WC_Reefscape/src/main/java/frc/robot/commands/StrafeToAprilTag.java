@@ -13,42 +13,30 @@ public class StrafeToAprilTag extends Command {
 
     ProfiledPIDController controller = new ProfiledPIDController(3, 0, 0, new Constraints(Constants.maxSpeed, 2));
 
-    VisionSubsystem m_VisionSubsystem;
+    VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
 
     double tolerance = 0.05;
-
     double currError;
-
     double strafeSpeed;
 
     public StrafeToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
-        m_VisionSubsystem = visionSubsystem;
+        m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
 
         addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {
-        // TODO: Convert to photonvision
-        // controller.reset(m_VisionSubsystem.getAprilTagPoseToBot3d().getX());
+        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest);
         controller.setGoal(0);
         controller.setTolerance(tolerance);
     }
 
     public void execute() {
-        // strafeSpeed = 0;
-
-        // TODO: Convert to photonvision
-        // currError = m_VisionSubsystem.getAprilTagPoseToBot3d().getX();
-        
-        // if (LimelightHelpers.getTV("limelight") && !controller.atGoal()) {
-            strafeSpeed = -controller.calculate(currError);
-        // }
-
+        currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest;
+        strafeSpeed = controller.calculate(currError);
         m_drivetrainSubsystem.drive(new Translation2d(0, strafeSpeed), 0, true, false);
-        SmartDashboard.putNumber("strafeSpeed", strafeSpeed);
-        SmartDashboard.putNumber("currError", currError);
     }
 
     public void end(boolean interrupted) {
@@ -56,9 +44,6 @@ public class StrafeToAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        return false;
-
-        // TODO: Convert to photonvision
-        // return (!LimelightHelpers.getTV("limelight") || controller.atGoal());
+        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
     }
 }
