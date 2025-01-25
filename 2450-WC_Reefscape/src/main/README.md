@@ -7,9 +7,9 @@
 ## Priority Checklist
 
 - [x] Set up photonvision (hardware)
-- [ ] Set up kraken (hardware and software)
+- [x] Set up kraken (hardware and software)
 - [ ] Set up new radio (hardware)
-- [ ] Throughbore encoder (hardware and software)
+- [x] Throughbore encoder (hardware and software)
 - [ ] Beam break (hardware and software)
 - [ ] CANdle LED (hardware and software)
 - [x] Set up default autonomous
