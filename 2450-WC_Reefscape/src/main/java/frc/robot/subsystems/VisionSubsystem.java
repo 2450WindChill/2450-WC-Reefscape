@@ -1,16 +1,25 @@
 package frc.robot.subsystems;
 
+import java.util.List;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase {
+
+    PhotonCamera frontCamera = new PhotonCamera("frontCamera");
+
     public VisionSubsystem() {
+        
     }
 
     @Override
     public void periodic() {
+        List<PhotonPipelineResult> frontCameraResults = frontCamera.getAllUnreadResults();
     }
 
     @Override
