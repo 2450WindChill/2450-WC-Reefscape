@@ -5,8 +5,14 @@
 package frc.robot;
 
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.commands.AlignToAprilTagSequential;
+import frc.robot.commands.ApproachAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.SquareToAprilTag;
+import frc.robot.commands.StrafeToAprilTag;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.kDriverControllerPort);
   public SendableChooser<Command> m_chooser;
 
@@ -42,8 +49,10 @@ public class RobotContainer {
 
   private void configureDashboardBindings() {
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
-    // Example tab:
-    // tab.add("Title", new SquareToAprilTag(m_poseEstimator, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("SquareToAprilTag", new SquareToAprilTag(m_visionSubsystem, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("StrafeToAprilTag", new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("ApproachAprilTag", new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("AlignToAprilTag", new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
   }
 
   // Auto command
