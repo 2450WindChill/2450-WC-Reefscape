@@ -1,10 +1,16 @@
 package frc.robot;
 
+import java.sql.Driver;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -27,6 +33,11 @@ public class WindChillKrakenSwerveModule {
 
   private SparkMax angleMotor;
   private TalonFX driveMotor;
+  private InvertedValue invertedValue = InvertedValue.CounterClockwise_Positive;
+  private NeutralModeValue idleMode = NeutralModeValue.Brake;
+  private double PeakForwardVoltage = 12.0;
+  private double PeakReverseVoltage = -12.0;
+  
 
   private SparkBaseConfig angleConfig;
   private TalonFXConfiguration talonFXConfigs;
@@ -37,7 +48,7 @@ public class WindChillKrakenSwerveModule {
   private RelativeEncoder integratedAngleEncoder;
   private CANcoder angleEncoder;
 
-  private final SparkClosedLoopController driveController;
+  // private final SparkClosedLoopController driveController;
   private final SparkClosedLoopController angleController;
 
   public WindChillKrakenSwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
@@ -119,7 +130,7 @@ public class WindChillKrakenSwerveModule {
     return angleEncoder.getAbsolutePosition().getValueAsDouble();
   }
 
-  // TODO: Once we get Kraken encoder this should work (done?)
+  // TODO: Once we get Kraken encoder this should work (done?), make sure where these methods are used the types are correct
   public double getDriveEncoder() {
     return driveMotor.getPosition().getValueAsDouble();
   }
@@ -158,35 +169,64 @@ public class WindChillKrakenSwerveModule {
 
     var talonFXConfigurator = driveMotor.getConfigurator();
     var talonFXConfigs = new TalonFXConfiguration();
+    var motorConfigs = new MotorOutputConfigs();
+    var voltageConfigs = new VoltageConfigs();
 
     // enable stator current limit
     var limitConfigs = new CurrentLimitsConfigs();
     limitConfigs.StatorCurrentLimit = 120;
     limitConfigs.StatorCurrentLimitEnable = true;
-    talonFXConfigurator.apply(limitConfigs);
 
-   // Probably not solution
-    driveMotor.setVoltage(Constants.voltageComp);
-    
+    // TODO: Look at this current limiting code compared to what you have
+    // talonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = Constants.Swerve.driveEnableCurrentLimit;
+    // talonFXConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.driveCurrentLimit;
+    // talonFXConfigs.CurrentLimits.SupplyCurrentThreshold = Constants.Swerve.driveCurrentThreshold;
+    // talonFXConfigs.CurrentLimits.SupplyTimeThreshold = Constants.Swerve.driveCurrentThresholdTime;
+  
+    motorConfigs.Inverted = invertedValue;
+    motorConfigs.NeutralMode = idleMode;
+
+    // in init function, set slot 0 gains
+    var slot0Configs = new Slot0Configs();
+  
+    // Setting PID values
+    slot0Configs.kP = 0.11;
+    slot0Configs.kI = 0;
+    slot0Configs.kD = 0;
+
+    /* Gear Ratio Config */
+    talonFXConfigs.Feedback.SensorToMechanismRatio = Constants.driveGearRatio;
+
+    /* Open and Closed Loop Ramping */
+    talonFXConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.openLoopRamp;
+    talonFXConfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.openLoopRamp;
+
+    talonFXConfigs.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = Constants.closedLoopRamp;
+    talonFXConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = Constants.closedLoopRamp;
+
     driveMotor.setPosition(0.0);
+
+    // Applying configs to the configurator
+    talonFXConfigurator.apply(limitConfigs);
+    talonFXConfigurator.apply(motorConfigs);
+    driveMotor.getConfigurator().apply(slot0Configs);
 
 
 // ------------------------------------------------------------
-    talonFXConfigs
+    // talonFXConfigs
         //.smartCurrentLimit(Constants.driveContinuousCurrentLimit)
-        .idleMode(Constants.driveIdleMode) // Need?
-        .inverted(Constants.driveInvert) // Need?
-        .voltageCompensation(Constants.voltageComp); // Check what code I put
+        // .idleMode(Constants.driveIdleMode)
+        // .inverted(Constants.driveInvert)
+        .voltageCompensation(Constants.voltageComp); // ?
     driveConfig.encoder
         .positionConversionFactor(Constants.driveConversionPositionFactor)
         .velocityConversionFactor(Constants.driveConversionVelocityFactor);
-    driveConfig.closedLoop
-
-        .pidf(Constants.driveKP, Constants.driveKI, Constants.driveKD, Constants.driveKFF);
+    // driveConfig.closedLoop
+    //     .pidf(Constants.driveKP, Constants.driveKI, Constants.driveKD, Constants.driveKFF);
 
     driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    driveEncoder.setPosition(0.0);
+    // driveEncoder.setPosition(0.0);
   }
 
   // public SwerveModulePosition getPosition() {
