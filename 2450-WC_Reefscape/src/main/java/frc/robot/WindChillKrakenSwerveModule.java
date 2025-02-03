@@ -179,7 +179,7 @@ public class WindChillKrakenSwerveModule {
 
     // TODO: Look at this current limiting code compared to what you have
     // talonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = Constants.Swerve.driveEnableCurrentLimit;
-    // talonFXConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.driveCurrentLimit;
+    // talonFXConfigs.CurrentLimits.SupplyCurrentLimit = Constants.driveContinuousCurrentLimit;
     // talonFXConfigs.CurrentLimits.SupplyCurrentThreshold = Constants.Swerve.driveCurrentThreshold;
     // talonFXConfigs.CurrentLimits.SupplyTimeThreshold = Constants.Swerve.driveCurrentThresholdTime;
   
@@ -217,14 +217,14 @@ public class WindChillKrakenSwerveModule {
         //.smartCurrentLimit(Constants.driveContinuousCurrentLimit)
         // .idleMode(Constants.driveIdleMode)
         // .inverted(Constants.driveInvert)
-        .voltageCompensation(Constants.voltageComp); // ?
-    driveConfig.encoder
-        .positionConversionFactor(Constants.driveConversionPositionFactor)
-        .velocityConversionFactor(Constants.driveConversionVelocityFactor);
-    // driveConfig.closedLoop
+    //     .voltageCompensation(Constants.voltageComp); // ?
+    // driveConfig.encoder
+    //     .positionConversionFactor(Constants.driveConversionPositionFactor)
+    //     .velocityConversionFactor(Constants.driveConversionVelocityFactor);
+    // // driveConfig.closedLoop
     //     .pidf(Constants.driveKP, Constants.driveKI, Constants.driveKD, Constants.driveKFF);
 
-    driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // driveEncoder.setPosition(0.0);
   }
