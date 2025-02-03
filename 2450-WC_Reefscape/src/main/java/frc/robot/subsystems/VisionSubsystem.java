@@ -58,14 +58,14 @@ public class VisionSubsystem extends SubsystemBase {
             var result = frontCameraResults.get(frontCameraResults.size() - 1);
             if (result.hasTargets()) {
                 // At least one AprilTag was seen by the camera
-                for (var target : result.getTargets()) {
-                    if (target.getFiducialId() == 1) {
-                        frontCameraTarget = target;
+                // for (var target : result.getTargets()) {
+                //     if (target.getFiducialId() == 1) {
+                        frontCameraTarget = result.getBestTarget();
                         apriltagX = getFrontAprilTagPoseInRobotSpace().getX();
                         apriltagY = getFrontAprilTagPoseInRobotSpace().getY();
                         apriltagZ = getFrontAprilTagPoseInRobotSpace().getRotation().getRadians();
-                    }
-                }
+                    // }
+                // }
             }
         }
         
