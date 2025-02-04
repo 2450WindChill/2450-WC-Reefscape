@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.SwerveMode;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
-  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   private final CommandXboxController m_driverController = new CommandXboxController(
       ControllerConstants.kDriverControllerPort);
   public SendableChooser<Command> m_chooser;

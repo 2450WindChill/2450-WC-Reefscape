@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.libs.ModuleConfiguration;
+import frc.robot.swerveModules.SwerveModuleConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -27,6 +28,11 @@ public final class Constants {
      public static final int kOperatorControllerPort = 1;
   }
   
+  public enum SwerveMode {
+    NEO,
+    KRAKEN
+  }
+
   /**
    * The left-to-right distance between the drivetrain wheels
    *

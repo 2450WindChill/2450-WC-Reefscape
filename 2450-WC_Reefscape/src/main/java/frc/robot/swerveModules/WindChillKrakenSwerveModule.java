@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.swerveModules;
 
 import java.sql.Driver;
 
@@ -24,10 +24,11 @@ import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.Constants;
 import frc.robot.libs.OnboardModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class WindChillKrakenSwerveModule {
+public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
   public int moduleNumber;
   private Rotation2d lastAngle;
 
