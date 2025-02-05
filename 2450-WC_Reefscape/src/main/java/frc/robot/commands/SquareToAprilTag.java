@@ -44,6 +44,7 @@ public class SquareToAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
+        // return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
+        return false;
     }
 }

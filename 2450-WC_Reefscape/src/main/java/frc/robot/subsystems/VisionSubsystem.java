@@ -27,6 +27,10 @@ public class VisionSubsystem extends SubsystemBase {
     PhotonTrackedTarget frontCameraTarget;
     PhotonTrackedTarget backCameraTarget;
 
+    double apriltagX = 0.0;
+    double apriltagY = 0.0;
+    double apriltagZ = 0.0;
+
     ShuffleboardTab tab;
 
     public VisionSubsystem() {
@@ -44,9 +48,6 @@ public class VisionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Read in relevant data from the Camera
-        double apriltagX = 0.0;
-        double apriltagY = 0.0;
-        double apriltagZ = 0.0;
         frontCameraResults = frontCamera.getAllUnreadResults();
         boolean targetVisible = false;
 
