@@ -1,20 +1,47 @@
 # Title
 
-> Note: Check out **TODO tree**0
+> Note: Check out **TODO tree**
 
 > Note: Eliminated pose estimator subsystem and split functionality into drivetrain subsystem and vision subsystem
 
 ## Priority Checklist
 
-- [x] Set up photonvision (hardware)
-- [ ] Set up kraken (hardware and software)
-- [ ] Set up new radio (hardware)
-- [ ] Throughbore encoder (hardware and software)
-- [ ] Beam break (hardware and software)
-- [ ] CANdle LED (hardware and software)
-- [x] Set up default autonomous
-- [ ] Convert swerve drive motors (not angle motors) to krakens
+### Week Zero
 
+Week Zero To-do:
+- [ ] *Test swerve*
+- [ ] Basic autonomous
+- [ ] Fix vision sequence
+- [ ] Controller commands
+
+Week Zero Commands:
+- [x] Elevator up/down
+- [x] Bop algae
+- [x] End-effector control (place coral on levels 1-3)
+- [ ] *Left-right swerve micro-adjustment drive*
+
+Week Zero Subsystems:
+- [ ] Coral subsystem
+  - [ ] Elevator distance sensor? (talk to build team)
+  - [ ] Using throughbore encoder?
+  - [ ] Using beam break?
+
+---
+
+  Later To-do:
+- [ ] Distance sensor (vision)
+- [ ] Deep climb subsystem/command
+- [ ] Mapping april tag data to network tables (needed for controller)
+- [ ] Path planning
+
+
+  Done:
+- [x] CANdle LED (hardware and software)
+- [x] Set up photonvision (hardware)
+- [x] Set up kraken (hardware and software)
+- [x] Set up new radio (hardware)
+- [x] Set up default autonomous
+- [x] Convert swerve drive motors (not angle motors) to krakens
 
 
 ## Current checklist
@@ -26,11 +53,8 @@
 - Hardware bring-up:
   - Throughbore Encoder
   - Distance sensor
-  - Kraken
-  - CANdle LED
   - Magnetic limit switches
   - Beam break
-  - Update radio
 
 - Set up custom controller:
   - Figure out how to have computer respond to buttons

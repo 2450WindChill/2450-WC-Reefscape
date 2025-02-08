@@ -6,7 +6,10 @@ package frc.robot;
 
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.SwerveMode;
+import frc.robot.commands.BopAlgae;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.ElevatorMovement;
+import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
@@ -21,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
+  public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
   private final CommandXboxController m_driverController = new CommandXboxController(
       ControllerConstants.kDriverControllerPort);
   public SendableChooser<Command> m_chooser;
@@ -45,6 +49,15 @@ public class RobotContainer {
 
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
+    m_driverController.a().whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    m_driverController.y().whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+
+    m_coralSubsystem.setDefaultCommand(
+      new BopAlgae(
+          m_coralSubsystem,
+          () -> m_driverController.getRightTriggerAxis(),
+          () -> m_driverController.getLeftTriggerAxis()));
+
   }
 
   private void configureDashboardBindings() {
