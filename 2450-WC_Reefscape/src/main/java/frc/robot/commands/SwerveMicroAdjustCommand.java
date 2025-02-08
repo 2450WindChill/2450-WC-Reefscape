@@ -29,6 +29,7 @@ public class SwerveMicroAdjustCommand extends Command {
             // D-pad up: move forward (robot's front)
             forwardSpeed = m_adjustSpeed;
         } else if (pov == 180) {
+            // D-pad down: move backward
             forwardSpeed = -m_adjustSpeed;
         } else if (pov == 90) {
             // D-pad right: strafe right
