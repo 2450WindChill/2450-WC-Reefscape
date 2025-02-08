@@ -9,10 +9,13 @@ import frc.robot.Constants.SwerveMode;
 import frc.robot.commands.BopAlgae;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ElevatorMovement;
+import frc.robot.commands.SwerveMicroAdjustCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -25,8 +28,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
-  private final CommandXboxController m_driverController = new CommandXboxController(
-      ControllerConstants.kDriverControllerPort);
+
+  private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.kDriverControllerPort);
+  private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
+
   public SendableChooser<Command> m_chooser;
   Timer timer = new Timer();
   double time = 0.0;
@@ -45,10 +50,13 @@ public class RobotContainer {
     configureControllerBindings();
     configureAutoChooser();
     configureDashboardBindings();
+
+    new SwerveMicroAdjustCommand(m_drivetrainSubsystem, m_operatorController, 0.1);
   }
 
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
+
     m_driverController.a().whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
     m_driverController.y().whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
 
@@ -57,7 +65,6 @@ public class RobotContainer {
           m_coralSubsystem,
           () -> m_driverController.getRightTriggerAxis(),
           () -> m_driverController.getLeftTriggerAxis()));
-
   }
 
   private void configureDashboardBindings() {

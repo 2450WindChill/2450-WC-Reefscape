@@ -17,11 +17,10 @@ Week Zero To-do:
 Week Zero Commands:
 - [x] Elevator up/down
 - [x] Bop algae
-- [x] End-effector control (place coral on levels 1-3)
-- [ ] *Left-right swerve micro-adjustment drive*
+- [x] Left-right swerve micro-adjustment drive
 
 Week Zero Subsystems:
-- [ ] Coral subsystem
+- Coral subsystem
   - [ ] Elevator distance sensor? (talk to build team)
   - [ ] Using throughbore encoder?
   - [ ] Using beam break?

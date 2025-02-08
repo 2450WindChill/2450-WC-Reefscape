@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveMode;
+import frc.robot.commands.SwerveMicroAdjustCommand;
 import frc.robot.swerveModules.BaseWindChillSwerveModule;
 import frc.robot.swerveModules.WindChillKrakenSwerveModule;
 import frc.robot.swerveModules.WindChillNeoSwerveModule;
