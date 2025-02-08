@@ -34,8 +34,14 @@ public class StrafeToAprilTag extends Command {
     }
 
     public void execute() {
+        strafeSpeed = 0;
+
         currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest;
-        strafeSpeed = controller.calculate(currError);
+
+        if (m_visionSubsystem.frontCameraHasTarget() && !controller.atGoal()) {
+            strafeSpeed = controller.calculate(currError);
+        }
+
         m_drivetrainSubsystem.drive(new Translation2d(0, strafeSpeed), 0, true, false);
     }
 
