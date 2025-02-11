@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.libs.ModuleConfiguration;
+import frc.robot.swerveModules.SwerveModuleConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -27,6 +28,11 @@ public final class Constants {
      public static final int kOperatorControllerPort = 1;
   }
   
+  public enum SwerveMode {
+    NEO,
+    KRAKEN
+  }
+
   /**
    * The left-to-right distance between the drivetrain wheels
    *
@@ -58,7 +64,7 @@ public final class Constants {
 
   public static final double feetToMeters = 0.3048;
 
-  public static final double driveGearRatio = (8.14 / 1.0); // 6.75:1
+  public static final double driveGearRatio = (6.12 / 1.0); // 6.12:1
   public static final double angleGearRatio = (150 / 7); // 12.8:1
 
   public static final double driveBaseRadius = (Math.sqrt((trackWidth * trackWidth) + (trackWidth * trackWidth)))/2;
@@ -128,36 +134,36 @@ public final class Constants {
 
   /* Front Left Module - Module 0 */
   public static final class FrontLeftModule {
-    public static final int driveMotorID = 6;
-    public static final int angleMotorID = 5;
-    public static final int canCoderID = 11;
+    public static final int driveMotorID = 11;
+    public static final int angleMotorID = 1;
+    public static final int canCoderID = 21;
     public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
         canCoderID);
   }
 
   /* Front Right Module - Module 1 */
   public static final class FrontRightModule {
-    public static final int driveMotorID = 8;
-    public static final int angleMotorID = 7;
-    public static final int canCoderID = 12;
-    public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
-        canCoderID);
-  }
-
-  /* Back Left Module - Module 2 */
-  public static final class BackLeftModule {
-    public static final int driveMotorID = 4;
-    public static final int angleMotorID = 3;
-    public static final int canCoderID = 10;
+    public static final int driveMotorID = 12;
+    public static final int angleMotorID = 2;
+    public static final int canCoderID = 22;
     public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
         canCoderID);
   }
 
   /* Back Right Module - Module 3 */
   public static final class BackRightModule {
-    public static final int driveMotorID = 2;
-    public static final int angleMotorID = 1;
-    public static final int canCoderID = 9;
+    public static final int driveMotorID = 13;
+    public static final int angleMotorID = 3;
+    public static final int canCoderID = 23;
+    public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
+        canCoderID);
+  }
+
+  /* Back Left Module - Module 2 */
+  public static final class BackLeftModule {
+    public static final int driveMotorID = 14;
+    public static final int angleMotorID = 4;
+    public static final int canCoderID = 24;
     public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
         canCoderID);
   }
