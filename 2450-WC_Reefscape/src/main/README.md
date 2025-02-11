@@ -9,8 +9,8 @@
 ### Week Zero
 
 Week Zero To-do:
-- [ ] *Test swerve*
-- [ ] Basic autonomous
+- [x] *Test swerve*
+- [x] Basic autonomous
 - [ ] Fix vision sequence
 - [ ] Controller commands
 

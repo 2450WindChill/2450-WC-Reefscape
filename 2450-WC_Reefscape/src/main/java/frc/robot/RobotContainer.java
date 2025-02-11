@@ -50,8 +50,6 @@ public class RobotContainer {
     configureControllerBindings();
     configureAutoChooser();
     configureDashboardBindings();
-
-    new SwerveMicroAdjustCommand(m_drivetrainSubsystem, m_operatorController, 0.1);
   }
 
   // TODO: This is where all button mappings go
