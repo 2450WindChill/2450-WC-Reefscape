@@ -9,13 +9,13 @@ import frc.robot.Constants.SwerveMode;
 import frc.robot.commands.BopAlgae;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ElevatorMovement;
-import frc.robot.commands.SwerveMicroAdjustCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -24,13 +24,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
-  private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.kDriverControllerPort);
+  private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
+
+  
+  public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
+  public final JoystickButton op_bButton = new JoystickButton(m_operatorController, Button.kB.value);
+
+  public final JoystickButton op_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
+
+
 
   public SendableChooser<Command> m_chooser;
   Timer timer = new Timer();
@@ -46,23 +55,27 @@ public class RobotContainer {
             () -> m_driverController.getLeftX(),
             () -> m_driverController.getRightX(),
             () -> Constants.isRobotCentric,
-            m_driverController.leftTrigger()));
+            () -> op_leftBumper.getAsBoolean(),
+            () -> m_driverController.getPOV()));
     configureControllerBindings();
     configureAutoChooser();
     configureDashboardBindings();
-  }
+ }
 
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
 
-    m_driverController.a().whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
-    m_driverController.y().whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+    op_aButton.onTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    op_bButton.onTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+
+    // m_operatorController.a().(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    // m_operatorController.y().whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
 
     m_coralSubsystem.setDefaultCommand(
       new BopAlgae(
           m_coralSubsystem,
-          () -> m_driverController.getRightTriggerAxis(),
-          () -> m_driverController.getLeftTriggerAxis()));
+          () -> m_operatorController.getRightTriggerAxis(),
+          () -> m_operatorController.getLeftTriggerAxis()));
   }
 
   private void configureDashboardBindings() {

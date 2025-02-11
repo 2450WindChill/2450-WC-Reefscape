@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -23,10 +24,11 @@ public class DefaultDriveCommand extends Command {
   private DoubleSupplier strafeSupplier;
   private DoubleSupplier rotationSupplier;
   private BooleanSupplier isRobotCentricSupplier;
-  private Trigger isSlowMode;
+  private BooleanSupplier isSlowMode;
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
+  private IntSupplier m_POVSupplier;
 
   /**
    * Creates a new ExampleCommand.
@@ -39,8 +41,8 @@ public class DefaultDriveCommand extends Command {
       DoubleSupplier strafeSupplier,
       DoubleSupplier rotationSupplier,
       BooleanSupplier isRobotCentricSupplier,
-      Trigger isSlowModeSupplier
-    ) {
+      BooleanSupplier isSlowModeSupplier,
+      IntSupplier POVSupplier) {
 
     m_driveTrainSubSystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -51,33 +53,58 @@ public class DefaultDriveCommand extends Command {
     this.rotationSupplier = rotationSupplier;
     this.isRobotCentricSupplier = isRobotCentricSupplier;
     this.isSlowMode = isSlowModeSupplier;
+    m_POVSupplier = POVSupplier;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+
   }
-  
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double translationVal =
-        translationLimiter.calculate(
-            MathUtil.applyDeadband(translationSupplier.getAsDouble(), Constants.stickDeadband));
-    double strafeVal =
-        strafeLimiter.calculate(
-            MathUtil.applyDeadband(strafeSupplier.getAsDouble(), Constants.stickDeadband));
-    double rotationVal =
-        rotationLimiter.calculate(
-            MathUtil.applyDeadband(rotationSupplier.getAsDouble(), Constants.stickDeadband));
+    double translationVal = translationLimiter.calculate(
+        MathUtil.applyDeadband(translationSupplier.getAsDouble(), Constants.stickDeadband));
+    double strafeVal = strafeLimiter.calculate(
+        MathUtil.applyDeadband(strafeSupplier.getAsDouble(), Constants.stickDeadband));
+    double rotationVal = rotationLimiter.calculate(
+        MathUtil.applyDeadband(rotationSupplier.getAsDouble(), Constants.stickDeadband));
 
-    /* Drive */
-    m_driveTrainSubSystem.drive(
-        new Translation2d(translationVal, strafeVal).times(Constants.maxSpeed),
-        rotationVal * Constants.maxAngularVelocity,
-        isRobotCentricSupplier.getAsBoolean(),
-        isSlowMode.getAsBoolean()
-      );
+    int pov = m_POVSupplier.getAsInt();
+    double forwardSpeed = 0.0;
+    double strafeSpeed = 0.0;
+    double m_adjustSpeed = 0.1;
+
+    // If a d-pad button is being pressed, do micro adjustments robot-centric
+    if (pov >= 0) {
+      // Check the POV value and set speeds accordingly.
+      if (pov == 0) {
+        // D-pad up: move forward (robot's front)
+        forwardSpeed = m_adjustSpeed;
+      } else if (pov == 180) {
+        // D-pad down: move backward
+        forwardSpeed = -m_adjustSpeed;
+      } else if (pov == 90) {
+        // D-pad right: strafe right
+        strafeSpeed = m_adjustSpeed;
+      } else if (pov == 270) {
+        // D-pad left: strafe left
+        strafeSpeed = -m_adjustSpeed;
+      }
+
+      // Drive with the given speeds, no rotation.
+      // The last parameter 'true' indicates robot-oriented control.
+      m_driveTrainSubSystem.drive(new Translation2d(forwardSpeed, strafeSpeed), 0, true, isSlowMode.getAsBoolean());
+
+    } else {
+      // Drive normally with joystick in field-centric
+      m_driveTrainSubSystem.drive(
+          new Translation2d(translationVal, strafeVal).times(Constants.maxSpeed),
+          rotationVal * Constants.maxAngularVelocity,
+          isRobotCentricSupplier.getAsBoolean(),
+          isSlowMode.getAsBoolean());
+    }
   }
 }
