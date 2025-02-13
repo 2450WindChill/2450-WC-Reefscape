@@ -9,6 +9,7 @@ import frc.robot.Constants.SwerveMode;
 import frc.robot.commands.BopAlgae;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ElevatorMovement;
+import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -81,8 +83,12 @@ public class RobotContainer {
   private void configureDashboardBindings() {
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
 
-    // Example tab:
-    // tab.add("Title", new SquareToAprilTag(m_poseEstimator, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("0", new MoveElevatorToPosition(m_coralSubsystem, 0)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("10", new MoveElevatorToPosition(m_coralSubsystem, 10)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("20", new MoveElevatorToPosition(m_coralSubsystem, 20)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("50", new MoveElevatorToPosition(m_coralSubsystem, 50)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("200", new MoveElevatorToPosition(m_coralSubsystem, 200)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("500", new MoveElevatorToPosition(m_coralSubsystem, 500)).withWidget(BuiltInWidgets.kCommand);
   }
 
   // Basic auto for testing, backs up after a certain period of time
