@@ -7,6 +7,8 @@ package frc.robot;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.SwerveMode;
 import frc.robot.commands.BopAlgae;
+import frc.robot.commands.CoralIntake;
+import frc.robot.commands.CoralOuttake;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ElevatorMovement;
 import frc.robot.commands.MoveElevatorToPosition;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -27,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
@@ -38,6 +42,12 @@ public class RobotContainer {
   
   public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
   public final JoystickButton op_bButton = new JoystickButton(m_operatorController, Button.kB.value);
+
+  public final POVButton op_UpDpad = new POVButton(m_operatorController, 0);
+  public final POVButton op_DownDpad = new POVButton(m_operatorController, 180);
+
+  public final JoystickButton op_xButton = new JoystickButton(m_operatorController, Button.kX.value);
+  public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
 
   public final JoystickButton op_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
 
@@ -67,11 +77,8 @@ public class RobotContainer {
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
 
-    op_aButton.onTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
-    op_bButton.onTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
-
-    // m_operatorController.a().(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
-    // m_operatorController.y().whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+    op_DownDpad.onTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    op_UpDpad.onTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
 
     m_coralSubsystem.setDefaultCommand(
       new BopAlgae(

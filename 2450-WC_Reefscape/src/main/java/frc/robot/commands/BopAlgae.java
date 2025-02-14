@@ -24,7 +24,7 @@ public class BopAlgae extends Command{
 
     public void execute() {
        double fS = (m_backwardSpeed.getAsDouble() - m_forwardSpeed.getAsDouble()) * 0.5;
-       m_coralSubsystem.endeffectorMotor.set(fS);
+       m_coralSubsystem.setEndAffectorSpeed(fS);;
     }
 
     public void end() {

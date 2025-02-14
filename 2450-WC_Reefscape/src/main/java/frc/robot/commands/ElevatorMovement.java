@@ -20,23 +20,24 @@ public class ElevatorMovement extends Command {
 
     public void initialize() {
         if (m_direction == "up") {
-            m_coralsubsystem.elevatorMotor.set(m_speed);
+            m_coralsubsystem.setElevatorSpeed(m_speed);
         }
         if (m_direction == "down") {
-            m_coralsubsystem.elevatorMotor.set(-m_speed);
+            m_coralsubsystem.setElevatorSpeed(-m_speed);
         }
     
     }
 
     public void execute() {
-        
+        System.out.println("Elevator movement direction: " + m_direction);
     }
 
     public void end() {
-        m_coralsubsystem.elevatorMotor.set(0.0);
+        m_coralsubsystem.setElevatorSpeed(0.0);;
     }
 
+    // just in case a second limit switch is added, this needs to be updated
     public boolean isFinished() {
-       return false;
+       return !m_coralsubsystem.getElevatorSwitch();
     }
 }

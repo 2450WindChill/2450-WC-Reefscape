@@ -20,6 +20,7 @@ Week Zero To-do:
 - [x] Basic autonomous
 - [ ] Fix vision sequence
 - [ ] Controller commands
+- [ ] Add second limit switch to ElevatorMovement
 
 Week Zero Commands:
 - [x] Elevator up/down
@@ -28,17 +29,18 @@ Week Zero Commands:
 
 Week Zero Subsystems:
 - Coral subsystem
-  - [ ] Elevator distance sensor? (talk to build team)
-  - [ ] Using throughbore encoder?
-  - [ ] Using beam break?
+  - [ ] Elevator distance sensor
+  - [ ] Beam break
 
 ---
 
   Later To-do:
+- [ ] Throughbore encoder
 - [ ] Distance sensor (vision)
 - [ ] Deep climb subsystem/command
 - [ ] Mapping april tag data to network tables (needed for controller)
 - [ ] Path planning
+- [ ] give jake $20
 
 
   Done:
