@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
-  public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+  //public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -63,9 +63,9 @@ public class RobotContainer {
     m_drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
             m_drivetrainSubsystem,
-            () -> m_driverController.getLeftY(),
-            () -> m_driverController.getLeftX(),
-            () -> m_driverController.getRightX(),
+            () -> (m_driverController.getLeftY() * 0.3),
+            () -> (m_driverController.getLeftX() * 0.3),
+            () -> (m_driverController.getRightX() * 0.3),
             () -> Constants.isRobotCentric,
             () -> op_leftBumper.getAsBoolean(),
             () -> m_driverController.getPOV()));
@@ -77,25 +77,25 @@ public class RobotContainer {
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
 
-    op_DownDpad.onTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
-    op_UpDpad.onTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+    // op_DownDpad.onTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    // op_UpDpad.onTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
 
-    m_coralSubsystem.setDefaultCommand(
-      new BopAlgae(
-          m_coralSubsystem,
-          () -> m_operatorController.getRightTriggerAxis(),
-          () -> m_operatorController.getLeftTriggerAxis()));
+    // m_coralSubsystem.setDefaultCommand(
+    //   new BopAlgae(
+    //       m_coralSubsystem,
+    //       () -> m_operatorController.getRightTriggerAxis(),
+    //       () -> m_operatorController.getLeftTriggerAxis()));
   }
 
   private void configureDashboardBindings() {
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
 
-    tab.add("0", new MoveElevatorToPosition(m_coralSubsystem, 0)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("10", new MoveElevatorToPosition(m_coralSubsystem, 10)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("20", new MoveElevatorToPosition(m_coralSubsystem, 20)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("50", new MoveElevatorToPosition(m_coralSubsystem, 50)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("200", new MoveElevatorToPosition(m_coralSubsystem, 200)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("500", new MoveElevatorToPosition(m_coralSubsystem, 500)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("0", new MoveElevatorToPosition(m_coralSubsystem, 0)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("10", new MoveElevatorToPosition(m_coralSubsystem, 10)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("20", new MoveElevatorToPosition(m_coralSubsystem, 20)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("50", new MoveElevatorToPosition(m_coralSubsystem, 50)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("200", new MoveElevatorToPosition(m_coralSubsystem, 200)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("500", new MoveElevatorToPosition(m_coralSubsystem, 500)).withWidget(BuiltInWidgets.kCommand);
   }
 
   // Basic auto for testing, backs up after a certain period of time

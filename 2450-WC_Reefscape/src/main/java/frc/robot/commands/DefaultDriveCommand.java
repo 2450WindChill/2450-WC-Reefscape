@@ -75,7 +75,7 @@ public class DefaultDriveCommand extends Command {
     int pov = m_POVSupplier.getAsInt();
     double forwardSpeed = 0.0;
     double strafeSpeed = 0.0;
-    double m_adjustSpeed = 0.1;
+    double m_adjustSpeed = 0.2;
 
     // If a d-pad button is being pressed, do micro adjustments robot-centric
     if (pov >= 0) {
