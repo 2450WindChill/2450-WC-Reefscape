@@ -5,6 +5,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public abstract class BaseWindChillSwerveModule {
+    public BaseWindChillSwerveModule(int ModuleNumber) {
+        this.moduleNumber = ModuleNumber;
+    }
     public int moduleNumber;
 
     public BaseWindChillSwerveModule[] swerveModules;

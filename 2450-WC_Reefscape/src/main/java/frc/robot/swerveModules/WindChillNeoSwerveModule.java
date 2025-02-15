@@ -36,6 +36,7 @@ public class WindChillNeoSwerveModule extends BaseWindChillSwerveModule{
   private final SparkClosedLoopController angleController;
 
   public WindChillNeoSwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
+    super(moduleNumber);
     this.moduleNumber = moduleNumber;
 
     /* Angle Encoder Config */
