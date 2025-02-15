@@ -51,7 +51,7 @@ public class VisionSubsystem extends SubsystemBase {
         frontCameraResults = frontCamera.getAllUnreadResults();
         boolean targetVisible = false;
 
-        frontCameraTarget = null;
+        // frontCameraTarget = null;
 
         if (!frontCameraResults.isEmpty()) {
             // Camera processed a new frame since last
@@ -73,6 +73,7 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Apriltag X", apriltagX);
         SmartDashboard.putNumber("Apriltag Y", apriltagY);
         SmartDashboard.putNumber("Apriltag Z", apriltagZ);
+        SmartDashboard.putBoolean("Front Camera Has Target", frontCameraHasTarget());
     }
 
     @Override

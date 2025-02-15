@@ -11,14 +11,14 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public class SquareToAprilTag extends Command {
 
-    ProfiledPIDController controller = new ProfiledPIDController(5, 0, 0, new Constraints(Constants.maxAngularVelocity, 4));
+    ProfiledPIDController controller = new ProfiledPIDController(0.2, 0, 0.01, new Constraints(Constants.maxAngularVelocity, 4));
 
     VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
 
-    double tolerance = Math.toRadians(3);
+    double tolerance = Math.toRadians(5);
     double currAngle;
-    double rotSpeed;
+    double rotSpeed = 0;
 
     public SquareToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
         m_visionSubsystem = visionSubsystem;
@@ -35,8 +35,9 @@ public class SquareToAprilTag extends Command {
 
     public void execute() {
         currAngle = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getRotation().getRadians();
-        rotSpeed = controller.calculate(currAngle);
+        rotSpeed = -controller.calculate(currAngle);
         m_drivetrainSubsystem.drive(new Translation2d(), rotSpeed, true, false);
+        SmartDashboard.putBoolean("At Rotation Goal", controller.atGoal());
     }
 
     public void end(boolean interrupted) {
@@ -44,7 +45,6 @@ public class SquareToAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        // return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
-        return false;
+        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
     }
 }

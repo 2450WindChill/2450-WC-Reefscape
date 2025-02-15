@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.Currency;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -18,7 +20,7 @@ public class StrafeToAprilTag extends Command {
 
     double tolerance = 0.05;
     double currError;
-    double strafeSpeed;
+    double strafeSpeed = 0;
 
     public StrafeToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
         m_visionSubsystem = visionSubsystem;
@@ -34,15 +36,10 @@ public class StrafeToAprilTag extends Command {
     }
 
     public void execute() {
-        strafeSpeed = 0;
-
         currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest;
-
-        if (m_visionSubsystem.frontCameraHasTarget() && !controller.atGoal()) {
-            strafeSpeed = controller.calculate(currError);
-        }
-
+        strafeSpeed = controller.calculate(currError);
         m_drivetrainSubsystem.drive(new Translation2d(0, strafeSpeed), 0, true, false);
+        SmartDashboard.putBoolean("At Strafe Goal", controller.atGoal());
     }
 
     public void end(boolean interrupted) {
@@ -50,7 +47,8 @@ public class StrafeToAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        // return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
-        return false;
+        // return atGoal;
+        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
+        // return false;
     }
 }

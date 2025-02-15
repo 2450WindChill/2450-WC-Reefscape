@@ -15,14 +15,11 @@ public class ApproachAprilTag extends Command {
     ProfiledPIDController controller = new ProfiledPIDController(3, 0, 0, new Constraints(Constants.maxSpeed, 2));
 
     VisionSubsystem m_visionSubsystem;
-
     DrivetrainSubsystem m_drivetrainSubsystem;
 
     double tolerance = 0.05;
-
     double currError;
-
-    double approachSpeed;
+    double approachSpeed = 0;
 
     public ApproachAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
         m_visionSubsystem = visionSubsystem;
@@ -40,6 +37,7 @@ public class ApproachAprilTag extends Command {
         currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest;
         approachSpeed = controller.calculate(currError);
         m_drivetrainSubsystem.drive(new Translation2d(approachSpeed, 0), 0, true, false);
+        SmartDashboard.putBoolean("At Approach Goal", controller.atGoal());
     }
 
     public void end(boolean interrupted) {
