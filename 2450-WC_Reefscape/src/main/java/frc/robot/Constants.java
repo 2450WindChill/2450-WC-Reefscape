@@ -57,8 +57,8 @@ public final class Constants {
   public static final double wheelDiameter = Units.inchesToMeters(3.0);
   public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-  public static final int elevatorMotorId = 3;
-  public static final int endeffectorMotorId = 2;
+  public static final int elevatorMotorId = 2;
+  public static final int endeffectorMotorId = 11;
   public static final int elevatorSwitchChannel = 4;
   public static final int beamBreakTransmitterChannel = 0;
   public static final int beamBreakRecieverChannel = 1;

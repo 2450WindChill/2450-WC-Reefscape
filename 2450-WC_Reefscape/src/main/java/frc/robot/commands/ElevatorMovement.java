@@ -33,7 +33,8 @@ public class ElevatorMovement extends Command {
     }
 
     public void end() {
-        m_coralsubsystem.setElevatorSpeed(0.0);;
+        m_coralsubsystem.setElevatorSpeed(0.0);
+        System.out.println("Elevator Stopped");
     }
 
     // just in case a second limit switch is added, this needs to be updated

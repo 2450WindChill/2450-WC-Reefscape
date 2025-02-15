@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
-  //public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+  public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -43,8 +43,8 @@ public class RobotContainer {
   public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
   public final JoystickButton op_bButton = new JoystickButton(m_operatorController, Button.kB.value);
 
-  public final POVButton op_UpDpad = new POVButton(m_operatorController, 0);
-  public final POVButton op_DownDpad = new POVButton(m_operatorController, 180);
+  public final POVButton op_UpDpad = new POVButton(m_operatorController, 180);
+  public final POVButton op_DownDpad = new POVButton(m_operatorController, 0);
 
   public final JoystickButton op_xButton = new JoystickButton(m_operatorController, Button.kX.value);
   public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
@@ -77,8 +77,8 @@ public class RobotContainer {
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
 
-    // op_DownDpad.onTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
-    // op_UpDpad.onTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+    op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.1));
+    op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.1));
 
     // m_coralSubsystem.setDefaultCommand(
     //   new BopAlgae(
