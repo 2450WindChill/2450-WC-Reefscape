@@ -29,6 +29,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -46,6 +47,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public HolonomicDriveController holonomicDriveController;
   public static SwerveDrivePoseEstimator poseEstimate;
   public static Enum<SwerveMode> mymode = Constants.SwerveMode.KRAKEN;
+  private final Field2d m_field = new Field2d();
 
   public DrivetrainSubsystem(SwerveMode myMode) {
     holonomicDriveController = new HolonomicDriveController(
@@ -55,6 +57,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     gyro = new Pigeon2(Constants.pigeonID, "canivore");
     zeroGyro();
+
+   
+    // Do this in either robot or subsystem init
+    SmartDashboard.putData("Field", m_field);
+    // Do this in either robot periodic or subsystem periodic
+    m_field.setRobotPose(getBotPose());
 
   // -----------------------------------------------------------------------------------------------------------------------------------------
   // Pathplanner:
@@ -66,13 +74,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
     } catch (Exception e) {
       // Handle exception as needed
       e.printStackTrace();
+      return;
     }
 
     // AutoBuilder is used to create full autonomous routines based on auto files created in the GUI app
     // This code configures it to control our robot.
     AutoBuilder.configure(
             getBotPoseSupplier(),
-            resetPoseConsumer(getBotPose()),
+            resetPoseConsumer(),
             getSpeedsSupplier(),
             (speeds, feedforwards) -> driveRobotRelative(speeds),
             new PPHolonomicDriveController(
@@ -89,7 +98,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             },
             this
     );
-  }
+  
 
     // TODO: Implement kraken motor controllers to swerve modules
 
@@ -119,7 +128,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
           break;
     }
   }
-}
 
   @Override
   public void periodic() {
@@ -241,9 +249,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
   
 
-  public Consumer<Pose2d> resetPoseConsumer(Pose2d newPose) {
-    poseEstimate.resetPosition(gyro.getRotation2d(), getPositions(),
-        newPose);
+  public Consumer<Pose2d> resetPoseConsumer() {
+    return (lambdaNewPose) -> poseEstimate.resetPosition(gyro.getRotation2d(), getPositions(),lambdaNewPose);
   }
 
   // Gets estimated bot x
