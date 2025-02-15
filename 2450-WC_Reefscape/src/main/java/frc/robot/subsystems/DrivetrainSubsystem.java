@@ -1,9 +1,16 @@
 package frc.robot.subsystems;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.fasterxml.jackson.databind.JsonSerializable.Base;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
@@ -20,6 +27,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,6 +55,41 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     gyro = new Pigeon2(Constants.pigeonID, "canivore");
     zeroGyro();
+
+  // -----------------------------------------------------------------------------------------------------------------------------------------
+  // Pathplanner:
+
+    // Load the RobotConfig from the GUI settings
+    RobotConfig config;
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    // AutoBuilder is used to create full autonomous routines based on auto files created in the GUI app
+    // This code configures it to control our robot.
+    AutoBuilder.configure(
+            getBotPoseSupplier(),
+            resetPoseConsumer(getBotPose()),
+            getSpeedsSupplier(),
+            (speeds, feedforwards) -> driveRobotRelative(speeds),
+            new PPHolonomicDriveController(
+                    new PIDConstants(5.0, 0.0, 0.0),
+                    new PIDConstants(5.0, 0.0, 0.0)
+            ),
+            config,
+            () -> {
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this
+    );
+  }
 
     // TODO: Implement kraken motor controllers to swerve modules
 
@@ -76,6 +119,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
           break;
     }
   }
+}
 
   @Override
   public void periodic() {
@@ -174,6 +218,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return poseEstimate.getEstimatedPosition();
   }
 
+  // Gets current estimated bot pose
+  public static Supplier<Pose2d> getBotPoseSupplier() {
+    return () -> poseEstimate.getEstimatedPosition();
+  }
+
   public Pose2d getThisPose() {
     return poseEstimate.getEstimatedPosition();
   }
@@ -187,6 +236,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void resetPose(Pose2d newPose) {
+    poseEstimate.resetPosition(gyro.getRotation2d(), getPositions(),
+        newPose);
+  }
+  
+
+  public Consumer<Pose2d> resetPoseConsumer(Pose2d newPose) {
     poseEstimate.resetPosition(gyro.getRotation2d(), getPositions(),
         newPose);
   }
@@ -226,6 +281,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public ChassisSpeeds getSpeeds() {
     return Constants.swerveKinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public Supplier<ChassisSpeeds> getSpeedsSupplier() {
+    return () -> Constants.swerveKinematics.toChassisSpeeds(getModuleStates());
   }
 
   public ChassisSpeeds getAutoSpeeds() {
