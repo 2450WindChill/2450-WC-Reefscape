@@ -46,16 +46,47 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public CANcoder canCoder;
   public HolonomicDriveController holonomicDriveController;
   public static SwerveDrivePoseEstimator poseEstimate;
-  public static Enum<SwerveMode> mymode = Constants.SwerveMode.KRAKEN;
+  public static Enum<SwerveMode> mymode = Constants.SwerveMode.NEO;
   private final Field2d m_field = new Field2d();
 
   public DrivetrainSubsystem(SwerveMode myMode) {
+    
+    switch (myMode) {
+      case NEO:
+        swerveModules = new WindChillNeoSwerveModule[] {
+            new WindChillNeoSwerveModule(0, Constants.FrontLeftNeoModule.constants),
+            new WindChillNeoSwerveModule(1, Constants.FrontRightNeoModule.constants),
+            new WindChillNeoSwerveModule(2, Constants.BackLeftNeoModule.constants),
+            new WindChillNeoSwerveModule(3, Constants.BackRightNeoModule.constants) };
+        break;
+
+      case KRAKEN:
+        swerveModules = new WindChillKrakenSwerveModule[] {
+            new WindChillKrakenSwerveModule(0, Constants.FrontLeftKrakenModule.constants),
+            new WindChillKrakenSwerveModule(1, Constants.FrontRightKrakenModule.constants),
+            new WindChillKrakenSwerveModule(2, Constants.BackLeftKrakenModule.constants),
+            new WindChillKrakenSwerveModule(3, Constants.BackRightKrakenModule.constants) };
+          break;
+
+      default:
+        swerveModules = new WindChillKrakenSwerveModule[] {
+            new WindChillKrakenSwerveModule(0, Constants.FrontLeftKrakenModule.constants),
+            new WindChillKrakenSwerveModule(1, Constants.FrontRightKrakenModule.constants),
+            new WindChillKrakenSwerveModule(2, Constants.BackLeftKrakenModule.constants),
+            new WindChillKrakenSwerveModule(3, Constants.BackRightKrakenModule.constants) };
+          break;
+    }
+    gyro = new Pigeon2(Constants.pigeonID, "canivore");
+    poseEstimate = new SwerveDrivePoseEstimator(
+        Constants.swerveKinematics,
+        getGyroYaw(),
+        getModulePositions(),
+        new Pose2d(0, 0, new Rotation2d(0)));
+
     holonomicDriveController = new HolonomicDriveController(
         new PIDController(1, 0, 0), new PIDController(1, 0, 0),
         new ProfiledPIDController(1, 0, 0,
             new TrapezoidProfile.Constraints(6.28, 3.14)));
-
-    gyro = new Pigeon2(Constants.pigeonID, "canivore");
     zeroGyro();
 
    
@@ -98,35 +129,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
             },
             this
     );
-  
-
-    // TODO: Implement kraken motor controllers to swerve modules
-
-    switch (myMode) {
-      case NEO:
-        swerveModules = new WindChillNeoSwerveModule[] {
-            new WindChillNeoSwerveModule(0, Constants.FrontLeftModule.constants),
-            new WindChillNeoSwerveModule(1, Constants.FrontRightModule.constants),
-            new WindChillNeoSwerveModule(2, Constants.BackLeftModule.constants),
-            new WindChillNeoSwerveModule(3, Constants.BackRightModule.constants) };
-        break;
-
-      case KRAKEN:
-        swerveModules = new WindChillKrakenSwerveModule[] {
-            new WindChillKrakenSwerveModule(0, Constants.FrontLeftModule.constants),
-            new WindChillKrakenSwerveModule(1, Constants.FrontRightModule.constants),
-            new WindChillKrakenSwerveModule(2, Constants.BackLeftModule.constants),
-            new WindChillKrakenSwerveModule(3, Constants.BackRightModule.constants) };
-          break;
-
-      default:
-        swerveModules = new WindChillKrakenSwerveModule[] {
-            new WindChillKrakenSwerveModule(0, Constants.FrontLeftModule.constants),
-            new WindChillKrakenSwerveModule(1, Constants.FrontRightModule.constants),
-            new WindChillKrakenSwerveModule(2, Constants.BackLeftModule.constants),
-            new WindChillKrakenSwerveModule(3, Constants.BackRightModule.constants) };
-          break;
-    }
   }
 
   @Override
