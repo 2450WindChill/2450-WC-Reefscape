@@ -124,7 +124,7 @@ public class RobotContainer {
     One_Meter_Path = new PathPlannerAuto("One_Meter_Auto");
 
     // TODO: Eventually add all the autos to the chooser
-    m_chooser.addOption("One_Meter_Auto", Back_Up_Auto);
+    m_chooser.addOption("One_Meter_Auto", One_Meter_Path);
   }
 
   // Auto command
