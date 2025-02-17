@@ -37,8 +37,11 @@ public class ElevatorMovement extends Command {
         System.out.println("Elevator Stopped");
     }
 
-    // just in case a second limit switch is added, this needs to be updated
     public boolean isFinished() {
-       return !m_coralsubsystem.getElevatorSwitch();
+        if (!m_coralsubsystem.getElevatorLowSwitch() || !m_coralsubsystem.getElevatorHighSwitch()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

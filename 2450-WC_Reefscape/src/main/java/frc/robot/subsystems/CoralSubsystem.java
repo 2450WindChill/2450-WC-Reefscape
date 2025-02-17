@@ -23,7 +23,8 @@ public class CoralSubsystem extends SubsystemBase {
     private TalonFX elevatorMotor = new TalonFX(Constants.elevatorMotorId);
     private TalonFX endeffectorMotor = new TalonFX(Constants.endeffectorMotorId);
     private PIDController elevatorPidController = new PIDController(0.02, .001, 0);
-    private DigitalInput elevatorswitch = new DigitalInput(Constants.elevatorSwitchChannel);
+    private DigitalInput elevatorLowSwitch = new DigitalInput(Constants.elevatorLowSwitchChannel);
+    private DigitalInput elevatorHighSwitch = new DigitalInput(Constants.elevatorHighSwitchChannel);
     private DigitalInput beamBreakReciever = new DigitalInput(Constants.beamBreakRecieverChannel);
     private DigitalOutput beamBreakTransmitter = new DigitalOutput(Constants.beamBreakTransmitterChannel);
 
@@ -41,10 +42,14 @@ public class CoralSubsystem extends SubsystemBase {
         elevatorMotor.set(newSpeed);
     }
 
-    public boolean getElevatorSwitch() {
-        return elevatorswitch.get();
+    public boolean getElevatorLowSwitch() {
+        return elevatorLowSwitch.get();
     }
 
+    public boolean getElevatorHighSwitch() {
+        return elevatorHighSwitch.get();
+    }
+    
     public TalonFX getEndAffectorMotor() {
         return endeffectorMotor;
     }
@@ -75,11 +80,11 @@ public class CoralSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Elevator Speed", elevatorMotor.get());
-        SmartDashboard.putBoolean("elevatorswitch", elevatorswitch.get());
+        SmartDashboard.putBoolean("Bottom Elevator Limit Switch", elevatorLowSwitch.get());
 
         SmartDashboard.putBoolean("Beam Break One", beamBreakReciever.get());
 
-        if(!elevatorswitch.get()){
+        if(!elevatorLowSwitch.get()){
             zeroElevatorMotor();
             resetEncoder();
         }

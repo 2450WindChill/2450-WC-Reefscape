@@ -20,7 +20,7 @@ Week Zero To-do:
 - [x] Basic autonomous
 - [ ] Fix vision sequence
 - [ ] Controller commands
-- [ ] Add second limit switch to ElevatorMovement
+- [x] Add second limit switch to ElevatorMovement
 
 Week Zero Commands:
 - [x] Elevator up/down
