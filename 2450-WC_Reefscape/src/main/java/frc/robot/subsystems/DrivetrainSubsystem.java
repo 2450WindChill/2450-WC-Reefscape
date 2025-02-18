@@ -46,7 +46,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public CANcoder canCoder;
   public HolonomicDriveController holonomicDriveController;
   public static SwerveDrivePoseEstimator poseEstimate;
-  public static Enum<SwerveMode> mymode = Constants.SwerveMode.NEO;
+  public static Enum<SwerveMode> mymode = Constants.SwerveMode.KRAKEN;
   private final Field2d m_field = new Field2d();
 
   public DrivetrainSubsystem(SwerveMode myMode) {
@@ -116,8 +116,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
             getSpeedsSupplier(),
             (speeds, feedforwards) -> driveRobotRelative(speeds),
             new PPHolonomicDriveController(
-                    new PIDConstants(5.0, 0.0, 0.0),
-                    new PIDConstants(5.0, 0.0, 0.0)
+                    new PIDConstants(0.05, 0.0, 0.0),
+                    new PIDConstants(0.05, 0.0, 0.0)
             ),
             config,
             () -> {

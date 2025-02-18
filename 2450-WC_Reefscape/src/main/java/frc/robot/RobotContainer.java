@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 public class RobotContainer {
-  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.NEO);
+  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   //public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
@@ -124,7 +124,7 @@ public class RobotContainer {
     One_Meter_Path = new PathPlannerAuto("One_Meter_Auto");
 
     // TODO: Eventually add all the autos to the chooser
-    m_chooser.addOption("One_Meter_Auto", Back_Up_Auto);
+    m_chooser.addOption("One_Meter_Auto", One_Meter_Path);
   }
 
   // Auto command
