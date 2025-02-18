@@ -15,6 +15,7 @@ import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -36,8 +37,10 @@ public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
+  // TODO: get GenericHID linked to all custom controller buttons!
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
-  private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
+  //private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
+  private final GenericHID m_operatorController = new GenericHID(ControllerConstants.kOperatorControllerPort); // CHANGE THIS LATER
 
   
   public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
