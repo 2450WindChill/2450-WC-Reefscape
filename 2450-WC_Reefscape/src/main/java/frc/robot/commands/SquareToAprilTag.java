@@ -11,7 +11,7 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public class SquareToAprilTag extends Command {
 
-    ProfiledPIDController controller = new ProfiledPIDController(0.2, 0, 0.01, new Constraints(Constants.maxAngularVelocity, 4));
+    ProfiledPIDController controller = new ProfiledPIDController(0.75, 0, 0.2, new Constraints(1.5, 0.75));
 
     VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
