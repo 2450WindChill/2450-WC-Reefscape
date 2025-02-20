@@ -27,6 +27,8 @@ public class VisionSubsystem extends SubsystemBase {
     PhotonTrackedTarget frontCameraTarget;
     PhotonTrackedTarget backCameraTarget;
 
+    boolean hasTarget;
+
     double apriltagX = 0.0;
     double apriltagY = 0.0;
     double apriltagZ = 0.0;
@@ -64,10 +66,11 @@ public class VisionSubsystem extends SubsystemBase {
                         frontCameraTarget = result.getBestTarget();
                         apriltagX = getFrontAprilTagPoseInRobotSpace().getX();
                         apriltagY = getFrontAprilTagPoseInRobotSpace().getY();
-                        apriltagZ = getFrontAprilTagPoseInRobotSpace().getRotation().getRadians();
+                        apriltagZ = getFrontAprilTagPoseInRobotSpace().getRotation().getDegrees();
                     // }
                 // }
             }
+            hasTarget = result.hasTargets();
         }
         
         SmartDashboard.putNumber("Apriltag X", apriltagX);
@@ -95,9 +98,17 @@ public class VisionSubsystem extends SubsystemBase {
         Transform3d targetTransform = frontCameraTarget.getBestCameraToTarget();
         Translation2d targetTranslation = new Translation2d(targetTransform.getX(), targetTransform.getY());
 
-        Rotation2d targetRotation = new Rotation2d(frontCameraTarget.getYaw());
+        Rotation2d targetRotation = new Rotation2d(targetTransform.getRotation().getZ());
 
         return new Pose2d(targetTranslation, targetRotation);
+    }
+
+    public Rotation2d getFrontAprilTagYaw() {
+        if (frontCameraTarget == null) {
+            return new Rotation2d();
+        }
+
+        return new Rotation2d(Math.toRadians(frontCameraTarget.getYaw()));
     }
 
     // public Pose2d getBackAprilTagPoseInRobotSpace() {
@@ -111,7 +122,7 @@ public class VisionSubsystem extends SubsystemBase {
     // }
 
     public boolean frontCameraHasTarget() {
-        return frontCameraTarget != null;
+        return hasTarget;
     }
 
     // public boolean backCameraHasTarget() {

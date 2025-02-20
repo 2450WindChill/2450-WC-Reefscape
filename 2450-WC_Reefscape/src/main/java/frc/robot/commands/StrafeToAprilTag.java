@@ -13,25 +13,27 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public class StrafeToAprilTag extends Command {
 
-    ProfiledPIDController controller = new ProfiledPIDController(3, 0, 0, new Constraints(Constants.maxSpeed, 2));
+    ProfiledPIDController controller = new ProfiledPIDController(2.5, 0, 0, new Constraints(Constants.maxSpeed, 2));
 
     VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
+    double m_target;
 
     double tolerance = 0.05;
     double currError;
     double strafeSpeed = 0;
 
-    public StrafeToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+    public StrafeToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double target) {
         m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
+        m_target = target;
 
         addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {
         controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest);
-        controller.setGoal(0);
+        controller.setGoal(m_target);
         controller.setTolerance(tolerance);
     }
 

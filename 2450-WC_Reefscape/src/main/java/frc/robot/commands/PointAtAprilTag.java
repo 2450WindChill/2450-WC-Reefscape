@@ -9,20 +9,18 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
-public class SquareToAprilTag extends Command {
+public class PointAtAprilTag extends Command {
 
-    ProfiledPIDController controller = new ProfiledPIDController(6, 0, 0, new Constraints(Constants.maxAngularVelocity, 4));
+    ProfiledPIDController controller = new ProfiledPIDController(5, 0, 0, new Constraints(Constants.maxAngularVelocity, 4));
 
     VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
 
-    double tolerance = Math.toRadians(1);
+    double tolerance = Math.toRadians(5);
     double currAngle;
     double rotSpeed = 0;
 
-    boolean isInverted;
-
-    public SquareToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+    public PointAtAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
         m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
 
@@ -30,26 +28,14 @@ public class SquareToAprilTag extends Command {
     }
 
     public void initialize() {
-        double currentReading = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getRotation().getRadians();
-        controller.reset(currentReading);
-        if (currentReading > 0) {
-            controller.setGoal(Math.PI);
-            isInverted = false;
-        } else {
-            controller.setGoal(-Math.PI);
-            isInverted = true;
-        }
+        controller.reset(m_visionSubsystem.getFrontAprilTagYaw().getRadians());
+        controller.setGoal(0);
         controller.setTolerance(tolerance);
     }
 
     public void execute() {
-        currAngle = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getRotation().getRadians();
-        if (isInverted) {
-            currAngle = -Math.abs(currAngle);
-        } else {
-            currAngle = Math.abs(currAngle);
-        }
-        rotSpeed = controller.calculate(currAngle);
+        currAngle = m_visionSubsystem.getFrontAprilTagYaw().getRadians();
+        rotSpeed = -controller.calculate(currAngle);
         m_drivetrainSubsystem.drive(new Translation2d(), rotSpeed, true, false);
         SmartDashboard.putBoolean("At Rotation Goal", controller.atGoal());
     }

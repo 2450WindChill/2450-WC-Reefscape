@@ -36,7 +36,7 @@ public class ApproachAprilTag extends Command {
     public void execute() {
         currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest;
         approachSpeed = controller.calculate(currError);
-        m_drivetrainSubsystem.drive(new Translation2d(-approachSpeed, 0), 0, true, false);
+        m_drivetrainSubsystem.drive(new Translation2d(approachSpeed, 0), 0, true, false);
         SmartDashboard.putBoolean("At Approach Goal", controller.atGoal());
     }
 
