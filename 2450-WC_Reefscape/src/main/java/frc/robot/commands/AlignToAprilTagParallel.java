@@ -1,17 +1,17 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
-public class AlignToAprilTagSequential extends SequentialCommandGroup {
+public class AlignToAprilTagParallel extends ParallelCommandGroup {
 
     VisionSubsystem m_VisionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
     double m_strafeTarget;
     double m_approachTarget;
 
-    public AlignToAprilTagSequential(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double strafeTarget, double approachTarget) {
+    public AlignToAprilTagParallel(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double strafeTarget, double approachTarget) {
         m_VisionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_strafeTarget = strafeTarget;

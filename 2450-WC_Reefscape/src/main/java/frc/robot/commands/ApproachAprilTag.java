@@ -16,20 +16,22 @@ public class ApproachAprilTag extends Command {
 
     VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
+    double m_target;
 
     double tolerance = 0.05;
     double currError;
     double approachSpeed = 0;
 
-    public ApproachAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+    public ApproachAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double target) {
         m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
+        m_target = target;
         addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {
         controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest);
-        controller.setGoal(1.3);
+        controller.setGoal(m_target);
         controller.setTolerance(tolerance);
     }
 

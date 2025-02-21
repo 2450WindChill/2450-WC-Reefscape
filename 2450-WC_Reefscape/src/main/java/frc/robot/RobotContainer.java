@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.commands.AlignToAprilTagParallel;
 import frc.robot.commands.AlignToAprilTagSequential;
 import frc.robot.commands.ApproachAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
@@ -45,16 +46,18 @@ public class RobotContainer {
 
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
-    m_driverController.x().onTrue(new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, -0.165));
-    m_driverController.b().onTrue(new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 0.165));
+    m_driverController.x().onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, -0.165, 0.7));
+    m_driverController.b().onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0.165, 0.7));
+    // m_driverController.leftBumper().onTrue(new AlignToAprilTagParallel(m_visionSubsystem, m_drivetrainSubsystem, -0.165, 0.7));
+    // m_driverController.rightBumper().onTrue(new AlignToAprilTagParallel(m_visionSubsystem, m_drivetrainSubsystem, 0.165, 0.7));
   }
 
   private void configureDashboardBindings() {
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
     tab.add("SquareToAprilTag", new SquareToAprilTag(m_visionSubsystem, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
     tab.add("StrafeToAprilTag", new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 0)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("ApproachAprilTag", new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("AlignToAprilTag", new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("ApproachAprilTag", new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 1.3)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("AlignToAprilTag", new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0, 1.3)).withWidget(BuiltInWidgets.kCommand);
   }
 
   // Auto command
