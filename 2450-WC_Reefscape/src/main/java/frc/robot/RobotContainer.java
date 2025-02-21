@@ -9,10 +9,12 @@ import frc.robot.Constants.SwerveMode;
 import frc.robot.commands.BopAlgae;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOuttake;
+import frc.robot.commands.DeepClimbCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ElevatorMovement;
 import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.DeepClimbSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
@@ -35,11 +37,11 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+  public final DeepClimbSubsystem m_DeepClimbSubsystem = new DeepClimbSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
 
-  
   public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
   public final JoystickButton op_bButton = new JoystickButton(m_operatorController, Button.kB.value);
 
@@ -50,8 +52,6 @@ public class RobotContainer {
   public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
 
   public final JoystickButton op_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
-
-
 
   public SendableChooser<Command> m_chooser;
   Timer timer = new Timer();
@@ -72,30 +72,37 @@ public class RobotContainer {
     configureControllerBindings();
     configureAutoChooser();
     configureDashboardBindings();
- }
+  }
 
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
 
-    op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.1));
-    op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.1));
+    op_DownDpad.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, -50));
+    op_UpDpad.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, 50));
+    op_xButton.onTrue(new DeepClimbCommand(m_DeepClimbSubsystem, 30, 10));
 
     // m_coralSubsystem.setDefaultCommand(
-    //   new BopAlgae(
-    //       m_coralSubsystem,
-    //       () -> m_operatorController.getRightTriggerAxis(),
-    //       () -> m_operatorController.getLeftTriggerAxis()));
+    // new BopAlgae(
+    // m_coralSubsystem,
+    // () -> m_operatorController.getRightTriggerAxis(),
+    // () -> m_operatorController.getLeftTriggerAxis()));
   }
 
   private void configureDashboardBindings() {
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
 
-    // tab.add("0", new MoveElevatorToPosition(m_coralSubsystem, 0)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("10", new MoveElevatorToPosition(m_coralSubsystem, 10)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("20", new MoveElevatorToPosition(m_coralSubsystem, 20)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("50", new MoveElevatorToPosition(m_coralSubsystem, 50)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("200", new MoveElevatorToPosition(m_coralSubsystem, 200)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("500", new MoveElevatorToPosition(m_coralSubsystem, 500)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("0", new MoveElevatorToPosition(m_coralSubsystem,
+    // 0)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("10", new MoveElevatorToPosition(m_coralSubsystem,
+    // 10)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("20", new MoveElevatorToPosition(m_coralSubsystem,
+    // 20)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("50", new MoveElevatorToPosition(m_coralSubsystem,
+    // 50)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("200", new MoveElevatorToPosition(m_coralSubsystem,
+    // 200)).withWidget(BuiltInWidgets.kCommand);
+    // tab.add("500", new MoveElevatorToPosition(m_coralSubsystem,
+    // 500)).withWidget(BuiltInWidgets.kCommand);
   }
 
   // Basic auto for testing, backs up after a certain period of time

@@ -63,6 +63,8 @@ public final class Constants {
   public static final int elevatorHighSwitchChannel = 5; // TODO: check for conflicts!!
   public static final int beamBreakTransmitterChannel = 0;
   public static final int beamBreakRecieverChannel = 1;
+  public static final int climbMotorOneId = 6;
+  public static final int climbMotorTwoId = 7;
 
   public static final double openLoopRamp = 0.25;
   public static final double closedLoopRamp = 0.0;
