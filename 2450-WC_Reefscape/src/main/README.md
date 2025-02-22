@@ -11,7 +11,7 @@
 - [ ] Set up new radio (hardware)
 - [x] Throughbore encoder (hardware and software)
 - [ ] Beam break (hardware and software)
-- [ ] CANdle LED (hardware and software)
+- [ ] CANdle LED (hardware and software) <- J, DO ON MONDAY!!
 - [x] Set up default autonomous
 - [ ] Convert swerve drive motors (not angle motors) to krakens
 
