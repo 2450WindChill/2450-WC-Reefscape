@@ -28,6 +28,9 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 
 import java.util.Vector;
 
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -79,6 +82,7 @@ public class RobotContainer {
   Timer timer = new Timer();
   double time = 0.0;
   private Command Back_Up_Auto;
+  private Command One_Meter_Path;
   private Command Algae_Coral_Auto;
 
   public RobotContainer() {
@@ -157,14 +161,11 @@ public class RobotContainer {
     // Put the chooser on the dashboard
     SmartDashboard.putData("Auto Mode", m_chooser);
 
-    // Set the back up auto to the autoBackUp function
-    Back_Up_Auto = autoBackUp();
-
-    // TODO: Eventually set up pathplanner to add paths along with the scoring
-    // Algae_Coral_Auto = new PathPlannerAuto("Test_Auto");
+    // One Meter Pathplanner auto
+    One_Meter_Path = new PathPlannerAuto("One_Meter_Auto");
 
     // TODO: Eventually add all the autos to the chooser
-    m_chooser.addOption("Back_Up_Auto", Back_Up_Auto);
+    m_chooser.addOption("One_Meter_Auto", One_Meter_Path);
   }
 
   // Auto command
