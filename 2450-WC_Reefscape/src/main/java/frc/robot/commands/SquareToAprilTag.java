@@ -1,11 +1,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.Camera;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -22,15 +24,25 @@ public class SquareToAprilTag extends Command {
 
     boolean isInverted;
 
-    public SquareToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem) {
+    int targetedID;
+
+    Enum<Camera> m_camera;
+
+    public SquareToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, Enum<Camera> camera) {
         m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
+        m_camera = camera;
 
         addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {
-        double currentReading = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getRotation().getRadians();
+        if (m_camera == Camera.FRONT) {
+            targetedID = m_visionSubsystem.getFrontAprilTagID();
+        } else if (m_camera == Camera.BACK) {
+            targetedID = m_visionSubsystem.getBackAprilTagID();
+        }
+        double currentReading = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getRotation().getRadians();
         controller.reset(currentReading);
         if (currentReading > 0) {
             controller.setGoal(Math.PI);
@@ -43,7 +55,7 @@ public class SquareToAprilTag extends Command {
     }
 
     public void execute() {
-        currAngle = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getRotation().getRadians();
+        currAngle = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getRotation().getRadians();
         if (isInverted) {
             currAngle = -Math.abs(currAngle);
         } else {
@@ -51,7 +63,6 @@ public class SquareToAprilTag extends Command {
         }
         rotSpeed = controller.calculate(currAngle);
         m_drivetrainSubsystem.drive(new Translation2d(), rotSpeed, true, false);
-        SmartDashboard.putBoolean("At Rotation Goal", controller.atGoal());
     }
 
     public void end(boolean interrupted) {
@@ -59,6 +70,6 @@ public class SquareToAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
+        return ((m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID) == new Pose2d()) || controller.atGoal());
     }
 }

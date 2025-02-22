@@ -19,15 +19,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase {
 
     PhotonCamera frontCamera = new PhotonCamera("frontCamera");
-    // /PhotonCamera backCamera = new PhotonCamera("backCamera");
+    PhotonCamera backCamera = new PhotonCamera("backCamera");
 
     List<PhotonPipelineResult> frontCameraResults;
-    PhotonPipelineResult backCameraResult;
+    List<PhotonPipelineResult> backCameraResults;
 
-    PhotonTrackedTarget frontCameraTarget;
-    PhotonTrackedTarget backCameraTarget;
+    PhotonTrackedTarget frontCameraBestTarget;
+    PhotonTrackedTarget backCameraBestTarget;
 
-    boolean hasTarget;
+    PhotonPipelineResult frontResult;
+    PhotonPipelineResult backResult;
+
+    boolean frontCameraHasTarget;
+    boolean backCameraHasTarget;
 
     double apriltagX = 0.0;
     double apriltagY = 0.0;
@@ -51,26 +55,39 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         // Read in relevant data from the Camera
         frontCameraResults = frontCamera.getAllUnreadResults();
-        boolean targetVisible = false;
-
-        // frontCameraTarget = null;
+        backCameraResults = backCamera.getAllUnreadResults();
 
         if (!frontCameraResults.isEmpty()) {
             // Camera processed a new frame since last
             // Get the last one in the list.
-            var result = frontCameraResults.get(frontCameraResults.size() - 1);
-            if (result.hasTargets()) {
+            frontResult = frontCameraResults.get(frontCameraResults.size() - 1);
+            if (frontResult.hasTargets()) {
                 // At least one AprilTag was seen by the camera
                 // for (var target : result.getTargets()) {
                 //     if (target.getFiducialId() == 1) {
-                        frontCameraTarget = result.getBestTarget();
+                        frontCameraBestTarget = frontResult.getBestTarget();
                         apriltagX = getFrontAprilTagPoseInRobotSpace().getX();
                         apriltagY = getFrontAprilTagPoseInRobotSpace().getY();
                         apriltagZ = getFrontAprilTagPoseInRobotSpace().getRotation().getDegrees();
                     // }
                 // }
             }
-            hasTarget = result.hasTargets();
+            frontCameraHasTarget = frontResult.hasTargets();
+        }
+
+        if (!backCameraResults.isEmpty()) {
+            // Camera processed a new frame since last
+            // Get the last one in the list.
+            backResult = backCameraResults.get(backCameraResults.size() - 1);
+            if (backResult.hasTargets()) {
+                // At least one AprilTag was seen by the camera
+                // for (var target : result.getTargets()) {
+                //     if (target.getFiducialId() == 1) {
+                        backCameraBestTarget = frontResult.getBestTarget();
+                    // }
+                // }
+            }
+            frontCameraHasTarget = frontResult.hasTargets();
         }
         
         SmartDashboard.putNumber("Apriltag X", apriltagX);
@@ -83,19 +100,49 @@ public class VisionSubsystem extends SubsystemBase {
     public void simulationPeriodic() {
     }
 
-    // public int getFrontAprilTagID() {
-    // return frontCameraTarget.getFiducialId();
-    // }
+    public PhotonTrackedTarget getVisibleAprilTag(int id) {
+        for (int i = 0; i < frontResult.getTargets().size(); i++) {
+             if (frontResult.getTargets().get(i).getFiducialId() == id) {
+                return frontResult.getTargets().get(i);
+             }
+        }
+        return null;
+    }
 
-    // public int getBackAprilTagID() {
-    // return backCameraTarget.getFiducialId();
-    // }
+    public int getFrontAprilTagID() {
+    return frontCameraBestTarget.getFiducialId();
+    }
+
+    public int getBackAprilTagID() {
+    return backCameraBestTarget.getFiducialId();
+    }
 
     public Pose2d getFrontAprilTagPoseInRobotSpace() {
-        if (frontCameraTarget == null) {
+        if (frontCameraBestTarget == null) {
             return new Pose2d();
         }
-        Transform3d targetTransform = frontCameraTarget.getBestCameraToTarget();
+        Transform3d targetTransform = frontCameraBestTarget.getBestCameraToTarget();
+        Translation2d targetTranslation = new Translation2d(targetTransform.getX(), targetTransform.getY());
+
+        Rotation2d targetRotation = new Rotation2d(targetTransform.getRotation().getZ());
+
+        return new Pose2d(targetTranslation, targetRotation);
+    }
+
+    public Pose2d getBackAprilTagPoseInRobotSpace() {
+        if (frontCameraBestTarget == null) {
+            return new Pose2d();
+        }
+        Transform3d targetTransform = backCameraBestTarget.getBestCameraToTarget();
+        Translation2d targetTranslation = new Translation2d(targetTransform.getX(), targetTransform.getY());
+
+        Rotation2d targetRotation = new Rotation2d(targetTransform.getRotation().getZ());
+
+        return new Pose2d(targetTranslation, targetRotation);
+    }
+
+    public Pose2d getAprilTagPoseInRobotSpace(int id) {
+        Transform3d targetTransform = getVisibleAprilTag(id).getBestCameraToTarget();
         Translation2d targetTranslation = new Translation2d(targetTransform.getX(), targetTransform.getY());
 
         Rotation2d targetRotation = new Rotation2d(targetTransform.getRotation().getZ());
@@ -104,11 +151,11 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getFrontAprilTagYaw() {
-        if (frontCameraTarget == null) {
+        if (frontCameraBestTarget == null) {
             return new Rotation2d();
         }
 
-        return new Rotation2d(Math.toRadians(frontCameraTarget.getYaw()));
+        return new Rotation2d(Math.toRadians(frontCameraBestTarget.getYaw()));
     }
 
     // public Pose2d getBackAprilTagPoseInRobotSpace() {
@@ -122,7 +169,7 @@ public class VisionSubsystem extends SubsystemBase {
     // }
 
     public boolean frontCameraHasTarget() {
-        return hasTarget;
+        return frontCameraHasTarget;
     }
 
     // public boolean backCameraHasTarget() {

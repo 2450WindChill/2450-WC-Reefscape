@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.Camera;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.AlignToAprilTagParallel;
 import frc.robot.commands.AlignToAprilTagSequential;
@@ -97,8 +98,8 @@ public class RobotContainer {
 
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
-    dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, -0.165, 0.7));
-    dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0.165, 0.7));
+    dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, -0.165, 0.7, Camera.FRONT));
+    dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0.165, 0.7, Camera.FRONT));
     // m_driverController.leftBumper().onTrue(new AlignToAprilTagParallel(m_visionSubsystem, m_drivetrainSubsystem, -0.165, 0.7));
     // m_driverController.rightBumper().onTrue(new AlignToAprilTagParallel(m_visionSubsystem, m_drivetrainSubsystem, 0.165, 0.7));
 
@@ -119,10 +120,10 @@ public class RobotContainer {
 
   private void configureDashboardBindings() {
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
-    tab.add("SquareToAprilTag", new SquareToAprilTag(m_visionSubsystem, m_drivetrainSubsystem)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("StrafeToAprilTag", new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 0)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("ApproachAprilTag", new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 1.3)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("AlignToAprilTag", new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0, 1.3)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("SquareToAprilTag", new SquareToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("StrafeToAprilTag", new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 0, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("ApproachAprilTag", new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 1.3, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("AlignToAprilTag", new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0, 1.3, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
 
     tab.add("-10", new MoveElevatorToPosition(m_coralSubsystem,
         -10)).withWidget(BuiltInWidgets.kCommand);

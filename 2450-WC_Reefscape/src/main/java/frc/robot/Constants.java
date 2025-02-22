@@ -188,4 +188,9 @@ public final class Constants {
     public static final double backCameraLeftOffest = 0;
     public static final double backCameraUpOffest = 0;
   }
+
+  public static enum Camera {
+    FRONT,
+    BACK;
+  }
 }
