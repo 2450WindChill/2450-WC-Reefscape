@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.swerveModules;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -14,10 +14,11 @@ import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.Constants;
 import frc.robot.libs.OnboardModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class WindChillSwerveModule {
+public class WindChillNeoSwerveModule extends BaseWindChillSwerveModule{
   public int moduleNumber;
   private Rotation2d lastAngle;
 
@@ -34,7 +35,8 @@ public class WindChillSwerveModule {
   private final SparkClosedLoopController driveController;
   private final SparkClosedLoopController angleController;
 
-  public WindChillSwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
+  public WindChillNeoSwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
+    super(moduleNumber);
     this.moduleNumber = moduleNumber;
 
     /* Angle Encoder Config */
