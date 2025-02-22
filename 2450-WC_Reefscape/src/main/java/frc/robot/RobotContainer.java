@@ -37,7 +37,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
-  public final DeepClimbSubsystem m_DeepClimbSubsystem = new DeepClimbSubsystem();
+  // public final DeepClimbSubsystem m_DeepClimbSubsystem = new DeepClimbSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -47,11 +47,14 @@ public class RobotContainer {
 
   public final POVButton op_UpDpad = new POVButton(m_operatorController, 180);
   public final POVButton op_DownDpad = new POVButton(m_operatorController, 0);
+  public final POVButton op_LeftDpad = new POVButton(m_operatorController, 270);
+  public final POVButton op_RightDpad = new POVButton(m_operatorController, 90);
 
   public final JoystickButton op_xButton = new JoystickButton(m_operatorController, Button.kX.value);
   public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
 
   public final JoystickButton op_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
+  public final JoystickButton op_rightBumper = new JoystickButton(m_driverController, Button.kRightBumper.value);
 
   public SendableChooser<Command> m_chooser;
   Timer timer = new Timer();
@@ -77,9 +80,11 @@ public class RobotContainer {
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
 
-    op_DownDpad.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, -50));
-    op_UpDpad.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, 50));
-    op_xButton.onTrue(new DeepClimbCommand(m_DeepClimbSubsystem, 30, 10));
+    op_aButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    op_yButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+    
+    // op_xButton.onTrue(new DeepClimbCommand(m_DeepClimbSubsystem, 30, 10));
+    // op_yButton.whileTrue(new BopAlgae(m_coralSubsystem, 0.1, -0.1));
 
     // m_coralSubsystem.setDefaultCommand(
     // new BopAlgae(
@@ -91,18 +96,16 @@ public class RobotContainer {
   private void configureDashboardBindings() {
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
 
-    // tab.add("0", new MoveElevatorToPosition(m_coralSubsystem,
-    // 0)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("10", new MoveElevatorToPosition(m_coralSubsystem,
-    // 10)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("20", new MoveElevatorToPosition(m_coralSubsystem,
-    // 20)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("50", new MoveElevatorToPosition(m_coralSubsystem,
-    // 50)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("200", new MoveElevatorToPosition(m_coralSubsystem,
-    // 200)).withWidget(BuiltInWidgets.kCommand);
-    // tab.add("500", new MoveElevatorToPosition(m_coralSubsystem,
-    // 500)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("10", new MoveElevatorToPosition(m_coralSubsystem,
+        10)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("20", new MoveElevatorToPosition(m_coralSubsystem,
+        20)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("50", new MoveElevatorToPosition(m_coralSubsystem,
+        50)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("200", new MoveElevatorToPosition(m_coralSubsystem,
+        200)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("500", new MoveElevatorToPosition(m_coralSubsystem,
+        500)).withWidget(BuiltInWidgets.kCommand);
   }
 
   // Basic auto for testing, backs up after a certain period of time

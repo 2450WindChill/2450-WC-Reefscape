@@ -20,10 +20,10 @@ public class ElevatorMovement extends Command {
 
     public void initialize() {
         if (m_direction == "up") {
-            m_coralsubsystem.setElevatorSpeed(m_speed);
+            m_coralsubsystem.setElevatorSpeed(-m_speed);
         }
         if (m_direction == "down") {
-            m_coralsubsystem.setElevatorSpeed(-m_speed);
+            m_coralsubsystem.setElevatorSpeed(m_speed);
         }
     
     }
@@ -32,7 +32,7 @@ public class ElevatorMovement extends Command {
         System.out.println("Elevator movement direction: " + m_direction);
     }
 
-    public void end() {
+    public void end(boolean interrupted) {
         m_coralsubsystem.setElevatorSpeed(0.0);
         System.out.println("Elevator Stopped");
     }

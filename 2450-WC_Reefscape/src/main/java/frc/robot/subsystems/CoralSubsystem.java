@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkMax;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -26,7 +27,6 @@ public class CoralSubsystem extends SubsystemBase {
     private DigitalInput elevatorLowSwitch = new DigitalInput(Constants.elevatorLowSwitchChannel);
     private DigitalInput elevatorHighSwitch = new DigitalInput(Constants.elevatorHighSwitchChannel);
     private DigitalInput beamBreakReciever = new DigitalInput(Constants.beamBreakRecieverChannel);
-    private DigitalOutput beamBreakTransmitter = new DigitalOutput(Constants.beamBreakTransmitterChannel);
 
     /** Creates a new ExampleSubsystem. */
     public CoralSubsystem() {
@@ -35,7 +35,8 @@ public class CoralSubsystem extends SubsystemBase {
         slot0Configs.kI = 0; // no output for integrated error
         slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
         elevatorMotor.getConfigurator().apply(slot0Configs);
-        beamBreakTransmitter.set(true);
+
+        elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     public void setElevatorSpeed(double newSpeed) {
