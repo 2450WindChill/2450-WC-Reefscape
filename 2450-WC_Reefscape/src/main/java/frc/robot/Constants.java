@@ -58,7 +58,7 @@ public final class Constants {
   public static final double wheelCircumference = wheelDiameter * Math.PI;
 
   public static final int elevatorMotorId = 5;
-  public static final int endeffectorMotorId = 11;
+  public static final int endeffectorMotorId = 18;
   public static final int elevatorLowSwitchChannel = 4;
   public static final int elevatorHighSwitchChannel = 5; // TODO: check for conflicts!!
   public static final int beamBreakRecieverChannel = 1;

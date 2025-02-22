@@ -38,7 +38,7 @@ public class ElevatorMovement extends Command {
     }
 
     public boolean isFinished() {
-        if (!m_coralsubsystem.getElevatorLowSwitch() || !m_coralsubsystem.getElevatorHighSwitch()) {
+        if ((!m_coralsubsystem.getElevatorLowSwitch()) && (m_direction == "down")) {
             return true;
         } else {
             return false;

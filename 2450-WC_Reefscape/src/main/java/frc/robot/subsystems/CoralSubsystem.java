@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -22,7 +23,7 @@ import frc.robot.Constants;
 
 public class CoralSubsystem extends SubsystemBase {
     private TalonFX elevatorMotor = new TalonFX(Constants.elevatorMotorId);
-    private TalonFX endeffectorMotor = new TalonFX(Constants.endeffectorMotorId);
+    private SparkFlex endeffectorMotor = new SparkFlex(Constants.endeffectorMotorId, MotorType.kBrushless);
     private PIDController elevatorPidController = new PIDController(0.02, .001, 0);
     private DigitalInput elevatorLowSwitch = new DigitalInput(Constants.elevatorLowSwitchChannel);
     private DigitalInput elevatorHighSwitch = new DigitalInput(Constants.elevatorHighSwitchChannel);
@@ -51,7 +52,7 @@ public class CoralSubsystem extends SubsystemBase {
         return elevatorHighSwitch.get();
     }
     
-    public TalonFX getEndAffectorMotor() {
+    public SparkFlex getEndAffectorMotor() {
         return endeffectorMotor;
     }
 
@@ -86,7 +87,7 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Beam Break One", beamBreakReciever.get());
 
         if(!elevatorLowSwitch.get()){
-            zeroElevatorMotor();
+            // zeroElevatorMotor();
             resetEncoder();
         }
     }
