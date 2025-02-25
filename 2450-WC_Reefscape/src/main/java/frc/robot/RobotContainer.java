@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.SwerveMode;
+import frc.robot.commands.AlignToAprilTagSequential;
 import frc.robot.commands.BopAlgae;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOuttake;
@@ -16,6 +17,7 @@ import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DeepClimbSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -40,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+  public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
   // public final DeepClimbSubsystem m_DeepClimbSubsystem = new
   // DeepClimbSubsystem();
 
@@ -47,20 +50,26 @@ public class RobotContainer {
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
 
   public final JoystickButton dr_aButton = new JoystickButton(m_driverController, Button.kA.value);
+  public final JoystickButton dr_bButton = new JoystickButton(m_driverController, Button.kB.value);
+  public final JoystickButton dr_xButton = new JoystickButton(m_driverController, Button.kX.value);
+  public final JoystickButton dr_yButton = new JoystickButton(m_driverController, Button.kY.value);
+
+  public final JoystickButton dr_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
+  public final JoystickButton dr_rightBumper = new JoystickButton(m_driverController, Button.kRightBumper.value);
+
 
   public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
   public final JoystickButton op_bButton = new JoystickButton(m_operatorController, Button.kB.value);
+  public final JoystickButton op_xButton = new JoystickButton(m_operatorController, Button.kX.value);
+  public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
 
   public final POVButton op_UpDpad = new POVButton(m_operatorController, 180);
   public final POVButton op_DownDpad = new POVButton(m_operatorController, 0);
   public final POVButton op_LeftDpad = new POVButton(m_operatorController, 270);
   public final POVButton op_RightDpad = new POVButton(m_operatorController, 90);
 
-  public final JoystickButton op_xButton = new JoystickButton(m_operatorController, Button.kX.value);
-  public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
-
-  public final JoystickButton op_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
-  public final JoystickButton op_rightBumper = new JoystickButton(m_driverController, Button.kRightBumper.value);
+  public final JoystickButton op_leftBumper = new JoystickButton(m_operatorController, Button.kLeftBumper.value);
+  public final JoystickButton op_rightBumper = new JoystickButton(m_operatorController, Button.kRightBumper.value);
 
   public SendableChooser<Command> m_chooser;
   Timer timer = new Timer();
@@ -77,7 +86,7 @@ public class RobotContainer {
             () -> (m_driverController.getLeftX()),
             () -> (m_driverController.getRightX()),
             () -> Constants.isRobotCentric,
-            () -> op_leftBumper.getAsBoolean(),
+            () -> dr_leftBumper.getAsBoolean(),
             () -> m_driverController.getPOV()));
     configureControllerBindings();
     configureAutoChooser();
@@ -87,9 +96,19 @@ public class RobotContainer {
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
 
-    op_aButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
-    op_yButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
+    dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem));
+
+    op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, 0));
+    op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, 0));
+    op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, 0));
+    op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, 0));
+
+    op_leftBumper.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    op_rightBumper.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+
+    
+    
 
 
     // op_xButton.onTrue(new DeepClimbCommand(m_DeepClimbSubsystem, 30, 10));

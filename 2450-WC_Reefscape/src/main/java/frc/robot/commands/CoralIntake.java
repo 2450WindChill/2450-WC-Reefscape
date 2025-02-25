@@ -7,47 +7,34 @@ package frc.robot.commands;
 import frc.robot.subsystems.CoralSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
 public class CoralIntake extends Command {
-  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private final CoralSubsystem m_subsystem;
 
+  private final CoralSubsystem m_coralSubsystem;
   private final double m_speed;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public CoralIntake(CoralSubsystem subsystem, double speed) {
-    m_subsystem = subsystem;
+  public CoralIntake(CoralSubsystem coralSubsystem, double speed) {
+    m_coralSubsystem = coralSubsystem;
     m_speed = speed;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    
+    addRequirements(coralSubsystem);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
   public void initialize() {
-    m_subsystem.getEndAffectorMotor().set(m_speed);
+    m_coralSubsystem.getEndAffectorMotor().set(m_speed);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
   public void execute() {
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.getEndAffectorMotor().set(0);
+    m_coralSubsystem.getEndAffectorMotor().set(0);
   }
 
-  // Returns true when the command should end.
-  @Override
   public boolean isFinished() {
 
-    if (m_subsystem.getBeamBreak().get()) {
+    if (m_coralSubsystem.getBeamBreak().get()) {
       return false;
     } else {
       return true;
