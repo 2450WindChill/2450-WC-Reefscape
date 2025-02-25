@@ -77,7 +77,7 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     public boolean goalReached(int goal) {
-        double tolerance = 0.05;
+        double tolerance = 0.2;
         double currentPosition = elevatorMotor.getPosition().getValueAsDouble();
         if ((Math.abs(currentPosition - goal) < tolerance)) {
             return true;

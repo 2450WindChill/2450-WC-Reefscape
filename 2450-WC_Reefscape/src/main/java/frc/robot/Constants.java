@@ -56,6 +56,7 @@ public final class Constants {
   public static final int L1Height = -112;
   public static final int L2Height = -162;
   public static final int L3Height = -239;
+  public static final int intakeHeight = -22;
 
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);

@@ -75,8 +75,8 @@ public class RobotContainer {
   public final JoystickButton op_xButton = new JoystickButton(m_operatorController, Button.kX.value);
   public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
 
-  public final JoystickButton op_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
-  public final JoystickButton op_rightBumper = new JoystickButton(m_driverController, Button.kRightBumper.value);
+  public final JoystickButton op_leftBumper = new JoystickButton(m_operatorController, Button.kLeftBumper.value);
+  public final JoystickButton op_rightBumper = new JoystickButton(m_operatorController, Button.kRightBumper.value);
 
   public SendableChooser<Command> m_chooser;
   Timer timer = new Timer();
@@ -112,10 +112,12 @@ public class RobotContainer {
     // op_yButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
     // op_xButton.whileTrue(new CoralIntake(m_coralSubsystem, 0.2));
 
-    op_aButton.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L1Height));
-    op_xButton.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L2Height));
-    op_yButton.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L3Height));
-    op_yButton.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.intake));
+    op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.intakeHeight));
+    op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L1Height));
+    op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L2Height));
+    op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L3Height));
+    op_rightBumper.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+    op_leftBumper.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
 
     m_coralSubsystem.setDefaultCommand(
     new BopAlgae(
