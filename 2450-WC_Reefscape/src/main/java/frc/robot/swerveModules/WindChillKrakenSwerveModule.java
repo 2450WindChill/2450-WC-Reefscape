@@ -177,7 +177,7 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
 
     // enable stator current limit
     var limitConfigs = new CurrentLimitsConfigs();
-    limitConfigs.StatorCurrentLimit = 120;
+    limitConfigs.StatorCurrentLimit = 30;
     limitConfigs.StatorCurrentLimitEnable = true;
 
     // TODO: Look at this current limiting code compared to what you have

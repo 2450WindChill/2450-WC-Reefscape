@@ -133,6 +133,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // poseEstimate.update(
+    //             getGyroYaw(),
+    //             getPositions());
   }
 
   // --------------------------------------------------------------------------------

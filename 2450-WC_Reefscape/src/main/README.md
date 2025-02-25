@@ -8,6 +8,8 @@
 
 - [x] Set up photonvision (hardware)
 - [x] Set up kraken (hardware and software)
+- [ ] Test new radio
+- [ ] Beam break (hardware and software) (need cable)
 - [ ] Set up new radio (hardware)
 - [x] Throughbore encoder (hardware and software)
 - [ ] Beam break (hardware and software)

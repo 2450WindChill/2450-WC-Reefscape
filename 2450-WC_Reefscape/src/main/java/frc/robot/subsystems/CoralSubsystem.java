@@ -4,8 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -38,6 +42,10 @@ public class CoralSubsystem extends SubsystemBase {
         elevatorMotor.getConfigurator().apply(slot0Configs);
 
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+
+        SparkFlexConfig driveConfig = new SparkFlexConfig();
+        driveConfig.idleMode(Constants.endEffectorIdleMode);
+        endeffectorMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void setElevatorSpeed(double newSpeed) {
@@ -51,7 +59,7 @@ public class CoralSubsystem extends SubsystemBase {
     public boolean getElevatorHighSwitch() {
         return elevatorHighSwitch.get();
     }
-    
+
     public SparkFlex getEndAffectorMotor() {
         return endeffectorMotor;
     }
@@ -69,7 +77,7 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     public boolean goalReached(int goal) {
-        double tolerance = 0.05;
+        double tolerance = 0.2;
         double currentPosition = elevatorMotor.getPosition().getValueAsDouble();
         if ((Math.abs(currentPosition - goal) < tolerance)) {
             return true;
@@ -86,7 +94,7 @@ public class CoralSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("Beam Break One", beamBreakReciever.get());
 
-        if(!elevatorLowSwitch.get()){
+        if (!elevatorLowSwitch.get()) {
             // zeroElevatorMotor();
             resetEncoder();
         }
@@ -112,7 +120,7 @@ public class CoralSubsystem extends SubsystemBase {
         elevatorMotor.set(0);
     }
 
-    public DigitalInput getBeamBreak(){
+    public DigitalInput getBeamBreak() {
         return beamBreakReciever;
 
     }
