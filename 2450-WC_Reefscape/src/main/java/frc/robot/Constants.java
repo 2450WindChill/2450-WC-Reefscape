@@ -231,6 +231,21 @@ public final class Constants {
     public static final double backCameraForwardOffest = 0;
     public static final double backCameraLeftOffest = 0;
     public static final double backCameraUpOffest = 0;
+
+    public static final double postOffset = 0.165;
+  }
+
+  public static final class autoConstants {
+    public static enum ReefDirection {
+      LEFT,
+      RIGHT;
+    }
+
+    public static enum ReefLevel {
+      L1,
+      L2,
+      L3;
+    }
   }
 
   public static enum Camera {

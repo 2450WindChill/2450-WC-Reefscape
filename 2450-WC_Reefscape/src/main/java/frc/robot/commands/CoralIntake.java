@@ -26,18 +26,11 @@ public class CoralIntake extends Command {
   public void execute() {
   }
 
-  // Called once the command ends or is interrupted.
-  @Override
   public void end(boolean interrupted) {
     m_coralSubsystem.getEndAffectorMotor().set(0);
   }
 
   public boolean isFinished() {
-
-    if (m_coralSubsystem.getBeamBreak().get()) {
-      return false;
-    } else {
-      return true;
-    }
+    return !m_coralSubsystem.getBeamBreak().get();
   }
 }
