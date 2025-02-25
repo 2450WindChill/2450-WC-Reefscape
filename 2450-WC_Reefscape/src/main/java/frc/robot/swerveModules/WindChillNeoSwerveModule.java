@@ -150,7 +150,7 @@ public class WindChillNeoSwerveModule extends BaseWindChillSwerveModule{
   }
 
   private void configDriveMotor() {
-
+    
     driveConfig = new SparkMaxConfig();
     driveConfig 
       .smartCurrentLimit(Constants.driveContinuousCurrentLimit)

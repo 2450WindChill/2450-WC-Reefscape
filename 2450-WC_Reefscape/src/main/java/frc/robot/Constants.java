@@ -51,6 +51,12 @@ public final class Constants {
   public static final int pigeonID = 5;
   public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
+
+  /* Elevator heights */
+  public static final int L1Height = -112;
+  public static final int L2Height = -162;
+  public static final int L3Height = -239;
+
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);
   public static final double wheelBase = Units.inchesToMeters(21.73);
@@ -127,6 +133,7 @@ public final class Constants {
   public static final IdleMode angleIdleMode = IdleMode.kBrake;
   public static final IdleMode wristIdleMode = IdleMode.kBrake;
   public static final IdleMode driveIdleMode = IdleMode.kBrake;
+  public static final IdleMode endEffectorIdleMode = IdleMode.kBrake;
   public static final IdleMode elevatorIdleMode = IdleMode.kBrake;
 
   /* Motor Inverts */

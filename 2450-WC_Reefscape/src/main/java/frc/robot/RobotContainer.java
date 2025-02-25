@@ -102,24 +102,26 @@ public class RobotContainer {
 
   // TODO: This is where all button mappings go
   private void configureControllerBindings() {
+    // Vision commands
     dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, -0.165, 0.7, Camera.FRONT));
     dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0.165, 0.7, Camera.FRONT));
-    // m_driverController.leftBumper().onTrue(new AlignToAprilTagParallel(m_visionSubsystem, m_drivetrainSubsystem, -0.165, 0.7));
-    // m_driverController.rightBumper().onTrue(new AlignToAprilTagParallel(m_visionSubsystem, m_drivetrainSubsystem, 0.165, 0.7));
-
-    op_aButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
-    op_yButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
 
+    // Elevator and coral commands
+    // op_aButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    // op_yButton.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+    // op_xButton.whileTrue(new CoralIntake(m_coralSubsystem, 0.2));
 
-    // op_xButton.onTrue(new DeepClimbCommand(m_DeepClimbSubsystem, 30, 10));
-    // op_yButton.whileTrue(new BopAlgae(m_coralSubsystem, 0.1, -0.1));
+    op_aButton.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L1Height));
+    op_xButton.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L2Height));
+    op_yButton.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L3Height));
+    op_yButton.whileTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.intake));
 
     m_coralSubsystem.setDefaultCommand(
     new BopAlgae(
     m_coralSubsystem,
-    () -> m_operatorController.getRightTriggerAxis(),
-    () -> m_operatorController.getLeftTriggerAxis()));
+    () -> (m_operatorController.getRightTriggerAxis()) * 0.5,
+    () -> (m_operatorController.getLeftTriggerAxis()) * 0.5));
   }
 
   private void configureDashboardBindings() {
@@ -129,18 +131,10 @@ public class RobotContainer {
     tab.add("ApproachAprilTag", new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 1.3, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
     tab.add("AlignToAprilTag", new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0, 1.3, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
 
-    tab.add("-10", new MoveElevatorToPosition(m_coralSubsystem,
-        -10)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("-40", new MoveElevatorToPosition(m_coralSubsystem,
-        -40)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("-60", new MoveElevatorToPosition(m_coralSubsystem,
-        -60)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("-80", new MoveElevatorToPosition(m_coralSubsystem,
-        -80)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("-100", new MoveElevatorToPosition(m_coralSubsystem,
-        -100)).withWidget(BuiltInWidgets.kCommand);
-        tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem,
-        -25)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, -25)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("L1 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L1Height)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("L2 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L2Height)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("L3 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L3Height)).withWidget(BuiltInWidgets.kCommand);
   }
 
   // Basic auto for testing, backs up after a certain period of time
