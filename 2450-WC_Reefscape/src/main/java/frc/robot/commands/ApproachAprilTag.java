@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,6 +20,7 @@ public class ApproachAprilTag extends Command {
 
     VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
+    BooleanSupplier m_stopSupplier;
     double m_target;
 
     double tolerance = 0.05;
@@ -28,11 +31,12 @@ public class ApproachAprilTag extends Command {
 
     Enum<Camera> m_camera;
 
-    public ApproachAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double target, Enum<Camera> camera) {
+    public ApproachAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double target, Enum<Camera> camera, BooleanSupplier stopSupplier) {
         m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_target = target;
         m_camera = camera;
+        m_stopSupplier = stopSupplier;
 
         addRequirements(m_drivetrainSubsystem);
     }
@@ -43,13 +47,23 @@ public class ApproachAprilTag extends Command {
         } else if (m_camera == Camera.BACK) {
             targetedID = m_visionSubsystem.getBackAprilTagID();
         }
-        controller.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffest);
+        // Untested
+        // controller.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffest);
+
+        //Tested 
+        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest);
         controller.setGoal(m_target);
         controller.setTolerance(tolerance);
     }
 
     public void execute() {
-        currError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffest;
+        // Untested but should stop the robot from tracking the wrong target
+        // CHANGE ISFINISHED & INITIALIZE IF TRYING THIS LINE
+        // currError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffest;
+
+        // Tested
+        currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest;
+
         approachSpeed = controller.calculate(currError);
         m_drivetrainSubsystem.drive(new Translation2d(approachSpeed, 0), 0, true, false);
     }
@@ -59,6 +73,9 @@ public class ApproachAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        return ((m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID) == new Pose2d()) || controller.atGoal());
+        if (m_stopSupplier.getAsBoolean() == true) {
+            return true;
+        }
+        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
     }
 }

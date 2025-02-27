@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.Camera;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -12,11 +14,11 @@ public class AlignToAprilTagSequential extends SequentialCommandGroup {
     double m_strafeTarget;
     double m_approachTarget;
 
-    public AlignToAprilTagSequential(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double strafeTarget, double approachTarget, Enum<Camera> camera) {
+    public AlignToAprilTagSequential(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double strafeTarget, double approachTarget, Enum<Camera> camera, BooleanSupplier stopSupplier) {
         addCommands(
-            new SquareToAprilTag(visionSubsystem, drivetrainSubsystem, camera),
-            new StrafeToAprilTag(visionSubsystem, drivetrainSubsystem, strafeTarget, camera),
-            new ApproachAprilTag(visionSubsystem, drivetrainSubsystem, approachTarget, camera)
+            new SquareToAprilTag(visionSubsystem, drivetrainSubsystem, camera, stopSupplier),
+            new StrafeToAprilTag(visionSubsystem, drivetrainSubsystem, strafeTarget, camera, stopSupplier),
+            new ApproachAprilTag(visionSubsystem, drivetrainSubsystem, approachTarget, camera, stopSupplier)
         );
     }
 }

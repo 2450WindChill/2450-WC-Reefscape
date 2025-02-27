@@ -5,6 +5,8 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.CoralSubsystem;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -32,12 +34,16 @@ public class CoralOuttake extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      m_subsystem.getCANdle().setLEDs(255, 0, 0);
+    } else {
+      m_subsystem.getCANdle().setLEDs(0, 0, 255);
+    }
     m_subsystem.getEndAffectorMotor().set(0);
   }
 
   @Override
   public boolean isFinished() {
-    return m_subsystem.getBeamBreak().get();
+    return m_subsystem.getHorizontalBeamBreak().get();
   }
 }
-

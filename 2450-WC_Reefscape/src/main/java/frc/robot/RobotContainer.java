@@ -19,6 +19,7 @@ import frc.robot.Constants.autoConstants.ReefDirection;
 import frc.robot.Constants.autoConstants.ReefLevel;
 import frc.robot.commands.AlignToAprilTagSequential;
 import frc.robot.commands.BopAlgae;
+import frc.robot.commands.ClimberMovement;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOuttake;
 import frc.robot.commands.DeepClimbCommand;
@@ -31,7 +32,6 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 import java.util.Vector;
-
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -52,12 +52,13 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
-  // public final DeepClimbSubsystem m_DeepClimbSubsystem = new DeepClimbSubsystem();
+  public final DeepClimbSubsystem m_DeepClimbSubsystem = new DeepClimbSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -69,7 +70,7 @@ public class RobotContainer {
 
   public final JoystickButton dr_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
   public final JoystickButton dr_rightBumper = new JoystickButton(m_driverController, Button.kRightBumper.value);
-
+  public final JoystickButton dr_startButton = new JoystickButton(m_driverController, Button.kStart.value);
 
   public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
   public final JoystickButton op_bButton = new JoystickButton(m_operatorController, Button.kB.value);
@@ -107,39 +108,63 @@ public class RobotContainer {
   }
 
   private void configureControllerBindings() {
+    new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.5).onTrue(new AlignToAprilTagSequential(
+        m_visionSubsystem, m_drivetrainSubsystem, -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT,
+        () -> (dr_startButton.getAsBoolean())));
+
+    new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.5).onTrue(new AlignToAprilTagSequential(
+        m_visionSubsystem, m_drivetrainSubsystem, -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT,
+        () -> (dr_startButton.getAsBoolean())));
+
     // Driver Bindings
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
-    dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT));
-    // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0, 0));
-    dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, Constants.VisionConstants.postOffset, 0.7, Camera.FRONT));
+
+    dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
+        -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () -> (dr_startButton.getAsBoolean())));
+    dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
+        Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () -> (dr_startButton.getAsBoolean())));
+
+    dr_leftBumper.onTrue(new ClimberMovement(m_DeepClimbSubsystem, "out", 0.2));
+    dr_rightBumper.onTrue(new ClimberMovement(m_DeepClimbSubsystem, "in", 0.2));
+    dr_yButton.onTrue(new DeepClimbCommand(m_DeepClimbSubsystem, 50, -50));
 
     // Operator Bindings
     op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.intakeHeight));
     op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L1Height));
     op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L2Height));
     op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, Constants.L3Height));
-    op_rightBumper.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
-    op_leftBumper.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+    op_rightBumper.whileTrue(new CoralOuttake(m_coralSubsystem, 0.3));
+    op_leftBumper.whileTrue(new CoralIntake(m_coralSubsystem, 0.3));
+
+    op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
+    op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
 
     m_coralSubsystem.setDefaultCommand(
-      new BopAlgae(
-        m_coralSubsystem, 
-        () -> (m_operatorController.getRightTriggerAxis()) * 0.5,
-        () -> (m_operatorController.getLeftTriggerAxis()) * 0.5)
-      );
+        new BopAlgae(
+            m_coralSubsystem,
+            () -> (m_operatorController.getRightTriggerAxis()) * 0.5,
+            () -> (m_operatorController.getLeftTriggerAxis()) * 0.5));
   }
 
   private void configureDashboardBindings() {
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
-    tab.add("SquareToAprilTag", new SquareToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("StrafeToAprilTag", new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 0, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("ApproachAprilTag", new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 1.3, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("AlignToAprilTag", new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0, 1.3, Camera.FRONT)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("SquareToAprilTag", new SquareToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, Camera.FRONT, () -> (dr_startButton.getAsBoolean())))
+        .withWidget(BuiltInWidgets.kCommand);
+    tab.add("StrafeToAprilTag", new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 0, Camera.FRONT, () -> (dr_startButton.getAsBoolean())))
+        .withWidget(BuiltInWidgets.kCommand);
+    tab.add("ApproachAprilTag", new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 1.3, Camera.FRONT, () -> (dr_startButton.getAsBoolean())))
+        .withWidget(BuiltInWidgets.kCommand);
+    tab.add("AlignToAprilTag",
+        new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0, 1.3, Camera.FRONT, () -> (dr_startButton.getAsBoolean())))
+        .withWidget(BuiltInWidgets.kCommand);
 
     tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, -25)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("L1 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L1Height)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("L2 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L2Height)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("L3 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L3Height)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("L1 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L1Height))
+        .withWidget(BuiltInWidgets.kCommand);
+    tab.add("L2 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L2Height))
+        .withWidget(BuiltInWidgets.kCommand);
+    tab.add("L3 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L3Height))
+        .withWidget(BuiltInWidgets.kCommand);
   }
 
   // Basic auto for testing, backs up after a certain period of time
@@ -171,18 +196,17 @@ public class RobotContainer {
     }
 
     return Commands.parallel(
-        new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 
-              strafeOffset, 0, Camera.FRONT),
-        new MoveElevatorToPosition(m_coralSubsystem, height)
-      )
-      .andThen(new CoralOuttake(m_coralSubsystem, 0.5)
-    );
+        new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
+            strafeOffset, 0, Camera.FRONT, () -> (dr_startButton.getAsBoolean())),
+        new MoveElevatorToPosition(m_coralSubsystem, height))
+        .andThen(new CoralOuttake(m_coralSubsystem, 0.5));
   }
 
   private void configureAutoChooser() {
     m_chooser = new SendableChooser<>();
     SmartDashboard.putData("Auto Mode", m_chooser);
-    // m_chooser.addOption("Autonomous", scoreCoral(ReefDirection.LEFT, ReefLevel.L2));
+    // m_chooser.addOption("Autonomous", scoreCoral(ReefDirection.LEFT,
+    // ReefLevel.L2));
   }
 
   // Auto command

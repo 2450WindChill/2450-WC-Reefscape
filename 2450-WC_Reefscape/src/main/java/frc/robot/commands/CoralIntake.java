@@ -5,32 +5,49 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.CoralSubsystem;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class CoralIntake extends Command {
 
   private final CoralSubsystem m_coralSubsystem;
   private final double m_speed;
+  private DigitalInput beamBreak;
+
+  private boolean currentBeamBreakState;
+  private int stateChanges;
 
   public CoralIntake(CoralSubsystem coralSubsystem, double speed) {
     m_coralSubsystem = coralSubsystem;
     m_speed = speed;
-    
+    beamBreak = coralSubsystem.getVerticalBeamBreak();
+
+    currentBeamBreakState = beamBreak.get();
+
     addRequirements(coralSubsystem);
   }
 
   public void initialize() {
+    stateChanges = 0;
     m_coralSubsystem.getEndAffectorMotor().set(m_speed);
   }
 
   public void execute() {
+    if (beamBreak.get() != currentBeamBreakState) {
+      stateChanges += 1;
+      currentBeamBreakState = beamBreak.get();
+    }
   }
 
   public void end(boolean interrupted) {
     m_coralSubsystem.getEndAffectorMotor().set(0);
+    m_coralSubsystem.fireLEDS();
+
   }
 
   public boolean isFinished() {
-    return !m_coralSubsystem.getBeamBreak().get();
+    return stateChanges >= 2;
   }
 }

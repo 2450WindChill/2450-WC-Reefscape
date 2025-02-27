@@ -10,6 +10,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -19,7 +21,9 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,9 +33,16 @@ public class CoralSubsystem extends SubsystemBase {
     private TalonFX elevatorMotor = new TalonFX(Constants.elevatorMotorId);
     private SparkFlex endeffectorMotor = new SparkFlex(Constants.endeffectorMotorId, MotorType.kBrushless);
     private PIDController elevatorPidController = new PIDController(0.02, .001, 0);
+
+    // Limit Switches
     private DigitalInput elevatorLowSwitch = new DigitalInput(Constants.elevatorLowSwitchChannel);
-    private DigitalInput elevatorHighSwitch = new DigitalInput(Constants.elevatorHighSwitchChannel);
-    private DigitalInput beamBreakReciever = new DigitalInput(Constants.beamBreakRecieverChannel);
+    // private DigitalInput elevatorHighSwitch = new DigitalInput(Constants.elevatorHighSwitchChannel);
+
+    // Beam Breaks
+    private DigitalInput horizontalBeamBreak = new DigitalInput(Constants.horizontalBeamBreakID);
+    private DigitalInput verticalBeamBreak = new DigitalInput(Constants.verticalBeamBreakID);
+
+    private CANdle candle = new CANdle(5);
 
     /** Creates a new ExampleSubsystem. */
     public CoralSubsystem() {
@@ -52,13 +63,31 @@ public class CoralSubsystem extends SubsystemBase {
         elevatorMotor.set(newSpeed);
     }
 
+    public CANdle getCANdle() {
+        return candle;
+    }
+
+    public void fireLEDS() {
+        candle.configBrightnessScalar(1);
+        FireAnimation fireAnimation = new FireAnimation(1, 0.4, 68, 0.5, 0.5);
+        candle.animate(fireAnimation);
+  }
+
+  public void setAllianceColor() {
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+        candle.setLEDs(255, 0, 0);
+      } else {
+        candle.setLEDs(0, 0, 255);
+      }
+  }
+
     public boolean getElevatorLowSwitch() {
         return elevatorLowSwitch.get();
     }
 
-    public boolean getElevatorHighSwitch() {
-        return elevatorHighSwitch.get();
-    }
+    // public boolean getElevatorHighSwitch() {
+    //     return elevatorHighSwitch.get();
+    // }
 
     public SparkFlex getEndAffectorMotor() {
         return endeffectorMotor;
@@ -92,12 +121,19 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Speed", elevatorMotor.get());
         SmartDashboard.putBoolean("Bottom Elevator Limit Switch", elevatorLowSwitch.get());
 
-        SmartDashboard.putBoolean("Beam Break One", beamBreakReciever.get());
+        SmartDashboard.putBoolean("Beam Break One", horizontalBeamBreak.get());
 
         if (!elevatorLowSwitch.get()) {
             // zeroElevatorMotor();
             resetEncoder();
         }
+        // if (!horizontalBeamBreak.get()) {
+        //     candle.setLEDs(0, 255, 0);
+        // } else if (DriverStation.getAlliance().get() == Alliance.Red) {
+        //     candle.setLEDs(255, 0, 0);
+        // } else {
+        //     candle.setLEDs(0, 0, 255);
+        // }
     }
 
     public void simulationPeriodic() {
@@ -120,8 +156,11 @@ public class CoralSubsystem extends SubsystemBase {
         elevatorMotor.set(0);
     }
 
-    public DigitalInput getBeamBreak() {
-        return beamBreakReciever;
+    public DigitalInput getHorizontalBeamBreak() {
+        return horizontalBeamBreak;
+    }
 
+    public DigitalInput getVerticalBeamBreak() {
+        return verticalBeamBreak;
     }
 }

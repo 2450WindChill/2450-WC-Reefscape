@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import java.util.Currency;
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,6 +20,7 @@ public class StrafeToAprilTag extends Command {
 
     VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
+    BooleanSupplier m_stopSupplier;
     double m_target;
 
     double tolerance = 0.05;
@@ -29,11 +31,12 @@ public class StrafeToAprilTag extends Command {
 
     Enum<Camera> m_camera;
 
-    public StrafeToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double target, Enum<Camera> camera) {
+    public StrafeToAprilTag(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double target, Enum<Camera> camera, BooleanSupplier stopSupplier) {
         m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_target = target;
         m_camera = camera;
+        m_stopSupplier = stopSupplier;
 
         addRequirements(m_drivetrainSubsystem);
     }
@@ -44,13 +47,23 @@ public class StrafeToAprilTag extends Command {
         } else if (m_camera == Camera.BACK) {
             targetedID = m_visionSubsystem.getBackAprilTagID();
         }
-        controller.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraLeftOffest);
+        // Untested
+        // controller.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraLeftOffest);
+
+        // Tested
+        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest);
+
         controller.setGoal(m_target);
         controller.setTolerance(tolerance);
     }
 
     public void execute() {
-        currError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraLeftOffest;
+        // Untested but should stop the robot from tracking the wrong target
+        // CHANGE ISFINISHED & INITIALIZE IF TRYING THIS LINE
+        // currError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraLeftOffest;
+        
+        // Tested
+        currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest;
         strafeSpeed = controller.calculate(currError);
         m_drivetrainSubsystem.drive(new Translation2d(0, strafeSpeed), 0, true, false);
     }
@@ -60,8 +73,9 @@ public class StrafeToAprilTag extends Command {
     }
 
     public boolean isFinished() {
-        // return atGoal;
-        return ((m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID) == new Pose2d()) || controller.atGoal());
-        // return false;
+        if (m_stopSupplier.getAsBoolean() == true) {
+            return true;
+        }
+        return (!m_visionSubsystem.frontCameraHasTarget() || controller.atGoal());
     }
 }

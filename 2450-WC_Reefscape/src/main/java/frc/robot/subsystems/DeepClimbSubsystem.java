@@ -41,6 +41,11 @@ public class DeepClimbSubsystem extends SubsystemBase {
     return climbMotorTwo;
   }
 
+  public void setClimberMotors(double speed) {
+    climbMotorOne.set(speed);
+    climbMotorTwo.set(-speed);
+}
+
   public boolean goalReachedClimbMotorOne(int goal) {
     double tolerance = 0.05;
     double currentPosition = climbMotorOne.getPosition().getValueAsDouble();

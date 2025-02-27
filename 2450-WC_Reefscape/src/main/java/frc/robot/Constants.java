@@ -68,7 +68,8 @@ public final class Constants {
   public static final int endeffectorMotorId = 18;
   public static final int elevatorLowSwitchChannel = 4;
   public static final int elevatorHighSwitchChannel = 5; // TODO: check for conflicts!!
-  public static final int beamBreakRecieverChannel = 1;
+  public static final int horizontalBeamBreakID = 1;
+  public static final int verticalBeamBreakID = 2;
   public static final int climbMotorOneId = 6;
   public static final int climbMotorTwoId = 7;
 
@@ -224,7 +225,7 @@ public final class Constants {
   public static final double moveToPoseRotationSpeed = 0.5;
 
   public static final class VisionConstants {
-    public static final double frontCameraForwardOffest = 0;
+    public static final double frontCameraForwardOffest = Units.inchesToMeters(10.5);
     public static final double frontCameraLeftOffest = 0;
     public static final double frontCameraUpOffest = 0;
 
