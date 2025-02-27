@@ -180,18 +180,14 @@ public class RobotContainer {
   }
 
   private void configureAutoChooser() {
-    // Create auto chooser and put it on the dashboard
     m_chooser = new SendableChooser<>();
     SmartDashboard.putData("Auto Mode", m_chooser);
-
-    // TODO: Eventually add all the autos to the chooser
-    One_Meter_Path = new PathPlannerAuto("One_Meter_Auto");
-
-    m_chooser.addOption("One_Meter_Auto", One_Meter_Path);
+    // m_chooser.addOption("Autonomous", scoreCoral(ReefDirection.LEFT, ReefLevel.L2));
   }
 
   // Auto command
   public Command getAutonomousCommand() {
-    return m_chooser.getSelected();
+    return scoreCoral(ReefDirection.LEFT, ReefLevel.L2);
+    // return m_chooser.getSelected();
   }
 }
