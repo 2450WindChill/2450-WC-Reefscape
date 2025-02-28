@@ -34,6 +34,7 @@ public class CoralOuttake extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("Coral outtake done");
     if (DriverStation.getAlliance().get() == Alliance.Red) {
       m_subsystem.getCANdle().setLEDs(255, 0, 0);
     } else {

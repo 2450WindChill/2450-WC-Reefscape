@@ -133,7 +133,8 @@ public class WindChillNeoSwerveModule extends BaseWindChillSwerveModule{
   private void configAngleMotor() {
 
     angleConfig = new SparkMaxConfig();
-    angleConfig 
+    angleConfig
+      .idleMode(Constants.angleIdleMode)
       .smartCurrentLimit(Constants.angleContinuousCurrentLimit)
       .inverted(Constants.angleInvert)
       .voltageCompensation(Constants.voltageComp);

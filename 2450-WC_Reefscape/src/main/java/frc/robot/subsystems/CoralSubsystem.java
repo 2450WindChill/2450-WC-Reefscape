@@ -97,7 +97,7 @@ public class CoralSubsystem extends SubsystemBase {
         endeffectorMotor.set(newSpeed);
     }
 
-    public void setPIDGoal(int position) {
+    public void setPIDGoal(double position) {
         // create a position closed-loop request, voltage output, slot 0 configs
         final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
@@ -105,7 +105,7 @@ public class CoralSubsystem extends SubsystemBase {
         elevatorMotor.setControl(m_request.withPosition(position));
     }
 
-    public boolean goalReached(int goal) {
+    public boolean goalReached(double goal) {
         double tolerance = 0.2;
         double currentPosition = elevatorMotor.getPosition().getValueAsDouble();
         if ((Math.abs(currentPosition - goal) < tolerance)) {
@@ -121,7 +121,8 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Speed", elevatorMotor.get());
         SmartDashboard.putBoolean("Bottom Elevator Limit Switch", elevatorLowSwitch.get());
 
-        SmartDashboard.putBoolean("Beam Break One", horizontalBeamBreak.get());
+        SmartDashboard.putBoolean("Horizontal Break One", horizontalBeamBreak.get());
+        SmartDashboard.putBoolean("Vertical Break One", verticalBeamBreak.get());
 
         if (!elevatorLowSwitch.get()) {
             // zeroElevatorMotor();

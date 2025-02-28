@@ -17,9 +17,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 /** An example command that uses an example subsystem. */
 public class MoveElevatorToPosition extends Command {
   private final CoralSubsystem m_coralSubsystem;
-  private int m_target;
+  private double m_target;
 
-  public MoveElevatorToPosition(CoralSubsystem coralSubsystem, int target) {
+  public MoveElevatorToPosition(CoralSubsystem coralSubsystem, double target) {
     m_coralSubsystem = coralSubsystem;
     m_target = target;
     addRequirements(m_coralSubsystem);

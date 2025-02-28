@@ -42,6 +42,7 @@ public class CoralIntake extends Command {
   }
 
   public void end(boolean interrupted) {
+    System.out.println("Coral intake done");
     m_coralSubsystem.getEndAffectorMotor().set(0);
     m_coralSubsystem.fireLEDS();
 

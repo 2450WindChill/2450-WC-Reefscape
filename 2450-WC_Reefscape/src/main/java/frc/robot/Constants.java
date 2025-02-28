@@ -25,7 +25,7 @@ public final class Constants {
 
   public static class ControllerConstants {
     public static final int kDriverControllerPort = 0;
-     public static final int kOperatorControllerPort = 1;
+    public static final int kOperatorControllerPort = 1;
   }
   
   public enum SwerveMode {
@@ -53,10 +53,10 @@ public final class Constants {
 
 
   /* Elevator heights */
-  public static final int L1Height = -112;
-  public static final int L2Height = -162;
-  public static final int L3Height = -239;
-  public static final int intakeHeight = -22;
+  public static final double L1Height = -112;
+  public static final double L2Height = -152.67;
+  public static final double L3Height = -233.01;
+  public static final double intakeHeight = -19.68;
 
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);
