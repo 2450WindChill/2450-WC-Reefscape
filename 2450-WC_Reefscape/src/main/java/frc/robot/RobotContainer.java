@@ -57,10 +57,10 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
-  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN);
   public final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
-  public final DeepClimbSubsystem m_DeepClimbSubsystem = new DeepClimbSubsystem();
+  public final DeepClimbSubsystem m_deepClimbSubsystem = new DeepClimbSubsystem();
+  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN, m_visionSubsystem);
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -126,9 +126,9 @@ public class RobotContainer {
     dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
         Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () -> (dr_startButton.getAsBoolean()), 4));
 
-    dr_leftBumper.whileTrue(new ClimberMovement(m_DeepClimbSubsystem, "out", 0.05));
-    dr_rightBumper.whileTrue(new ClimberMovement(m_DeepClimbSubsystem, "in", 0.05));
-    dr_yButton.onTrue(new DeepClimbCommand(m_DeepClimbSubsystem, 50, -50));
+    dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
+    dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
+    dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 50, -50));
 
     // Operator Bindings
     op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,

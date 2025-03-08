@@ -58,11 +58,11 @@ public class AlignToAprilTagParallel extends Command {
         }
         rotController.setTolerance(rotTolerance);
 
-        strafeController.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraLeftOffest);
+        strafeController.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraRightOffset);
         strafeController.setGoal(m_strafeTarget);
         strafeController.setTolerance(strafeTolerance);
 
-        approachController.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffest);
+        approachController.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffset);
         approachController.setGoal(m_approachTarget);
         approachController.setTolerance(approachTolerance);
     }
@@ -81,14 +81,14 @@ public class AlignToAprilTagParallel extends Command {
         }
 
         if (!strafeController.atGoal()) {
-            strafeError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraLeftOffest;
+            strafeError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraRightOffset;
             strafeSpeed = strafeController.calculate(strafeError);
         } else {
             strafeSpeed = 0;
         }
 
         if (!approachController.atGoal()) {
-            approachError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffest;
+            approachError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffset;
             approachSpeed = approachController.calculate(approachError);
         } else {
             approachSpeed = 0;

@@ -225,11 +225,11 @@ public final class Constants {
   public static final double moveToPoseRotationSpeed = 0.5;
 
   public static final class VisionConstants {
-    public static final double frontCameraForwardOffest = Units.inchesToMeters(10.5);
-    public static final double frontCameraLeftOffest = 0;
+    public static final double frontCameraForwardOffset = Units.inchesToMeters(10.5);
+    public static final double frontCameraRightOffset = 0;
     public static final double frontCameraUpOffest = 0;
 
-    public static final double backCameraForwardOffest = 0;
+    public static final double backCameraForwardOffset = 0;
     public static final double backCameraLeftOffest = 0;
     public static final double backCameraUpOffest = 0;
 

@@ -51,7 +51,7 @@ public class StrafeToAprilTag extends Command {
         // controller.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraLeftOffest);
 
         // Tested
-        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest);
+        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraRightOffset);
 
         controller.setGoal(m_target);
         controller.setTolerance(tolerance);
@@ -63,7 +63,7 @@ public class StrafeToAprilTag extends Command {
         // currError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getY() + Constants.VisionConstants.frontCameraLeftOffest;
         
         // Tested
-        currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraLeftOffest;
+        currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getY() + Constants.VisionConstants.frontCameraRightOffset;
         strafeSpeed = controller.calculate(currError);
         m_drivetrainSubsystem.drive(new Translation2d(0, strafeSpeed), 0, true, false);
     }

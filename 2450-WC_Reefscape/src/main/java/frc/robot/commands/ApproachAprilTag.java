@@ -51,7 +51,7 @@ public class ApproachAprilTag extends Command {
         // controller.reset(m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffest);
 
         //Tested 
-        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest);
+        controller.reset(m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffset);
         controller.setGoal(m_target);
         controller.setTolerance(tolerance);
     }
@@ -62,7 +62,7 @@ public class ApproachAprilTag extends Command {
         // currError = m_visionSubsystem.getAprilTagPoseInRobotSpace(targetedID).getX() + Constants.VisionConstants.frontCameraForwardOffest;
 
         // Tested
-        currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffest;
+        currError = m_visionSubsystem.getFrontAprilTagPoseInRobotSpace().getX() + Constants.VisionConstants.frontCameraForwardOffset;
 
         approachSpeed = controller.calculate(currError);
         m_drivetrainSubsystem.drive(new Translation2d(approachSpeed, 0), 0, true, false);

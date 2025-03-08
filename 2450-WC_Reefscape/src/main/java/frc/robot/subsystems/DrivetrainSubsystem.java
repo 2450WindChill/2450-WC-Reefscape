@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -39,18 +40,19 @@ import frc.robot.swerveModules.WindChillKrakenSwerveModule;
 import frc.robot.swerveModules.WindChillNeoSwerveModule;
 
 public class DrivetrainSubsystem extends SubsystemBase {
+  private VisionSubsystem m_visionSubystem;
   public final Pigeon2 gyro;
   public BaseWindChillSwerveModule[] swerveModules;
   public SwerveDriveOdometry swerveOdometry;
   public SparkMax testMotor;
   public CANcoder canCoder;
   public HolonomicDriveController holonomicDriveController;
-  public static SwerveDrivePoseEstimator poseEstimate;
+  private static SwerveDrivePoseEstimator drivetrainPoseEstimator;
   public static Enum<SwerveMode> mymode = Constants.SwerveMode.KRAKEN;
   private final Field2d m_field = new Field2d();
 
-  public DrivetrainSubsystem(SwerveMode myMode) {
-    
+  public DrivetrainSubsystem(SwerveMode myMode, VisionSubsystem visionSubsystem) {
+    m_visionSubystem = visionSubsystem;
     switch (myMode) {
       case NEO:
         swerveModules = new WindChillNeoSwerveModule[] {
@@ -77,7 +79,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
           break;
     }
     gyro = new Pigeon2(Constants.pigeonID, "canivore");
-    poseEstimate = new SwerveDrivePoseEstimator(
+    drivetrainPoseEstimator = new SwerveDrivePoseEstimator(
         Constants.swerveKinematics,
         getGyroYaw(),
         getModulePositions(),
@@ -133,9 +135,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // poseEstimate.update(
-    //             getGyroYaw(),
-    //             getPositions());
+    drivetrainPoseEstimator.update(
+                getGyroYaw(),
+                getPositions());
+    drivetrainPoseEstimator.addVisionMeasurement(m_visionSubystem.getFrontPoseEstimate2d(), m_visionSubystem.getFrontPoseEstimateTimestamp());
+    SmartDashboard.putNumber("Robot X", getBotX());
+    SmartDashboard.putNumber("Robot Y", getBotY());
+    SmartDashboard.putNumber("Robot ROtation", getBotRotation());
+
   }
 
   // --------------------------------------------------------------------------------
@@ -228,22 +235,25 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // Pose Estimation:
   // --------------------------------------------------------------------------------
 
+  public SwerveDrivePoseEstimator getDrivetrainPoseEstimator() {
+    return drivetrainPoseEstimator;
+  }
   // Gets current estimated bot pose
   public static Pose2d getBotPose() {
-    return poseEstimate.getEstimatedPosition();
+    return drivetrainPoseEstimator.getEstimatedPosition();
   }
 
   // Gets current estimated bot pose
   public static Supplier<Pose2d> getBotPoseSupplier() {
-    return () -> poseEstimate.getEstimatedPosition();
+    return () -> drivetrainPoseEstimator.getEstimatedPosition();
   }
 
   public Pose2d getThisPose() {
-    return poseEstimate.getEstimatedPosition();
+    return drivetrainPoseEstimator.getEstimatedPosition();
   }
 
   public void zeroPose() {
-    poseEstimate = new SwerveDrivePoseEstimator(
+    drivetrainPoseEstimator = new SwerveDrivePoseEstimator(
         Constants.swerveKinematics,
         getGyroYaw(),
         getModulePositions(),
@@ -251,13 +261,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void resetPose(Pose2d newPose) {
-    poseEstimate.resetPosition(gyro.getRotation2d(), getPositions(),
+    drivetrainPoseEstimator.resetPosition(gyro.getRotation2d(), getPositions(),
         newPose);
   }
   
 
   public Consumer<Pose2d> resetPoseConsumer() {
-    return (lambdaNewPose) -> poseEstimate.resetPosition(gyro.getRotation2d(), getPositions(),lambdaNewPose);
+    return (lambdaNewPose) -> drivetrainPoseEstimator.resetPosition(gyro.getRotation2d(), getPositions(),lambdaNewPose);
   }
 
   // Gets estimated bot x
