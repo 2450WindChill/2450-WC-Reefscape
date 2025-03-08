@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class CoralIntake extends Command {
+public class CoralIntakeStage1 extends Command {
 
   private final CoralSubsystem m_coralSubsystem;
   private final double m_speed;
@@ -19,7 +19,7 @@ public class CoralIntake extends Command {
   private boolean currentBeamBreakState;
   private int stateChanges;
 
-  public CoralIntake(CoralSubsystem coralSubsystem, double speed) {
+  public CoralIntakeStage1(CoralSubsystem coralSubsystem, double speed) {
     m_coralSubsystem = coralSubsystem;
     m_speed = speed;
     beamBreak = coralSubsystem.getVerticalBeamBreak();

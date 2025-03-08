@@ -56,7 +56,7 @@ public final class Constants {
   public static final double L1Height = -112;
   public static final double L2Height = -152.67;
   public static final double L3Height = -233.01;
-  public static final double intakeHeight = -19.68;
+  public static final double intakeHeight = -23.23;
 
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);
@@ -233,7 +233,7 @@ public final class Constants {
     public static final double backCameraLeftOffest = 0;
     public static final double backCameraUpOffest = 0;
 
-    public static final double postOffset = 0.165;
+    public static final double postOffset = Units.inchesToMeters(6.5);
   }
 
   public static final class autoConstants {

@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase {
 
     PhotonCamera frontCamera = new PhotonCamera("frontCamera");
-    PhotonCamera backCamera = new PhotonCamera("backCamera");
+    //PhotonCamera backCamera = new PhotonCamera("backCamera");
 
     List<PhotonPipelineResult> frontCameraResults;
     List<PhotonPipelineResult> backCameraResults;
@@ -55,7 +55,7 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         // Read in relevant data from the Camera
         frontCameraResults = frontCamera.getAllUnreadResults();
-        backCameraResults = backCamera.getAllUnreadResults();
+       // backCameraResults = backCamera.getAllUnreadResults();
 
         if (!frontCameraResults.isEmpty()) {
             // Camera processed a new frame since last
@@ -75,20 +75,20 @@ public class VisionSubsystem extends SubsystemBase {
             frontCameraHasTarget = frontResult.hasTargets();
         }
 
-        if (!backCameraResults.isEmpty()) {
-            // Camera processed a new frame since last
-            // Get the last one in the list.
-            backResult = backCameraResults.get(backCameraResults.size() - 1);
-            if (backResult.hasTargets()) {
-                // At least one AprilTag was seen by the camera
-                // for (var target : result.getTargets()) {
-                //     if (target.getFiducialId() == 1) {
-                        backCameraBestTarget = frontResult.getBestTarget();
-                    // }
-                // }
-            }
-            frontCameraHasTarget = frontResult.hasTargets();
-        }
+        // if (!backCameraResults.isEmpty()) {
+        //     // Camera processed a new frame since last
+        //     // Get the last one in the list.
+        //     backResult = backCameraResults.get(backCameraResults.size() - 1);
+        //     if (backResult.hasTargets()) {
+        //         // At least one AprilTag was seen by the camera
+        //         // for (var target : result.getTargets()) {
+        //         //     if (target.getFiducialId() == 1) {
+        //                 backCameraBestTarget = frontResult.getBestTarget();
+        //             // }
+        //         // }
+        //     }
+        //     frontCameraHasTarget = frontResult.hasTargets();
+        // }
         
         SmartDashboard.putNumber("Apriltag X", apriltagX);
         SmartDashboard.putNumber("Apriltag Y", apriltagY);

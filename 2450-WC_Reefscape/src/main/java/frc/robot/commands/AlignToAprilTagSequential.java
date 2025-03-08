@@ -14,11 +14,11 @@ public class AlignToAprilTagSequential extends SequentialCommandGroup {
     double m_strafeTarget;
     double m_approachTarget;
 
-    public AlignToAprilTagSequential(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double strafeTarget, double approachTarget, Enum<Camera> camera, BooleanSupplier stopSupplier) {
+    public AlignToAprilTagSequential(VisionSubsystem visionSubsystem, DrivetrainSubsystem drivetrainSubsystem, double strafeTarget, double approachTarget, Enum<Camera> camera, BooleanSupplier stopSupplier, double time) {
         addCommands(
             new SquareToAprilTag(visionSubsystem, drivetrainSubsystem, camera, stopSupplier),
             new StrafeToAprilTag(visionSubsystem, drivetrainSubsystem, strafeTarget, camera, stopSupplier),
-            new ApproachAprilTag(visionSubsystem, drivetrainSubsystem, approachTarget, camera, stopSupplier)
+            new ApproachAprilTagWithTime(visionSubsystem, drivetrainSubsystem, approachTarget, camera, stopSupplier, time)
         );
     }
 }

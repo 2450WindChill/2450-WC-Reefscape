@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -124,10 +125,10 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Horizontal Break One", horizontalBeamBreak.get());
         SmartDashboard.putBoolean("Vertical Break One", verticalBeamBreak.get());
 
-        if (!elevatorLowSwitch.get()) {
-            // zeroElevatorMotor();
-            resetEncoder();
-        }
+        // if (!elevatorLowSwitch.get()) {
+        //     // zeroElevatorMotor();
+        //     resetEncoder();
+        // }
         // if (!horizontalBeamBreak.get()) {
         //     candle.setLEDs(0, 255, 0);
         // } else if (DriverStation.getAlliance().get() == Alliance.Red) {

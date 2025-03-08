@@ -16,14 +16,14 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public class StrafeToAprilTag extends Command {
 
-    ProfiledPIDController controller = new ProfiledPIDController(2.5, 0, 0, new Constraints(Constants.maxSpeed, 2));
+    ProfiledPIDController controller = new ProfiledPIDController(2, 0, 1, new Constraints(Constants.maxSpeed, 2));
 
     VisionSubsystem m_visionSubsystem;
     DrivetrainSubsystem m_drivetrainSubsystem;
     BooleanSupplier m_stopSupplier;
     double m_target;
 
-    double tolerance = 0.05;
+    double tolerance = 0.04;
     double currError;
     double strafeSpeed = 0;
 
