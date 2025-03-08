@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -73,6 +74,31 @@ public class CoralSubsystem extends SubsystemBase {
         FireAnimation fireAnimation = new FireAnimation(1, 0.4, 68, 0.5, 0.5);
         candle.animate(fireAnimation);
   }
+
+    // TODO: Need to test
+    public void blinkLEDSGreen() {
+        Timer timer = new Timer();
+        timer.start();
+
+        if (timer.hasElapsed(0.2)) {
+           setAllianceColor();
+        }
+        candle.setLEDs(0, 255, 0);
+        timer.reset();  
+    }
+
+     // TODO: Need to test
+     public void blinkLEDSWhite() {
+        Timer timer = new Timer();
+        timer.start();
+
+        if (timer.hasElapsed(0.2)) {
+            setAllianceColor();
+        }
+        candle.setLEDs(0, 255, 0);
+        timer.reset();  
+    }
+
 
   public void setAllianceColor() {
     if (DriverStation.getAlliance().get() == Alliance.Red) {

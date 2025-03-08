@@ -30,6 +30,7 @@ public class CoralIntakeStage1 extends Command {
   }
 
   public void initialize() {
+    m_coralSubsystem.getCANdle().setLEDs(0, 255, 0);
     stateChanges = 0;
     m_coralSubsystem.getEndAffectorMotor().set(m_speed);
   }
@@ -44,7 +45,7 @@ public class CoralIntakeStage1 extends Command {
   public void end(boolean interrupted) {
     System.out.println("Coral intake done");
     m_coralSubsystem.getEndAffectorMotor().set(0);
-    m_coralSubsystem.fireLEDS();
+    m_coralSubsystem.blinkLEDSGreen();
 
   }
 

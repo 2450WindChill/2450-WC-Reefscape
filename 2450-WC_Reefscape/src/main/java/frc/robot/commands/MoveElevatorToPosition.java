@@ -38,6 +38,11 @@ public class MoveElevatorToPosition extends Command {
     if (m_target == Constants.intakeHeight) {
       m_coralSubsystem.getCANdle().setLEDs(0, 255, 0);
     }
+
+    // TODO: Need to test
+    if (m_target == Constants.L1Height || m_target == Constants.L2Height || m_target == Constants.L3Height) {
+      m_coralSubsystem.blinkLEDSWhite();
+    }
   }
 
   public boolean isFinished() {
