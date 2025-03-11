@@ -72,6 +72,8 @@ public class MoveToPose extends Command {
         }
 
         m_drivetrainSubsystem.drive(new Translation2d(xSpeed, ySpeed), rotSpeed, false, false);
+
+        System.out.println("X at goal: " + xController.atGoal() + " Y at goal: " + yController.atGoal() + " Rot at goal: " + rotController.atGoal());
     }
 
     // TODO Change is finished from testing with return false to actual isFinished
