@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -48,10 +49,25 @@ public class MoveToPose extends Command {
         xController.setTolerance(driveTolerance);
         yController.setTolerance(driveTolerance);
         rotController.setTolerance(rotTolerance);
+
+        xController.setGoal(xTarget);
+        yController.setGoal(yTarget);
+        rotController.setGoal(rotTarget);
+
+        SmartDashboard.putNumber("Initial pose X: ", initialPose.getX());
+        SmartDashboard.putNumber("Initial pose Y: ", initialPose.getY());
+        SmartDashboard.putNumber("Initial pose Rot: ", initialPose.getRotation().getDegrees());
+
+        SmartDashboard.putNumber("Target pose X: ", xTarget);
+        SmartDashboard.putNumber("Target pose Y: ", yTarget);
+        SmartDashboard.putNumber("Target pose Rot: ", rotTarget);
     }
 
     public void execute() {
         Pose2d currPose = m_drivetrainSubsystem.getThisPose();
+        SmartDashboard.putNumber("Current pose X: ", currPose.getX());
+        SmartDashboard.putNumber("Current pose Y: ", currPose.getY());
+        SmartDashboard.putNumber("Current pose Rot: ", currPose.getRotation().getDegrees());
 
         if (!xController.atGoal()) {
             xSpeed = xController.calculate(currPose.getX());
@@ -60,13 +76,13 @@ public class MoveToPose extends Command {
         }
 
         if (!yController.atGoal()) {
-            ySpeed = xController.calculate(currPose.getY());
+            ySpeed = yController.calculate(currPose.getY());
         } else {
             ySpeed = 0;
         }
 
         if (!rotController.atGoal()) {
-            rotSpeed = xController.calculate(currPose.getRotation().getRadians());
+            rotSpeed = rotController.calculate(currPose.getRotation().getRadians());
         } else {
             rotSpeed = 0;
         }
@@ -78,8 +94,8 @@ public class MoveToPose extends Command {
 
     // TODO Change is finished from testing with return false to actual isFinished
     public boolean isFinished() {
-        return false;
-        // return (xController.atGoal() && yController.atGoal() && rotController.atGoal()) || m_overrideSupplier.getAsBoolean();
+        // return false;
+        return (xController.atGoal() && yController.atGoal() && rotController.atGoal()) || m_overrideSupplier.getAsBoolean();
     }
 
     public void end(boolean isFinished) {

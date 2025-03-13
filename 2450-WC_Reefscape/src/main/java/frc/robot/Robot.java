@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    m_robotContainer.m_coralSubsystem.setAllianceColor();
+    // m_robotContainer.m_coralSubsystem.setAllianceColor();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

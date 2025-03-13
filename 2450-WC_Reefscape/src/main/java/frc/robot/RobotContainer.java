@@ -64,7 +64,7 @@ public class RobotContainer {
   public CoralSubsystem m_coralSubsystem = null;
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
   public DeepClimbSubsystem m_deepClimbSubsystem = null;
-  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN,
+  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.NEO,
       m_visionSubsystem);
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
@@ -105,6 +105,7 @@ public class RobotContainer {
   public RobotContainer() {
     if (currentBotState == CurrentBot.COMP) {
       m_coralSubsystem = new CoralSubsystem();
+      m_coralSubsystem.setAllianceColor();
       m_deepClimbSubsystem = new DeepClimbSubsystem();
     }
     m_drivetrainSubsystem.setDefaultCommand(
@@ -136,16 +137,17 @@ public class RobotContainer {
 
     // Driver Bindings
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
-    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(1, 0, new Rotation2d(0)), () -> dr_bButton.getAsBoolean()));
+    dr_xButton.onTrue(
+        new MoveToPose(m_drivetrainSubsystem, new Pose2d(1, 0, new Rotation2d(0)), () -> dr_bButton.getAsBoolean()));
 
-    // dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
-    //     -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () -> (dr_startButton.getAsBoolean()), 4));
-    // dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
-    //     Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () -> (dr_startButton.getAsBoolean()), 4));
-
-    dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
-    dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
-    dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 50, -50));
+    // dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem,
+    // m_drivetrainSubsystem,
+    // -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () ->
+    // (dr_startButton.getAsBoolean()), 4));
+    // dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem,
+    // m_drivetrainSubsystem,
+    // Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () ->
+    // (dr_startButton.getAsBoolean()), 4));
 
     // Only use operator buttons if using the comp robot
     if (currentBotState == CurrentBot.COMP) {
@@ -161,6 +163,10 @@ public class RobotContainer {
       op_rightBumper.onTrue(new CoralOuttake(m_coralSubsystem, 0.2));
       op_RightDpad.onTrue(new CoralOuttake(m_coralSubsystem, 0.03));
       op_leftBumper.onTrue(new FullCoralIntake(m_coralSubsystem, 0.2, 0.25));
+
+      dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
+      dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
+      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 50, -50));
 
       // ELEVATOR COMMANDS COMMENTED OUT FOR NOW
       op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
@@ -180,6 +186,11 @@ public class RobotContainer {
   }
 
   private void configureDashboardBindings() {
+
+    if (currentBotState == CurrentBot.TEST) {
+      return;
+    }
+
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
     tab.add("SquareToAprilTag",
         new SquareToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, Camera.FRONT,
@@ -288,4 +299,6 @@ public class RobotContainer {
     // // .andThen(intakePreLoad())
     // .andThen(scoreCoral(ReefDirection.LEFT, ReefLevel.L2)));
   }
+
+  
 }

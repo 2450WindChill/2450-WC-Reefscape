@@ -60,17 +60,14 @@ public class VisionSubsystem extends SubsystemBase {
     
     private Matrix<N3, N1> curStdDevs;
     
-    String filePath = "C:\\Users\\Robotics 1 2024\\Documents\\GitHub\\2450-WC-Reefscape\\2450-WC_Reefscape\\src\\main\\java\\frc\\robot\\libs\\AprilTagFieldLayout.json";
-    Path javaPath = Paths.get("src", "main", "java", "frc", "robot", "libs", "AprilTagFieldLayout.json");
+    // String filePath = "C:\\Users\\Robotics 1 2024\\Documents\\GitHub\\2450-WC-Reefscape\\2450-WC_Reefscape\\src\\main\\java\\frc\\robot\\libs\\AprilTagFieldLayout.json";
+    // Path javaPath = Paths.get("src", "main", "java", "frc", "robot", "libs", "AprilTagFieldLayout.json");
+    Path javaPath = Paths.get("..",  "libs", "AprilTagFieldLayout.json");
+// 
 
     AprilTagFieldLayout fieldLayout = null;
 
-    PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, 
-                                                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
-                                                        new Transform3d(VisionConstants.frontCameraForwardOffset, 
-                                                                        VisionConstants.frontCameraRightOffset, 
-                                                                        VisionConstants.frontCameraUpOffest,
-                                                                        new Rotation3d(0, 0, 0)));
+    PhotonPoseEstimator frontPoseEstimator = null;
     EstimatedRobotPose frontPoseEstimate;
 
     /*
@@ -89,6 +86,14 @@ public class VisionSubsystem extends SubsystemBase {
        catch (Exception e) {
         System.out.println("Cannot read april tag file " + e.getMessage());
        }
+
+       System.err.println("Field Layout: " + fieldLayout);
+       frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, 
+                                                    PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                                                    new Transform3d(VisionConstants.frontCameraForwardOffset, 
+                                                                    VisionConstants.frontCameraRightOffset, 
+                                                                    VisionConstants.frontCameraUpOffest,
+                                                                    new Rotation3d(0, 0, 0)));
     }
 
     @Override

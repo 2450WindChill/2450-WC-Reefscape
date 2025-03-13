@@ -178,7 +178,7 @@ public class WindChillNeoSwerveModule extends BaseWindChillSwerveModule{
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        -((getDriveEncoder() / Constants.rotationsPerOneFoot) * Constants.feetToMeters) * 0.9,
+        ((getDriveEncoder() / Constants.rotationsPerOneFoot) * Constants.feetToMeters),
         Rotation2d.fromDegrees(getCanCoderInDegrees()));
   }
 
