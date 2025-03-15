@@ -70,7 +70,7 @@ public final class Constants {
 
   public static final int elevatorMotorId = 5;
   public static final int endeffectorMotorId = 18;
-  public static final int elevatorLowSwitchChannel = 4;
+  public static final int elevatorLowSwitchChannel = 9;
   public static final int elevatorHighSwitchChannel = 5; // TODO: check for conflicts!!
   public static final int horizontalBeamBreakID = 1;
   public static final int verticalBeamBreakID = 2;
@@ -211,7 +211,7 @@ public final class Constants {
   }
 
   /* Back Right Module - Module 3 */
-  public static final class BackRightNeoModule {
+  public static final class BackLeftNeoModule {
     public static final int driveMotorID = 4;
     public static final int angleMotorID = 3;
     public static final int canCoderID = 10;
@@ -220,7 +220,7 @@ public final class Constants {
   }
 
   /* Back Left Module - Module 2 */
-  public static final class BackLeftNeoModule {
+  public static final class BackRightNeoModule {
     public static final int driveMotorID = 2;
     public static final int angleMotorID = 1;
     public static final int canCoderID = 9;

@@ -21,8 +21,8 @@ public class MoveToPose extends Command {
 
     BooleanSupplier m_overrideSupplier;
 
-    double driveTolerance = 0.05;
-    double rotTolerance = Math.toRadians(3);
+    double driveTolerance = 0.02;
+    double rotTolerance = Math.toRadians(2);
 
     double xTarget;
     double yTarget;
@@ -31,6 +31,8 @@ public class MoveToPose extends Command {
     double xSpeed;
     double ySpeed;
     double rotSpeed;
+
+    boolean isInverted;
 
     public MoveToPose(DrivetrainSubsystem drivetrainSubsystem, Pose2d target, BooleanSupplier overrideSupplier) {
         m_drivetrainSubsystem = drivetrainSubsystem;
@@ -65,34 +67,34 @@ public class MoveToPose extends Command {
 
     public void execute() {
         Pose2d currPose = m_drivetrainSubsystem.getThisPose();
-        SmartDashboard.putNumber("Current pose X: ", currPose.getX());
-        SmartDashboard.putNumber("Current pose Y: ", currPose.getY());
-        SmartDashboard.putNumber("Current pose Rot: ", currPose.getRotation().getDegrees());
+        
 
-        if (!xController.atGoal()) {
-            xSpeed = xController.calculate(currPose.getX());
-        } else {
-            xSpeed = 0;
-        }
+        // if (!xController.atGoal()) {
+            // TODO confirm this should be negative
+            xSpeed = -xController.calculate(currPose.getX());
+        // } else {
+        //     xSpeed = 0;
+        // }
 
-        if (!yController.atGoal()) {
-            ySpeed = yController.calculate(currPose.getY());
-        } else {
-            ySpeed = 0;
-        }
+        // if (!yController.atGoal()) {
+            // TODO confirm this should be negative
+            ySpeed = -yController.calculate(currPose.getY());
+        // } else {
+        //     ySpeed = 0;
+        // }
 
-        if (!rotController.atGoal()) {
-            rotSpeed = rotController.calculate(currPose.getRotation().getRadians());
-        } else {
-            rotSpeed = 0;
-        }
+        // if (!rotController.atGoal()) {
+            // TODO confirm this should be negative
+            rotSpeed = -rotController.calculate(currPose.getRotation().getRadians());
+        // } else {
+        //     rotSpeed = 0;
+        // }
 
         m_drivetrainSubsystem.drive(new Translation2d(xSpeed, ySpeed), rotSpeed, false, false);
 
         System.out.println("X at goal: " + xController.atGoal() + " Y at goal: " + yController.atGoal() + " Rot at goal: " + rotController.atGoal());
     }
 
-    // TODO Change is finished from testing with return false to actual isFinished
     public boolean isFinished() {
         // return false;
         return (xController.atGoal() && yController.atGoal() && rotController.atGoal()) || m_overrideSupplier.getAsBoolean();

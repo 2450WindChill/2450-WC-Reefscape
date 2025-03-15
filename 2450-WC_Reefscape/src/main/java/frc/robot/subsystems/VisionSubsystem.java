@@ -82,7 +82,9 @@ public class VisionSubsystem extends SubsystemBase {
     */
 
     public VisionSubsystem() {
-        Path path = loadFile();
+        File field = new File(Filesystem.getDeployDirectory(), "AprilTagFieldLayout.json");
+        Path path = field.toPath();
+        System.out.println(path);
         
         try {
             fieldLayout = new AprilTagFieldLayout(path);
@@ -100,11 +102,6 @@ public class VisionSubsystem extends SubsystemBase {
                                                                     new Rotation3d(0, 0, 0)));
     }
 
-
-    public Path loadFile() {
-        File field = new File(Filesystem.getDeployDirectory(), "C:\\Users\\Robotics 2 2024\\Documents\\GitHub\\2450-WC-Reefscape\\2450-WC_Reefscape\\src\\main\\java\\frc\\robot\\libs\\AprilTagFieldLayout.json");
-        return field.toPath();
-    }
 
     @Override
     public void periodic() {

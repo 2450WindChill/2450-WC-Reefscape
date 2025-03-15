@@ -28,6 +28,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -139,9 +140,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 getGyroYaw(),
                 getPositions());
     // drivetrainPoseEstimator.addVisionMeasurement(m_visionSubystem.getFrontPoseEstimate2d(), m_visionSubystem.getFrontPoseEstimateTimestamp());
-    SmartDashboard.putNumber("Robot X", getBotX());
-    SmartDashboard.putNumber("Robot Y", getBotY());
-    SmartDashboard.putNumber("Robot ROtation", getBotRotation());
+    // SmartDashboard.putNumber("Robot X", getBotX());
+    // SmartDashboard.putNumber("Robot Y", getBotY());
+    // SmartDashboard.putNumber("Robot ROtation", getBotRotation());
 
     var visionEst = m_visionSubystem.getEstimatedGlobalPose();
     visionEst.ifPresent(
@@ -154,6 +155,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
             });
             
     m_field.setRobotPose(getBotPose());
+
+    SmartDashboard.putNumber("Current pose X: ", drivetrainPoseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("Current pose Y: ", drivetrainPoseEstimator.getEstimatedPosition().getY());
+    SmartDashboard.putNumber("Current pose Rot: ", drivetrainPoseEstimator.getEstimatedPosition().getRotation().getDegrees());
   }
 
   // --------------------------------------------------------------------------------
@@ -264,11 +269,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void zeroPose() {
-    drivetrainPoseEstimator = new SwerveDrivePoseEstimator(
-        Constants.swerveKinematics,
-        getGyroYaw(),
-        getModulePositions(),
-        new Pose2d(0, 0, new Rotation2d(0)));
+    drivetrainPoseEstimator.resetPose(new Pose2d());
   }
 
   public void resetPose(Pose2d newPose) {

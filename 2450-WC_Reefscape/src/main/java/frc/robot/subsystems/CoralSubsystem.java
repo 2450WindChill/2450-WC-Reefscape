@@ -35,7 +35,7 @@ public class CoralSubsystem extends SubsystemBase {
     private SparkFlex endeffectorMotor = new SparkFlex(Constants.endeffectorMotorId, MotorType.kBrushless);
     private PIDController elevatorPidController = new PIDController(0.02, .001, 0);
 
-    // Limit Switches
+    // Hall marks
     private DigitalInput elevatorLowSwitch = new DigitalInput(Constants.elevatorLowSwitchChannel);
     // private DigitalInput elevatorHighSwitch = new DigitalInput(Constants.elevatorHighSwitchChannel);
 
@@ -120,7 +120,7 @@ public class CoralSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Elevator Speed", elevatorMotor.get());
-        SmartDashboard.putBoolean("Bottom Elevator Limit Switch", elevatorLowSwitch.get());
+        SmartDashboard.putBoolean("Bottom Hall Mark", elevatorLowSwitch.get());
 
         SmartDashboard.putBoolean("Horizontal Break One", horizontalBeamBreak.get());
         SmartDashboard.putBoolean("Vertical Break One", verticalBeamBreak.get());
