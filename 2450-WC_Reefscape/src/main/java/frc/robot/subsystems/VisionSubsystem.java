@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +27,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -80,8 +82,10 @@ public class VisionSubsystem extends SubsystemBase {
     */
 
     public VisionSubsystem() {
+        Path path = loadFile();
+        
         try {
-            fieldLayout = new AprilTagFieldLayout(javaPath);
+            fieldLayout = new AprilTagFieldLayout(path);
         }
        catch (Exception e) {
         System.out.println("Cannot read april tag file " + e.getMessage());
@@ -94,6 +98,12 @@ public class VisionSubsystem extends SubsystemBase {
                                                                     VisionConstants.frontCameraRightOffset, 
                                                                     VisionConstants.frontCameraUpOffest,
                                                                     new Rotation3d(0, 0, 0)));
+    }
+
+
+    public Path loadFile() {
+        File field = new File(Filesystem.getDeployDirectory(), "C:\\Users\\Robotics 2 2024\\Documents\\GitHub\\2450-WC-Reefscape\\2450-WC_Reefscape\\src\\main\\java\\frc\\robot\\libs\\AprilTagFieldLayout.json");
+        return field.toPath();
     }
 
     @Override
@@ -112,6 +122,7 @@ public class VisionSubsystem extends SubsystemBase {
             }
             frontCameraHasTarget = frontResult.hasTargets();
         }
+
 
         /*
         if (!backCameraResults.isEmpty()) {
