@@ -19,10 +19,10 @@ public class ElevatorMovement extends Command {
     }
 
     public void initialize() {
-        if (m_direction == "up") {
+        if (m_direction.equals("up")) {
             m_coralsubsystem.setElevatorSpeed(-m_speed);
         }
-        if (m_direction == "down") {
+        if (m_direction.equals("down")) {
             m_coralsubsystem.setElevatorSpeed(m_speed);
         }
     
@@ -38,7 +38,8 @@ public class ElevatorMovement extends Command {
     }
 
     public boolean isFinished() {
-        if ((!m_coralsubsystem.getElevatorLowSwitch()) && (m_direction == "down")) {
+        if (((!m_coralsubsystem.getBottomHalSensor()) && (m_direction.equals("down")))
+        || ((!m_coralsubsystem.getL3HalSensor() && (m_direction.equals( "up"))))) {
             return true;
         } else {
             return false;

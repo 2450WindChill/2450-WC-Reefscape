@@ -19,6 +19,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
@@ -37,8 +38,12 @@ public class CoralSubsystem extends SubsystemBase {
     private PIDController elevatorPidController = new PIDController(0.02, .001, 0);
 
     // Limit Switches
-    private DigitalInput elevatorLowSwitch = new DigitalInput(Constants.elevatorLowSwitchChannel);
+    private DigitalInput testHal = new DigitalInput(Constants.testHalID);
     // private DigitalInput elevatorHighSwitch = new DigitalInput(Constants.elevatorHighSwitchChannel);
+
+    private DigitalInput L3HalSensor = new DigitalInput(2);
+    private DigitalInput intakeHalSensor = new DigitalInput(3);
+    private DigitalInput bottomHalSensor = new DigitalInput(4);
 
     // Beam Breaks
     private DigitalInput horizontalBeamBreak = new DigitalInput(Constants.horizontalBeamBreakID);
@@ -108,13 +113,17 @@ public class CoralSubsystem extends SubsystemBase {
       }
   }
 
-    public boolean getElevatorLowSwitch() {
-        return elevatorLowSwitch.get();
+    public boolean getL3HalSensor() {
+        return L3HalSensor.get();
     }
 
-    // public boolean getElevatorHighSwitch() {
-    //     return elevatorHighSwitch.get();
-    // }
+    public boolean getIntakeHalSensor() {
+        return intakeHalSensor.get();
+    }
+
+    public boolean getBottomHalSensor() {
+        return bottomHalSensor.get();
+    }
 
     public SparkFlex getEndAffectorMotor() {
         return endeffectorMotor;
@@ -146,10 +155,26 @@ public class CoralSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Elevator Speed", elevatorMotor.get());
-        SmartDashboard.putBoolean("Bottom Elevator Limit Switch", elevatorLowSwitch.get());
+        SmartDashboard.putBoolean("Test Hall Sensor", testHal.get());
 
         SmartDashboard.putBoolean("Horizontal Break One", horizontalBeamBreak.get());
         SmartDashboard.putBoolean("Vertical Break One", verticalBeamBreak.get());
+
+        SmartDashboard.putBoolean("L3 Hal Sensor", getL3HalSensor());
+        SmartDashboard.putBoolean("Intake Hal Sensor", getIntakeHalSensor());
+        SmartDashboard.putBoolean("Bottom Hal Sensor", getBottomHalSensor());
+
+        if (!L3HalSensor.get()) {
+            elevatorMotor.setPosition(Constants.L3Height);
+        }
+
+        if (!intakeHalSensor.get()) {
+            elevatorMotor.setPosition(Constants.intakeHeight);
+        }
+
+        if (!bottomHalSensor.get()) {
+            elevatorMotor.setPosition(0);
+        }
 
         // if (!elevatorLowSwitch.get()) {
         //     // zeroElevatorMotor();
