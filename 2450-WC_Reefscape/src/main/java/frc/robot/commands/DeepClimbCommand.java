@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DeepClimbSubsystem;
 
@@ -18,6 +19,9 @@ public class DeepClimbCommand extends Command {
     private int m_targetOne;
     private int m_targetTwo;
 
+     ProfiledPIDController absControllerOne = new ProfiledPIDController(3, 0, 0, new Constraints(Constants.maxSpeed, 2));
+     ProfiledPIDController absControllerTwo = new ProfiledPIDController(3, 0, 0, new Constraints(Constants.maxSpeed, 2));
+
     public DeepClimbCommand(DeepClimbSubsystem deepClimbSubsystem, int targetOne, int targetTwo) {
         m_DeepClimbSubsystem = deepClimbSubsystem;
         m_targetOne = targetOne;
@@ -27,6 +31,8 @@ public class DeepClimbCommand extends Command {
 
     public void initialize() {
         m_DeepClimbSubsystem.setPIDGoal(m_targetOne, m_targetTwo);
+        absControllerOne.setGoal(m_targetOne);
+        absControllerTwo.setGoal(m_targetOne);
     }
 
     public void execute() {
