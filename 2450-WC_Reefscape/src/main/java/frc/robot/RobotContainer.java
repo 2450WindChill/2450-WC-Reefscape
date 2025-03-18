@@ -92,7 +92,7 @@ public class RobotContainer {
   public final JoystickButton op_leftBumper = new JoystickButton(m_operatorController, Button.kLeftBumper.value);
   public final JoystickButton op_rightBumper = new JoystickButton(m_operatorController, Button.kRightBumper.value);
 
-  private final CurrentBot currentBotState = CurrentBot.TEST;
+  private final CurrentBot currentBotState = CurrentBot.COMP;
 
   public SendableChooser<Command> m_chooser;
 
@@ -137,9 +137,10 @@ public class RobotContainer {
 
     // Driver Bindings
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
-    dr_xButton.onTrue(
-        new MoveToPose(m_drivetrainSubsystem, new Pose2d(1, 0, new Rotation2d(Math.toRadians(90))), () -> dr_bButton.getAsBoolean()));
-    dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
+    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(1, 0, new Rotation2d(Math.toRadians(90))), () -> dr_bButton.getAsBoolean()));
+    //dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
+
+    dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099,  () -> dr_bButton.getAsBoolean()));
 
     // dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem,
     // m_drivetrainSubsystem,
@@ -167,8 +168,9 @@ public class RobotContainer {
 
       dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
       dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
-      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 50, -50));
 
+      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601,  () -> dr_bButton.getAsBoolean()));
+      
       // ELEVATOR COMMANDS COMMENTED OUT FOR NOW
       op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
       op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));

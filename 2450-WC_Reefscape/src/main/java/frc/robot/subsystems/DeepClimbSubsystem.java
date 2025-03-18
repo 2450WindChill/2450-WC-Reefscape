@@ -11,16 +11,16 @@ import frc.robot.Constants;
 public class DeepClimbSubsystem extends SubsystemBase {
   private TalonFX climbMotorOne = new TalonFX(Constants.climbMotorOneId);
   private TalonFX climbMotorTwo = new TalonFX(Constants.climbMotorTwoId);
-  private DutyCycleEncoder absoluteEncoderOne = new DutyCycleEncoder(3);
-  private DutyCycleEncoder absoluteEncoderTwo = new DutyCycleEncoder(4);
+  public DutyCycleEncoder absoluteEncoderOne = new DutyCycleEncoder(0);
+  public DutyCycleEncoder absoluteEncoderTwo = new DutyCycleEncoder(1);
 
   public DeepClimbSubsystem() {
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Climber Motor One Encoder", climbMotorOne.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Climber Motor Two Encoder", climbMotorTwo.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Climber Motor Encoder One", absoluteEncoderOne.get());
+    SmartDashboard.putNumber("Climber Motor Encoder Two", absoluteEncoderTwo.get());
   }
 
   @Override
@@ -42,6 +42,18 @@ public class DeepClimbSubsystem extends SubsystemBase {
 
   public TalonFX getClimbMotorTwo() {
     return climbMotorTwo;
+  }
+
+  public TalonFX setClimbMotorTwo() {
+    return climbMotorTwo;
+  }
+
+  public void setClimbMotorTwo(double speed) {
+    climbMotorTwo.set(speed);;
+  }
+
+  public void setClimbMotorOne(double speed) {
+    climbMotorOne.set(speed);;
   }
 
   public void setClimberMotors(double speed) {
