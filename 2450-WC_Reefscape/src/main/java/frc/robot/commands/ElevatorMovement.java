@@ -15,7 +15,7 @@ public class ElevatorMovement extends Command {
         m_coralsubsystem = coralSubsystem;
         m_direction = direction;
         m_speed = speed;
-        addRequirements();
+        addRequirements(m_coralsubsystem);
     }
 
     public void initialize() {

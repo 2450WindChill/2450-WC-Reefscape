@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -13,25 +14,27 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class CoralIntakeStage1 extends Command {
 
   private final CoralSubsystem m_coralSubsystem;
+  private final EndEffectorSubsystem m_EndEffectorSubsystem;
   private final double m_speed;
   private DigitalInput beamBreak;
 
   private boolean currentBeamBreakState;
   private int stateChanges;
 
-  public CoralIntakeStage1(CoralSubsystem coralSubsystem, double speed) {
+  public CoralIntakeStage1(CoralSubsystem coralSubsystem, EndEffectorSubsystem endEffectorSubsystem, double speed) {
     m_coralSubsystem = coralSubsystem;
     m_speed = speed;
+    m_EndEffectorSubsystem = endEffectorSubsystem;
     beamBreak = coralSubsystem.getVerticalBeamBreak();
 
     currentBeamBreakState = beamBreak.get();
 
-    addRequirements(coralSubsystem);
+    addRequirements(m_coralSubsystem);
   }
 
   public void initialize() {
     stateChanges = 0;
-    m_coralSubsystem.getEndAffectorMotor().set(m_speed);
+    m_EndEffectorSubsystem.getEndAffectorMotor().set(m_speed);
   }
 
   public void execute() {
@@ -43,7 +46,7 @@ public class CoralIntakeStage1 extends Command {
 
   public void end(boolean interrupted) {
     System.out.println("Coral intake done");
-    m_coralSubsystem.getEndAffectorMotor().set(0);
+    m_EndEffectorSubsystem.getEndAffectorMotor().set(0);
     m_coralSubsystem.fireLEDS();
 
   }

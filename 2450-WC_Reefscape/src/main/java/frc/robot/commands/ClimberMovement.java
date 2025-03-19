@@ -16,7 +16,7 @@ public class ClimberMovement extends Command {
         m_DeepClimbSubsystem = deepClimbSubsystem;
         m_direction = direction;
         m_speed = speed;
-        addRequirements();
+        addRequirements(m_DeepClimbSubsystem);
     }
 
     public void initialize() {

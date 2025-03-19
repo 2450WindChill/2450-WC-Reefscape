@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,19 +14,21 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class CoralOuttake extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final CoralSubsystem m_subsystem;
+  private final EndEffectorSubsystem m_EndEffectorSubsystem;
 
   private final double m_speed;
 
-  public CoralOuttake(CoralSubsystem subsystem, double speed) {
+  public CoralOuttake(CoralSubsystem subsystem, EndEffectorSubsystem endEffectorSubsystem, double speed) {
     m_subsystem = subsystem;
+    m_EndEffectorSubsystem = endEffectorSubsystem;
     m_speed = speed;
 
-    addRequirements(subsystem);
+    addRequirements(m_subsystem, m_EndEffectorSubsystem);
   }
 
   @Override
   public void initialize() {
-    m_subsystem.getEndAffectorMotor().set(m_speed);
+    m_EndEffectorSubsystem.getEndAffectorMotor().set(m_speed);
   }
 
   @Override
@@ -40,7 +43,7 @@ public class CoralOuttake extends Command {
     } else {
       m_subsystem.getCANdle().setLEDs(0, 0, 255);
     }
-    m_subsystem.getEndAffectorMotor().set(0);
+    m_EndEffectorSubsystem.getEndAffectorMotor().set(0);
   }
 
   @Override
