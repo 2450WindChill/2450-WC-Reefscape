@@ -40,6 +40,8 @@ public class MoveToPose extends Command {
         xTarget = target.getX();
         yTarget = target.getY();
         rotTarget = target.getRotation().getRadians();
+
+        addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {
@@ -68,27 +70,10 @@ public class MoveToPose extends Command {
     public void execute() {
         Pose2d currPose = m_drivetrainSubsystem.getThisPose();
         
-
-        // if (!xController.atGoal()) {
-            // TODO confirm this should be negative
-            xSpeed = -xController.calculate(currPose.getX());
-        // } else {
-        //     xSpeed = 0;
-        // }
-
-        // if (!yController.atGoal()) {
-            // TODO confirm this should be negative
-            ySpeed = -yController.calculate(currPose.getY());
-        // } else {
-        //     ySpeed = 0;
-        // }
-
-        // if (!rotController.atGoal()) {
-            // TODO confirm this should be negative
-            rotSpeed = -rotController.calculate(currPose.getRotation().getRadians());
-        // } else {
-        //     rotSpeed = 0;
-        // }
+        // TODO confirm this should be negative
+        xSpeed = -xController.calculate(currPose.getX());
+        ySpeed = -yController.calculate(currPose.getY());
+        rotSpeed = -rotController.calculate(currPose.getRotation().getRadians());
 
         m_drivetrainSubsystem.drive(new Translation2d(xSpeed, ySpeed), rotSpeed, false, false);
 

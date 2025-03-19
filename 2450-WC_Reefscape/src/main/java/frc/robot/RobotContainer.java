@@ -137,10 +137,12 @@ public class RobotContainer {
 
     // Driver Bindings
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
-    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(1, 0, new Rotation2d(Math.toRadians(90))), () -> dr_bButton.getAsBoolean()));
     //dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
 
     dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099,  () -> dr_bButton.getAsBoolean()));
+    dr_xButton.onTrue(
+        new MoveToPose(m_drivetrainSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))), () -> dr_bButton.getAsBoolean()));
+    dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
 
     // dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem,
     // m_drivetrainSubsystem,

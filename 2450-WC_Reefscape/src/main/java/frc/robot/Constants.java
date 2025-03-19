@@ -65,7 +65,7 @@ public final class Constants {
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);
   public static final double wheelBase = Units.inchesToMeters(21.73);
-  public static final double wheelDiameter = Units.inchesToMeters(3.0);
+  public static final double wheelDiameter = Units.inchesToMeters(3.9);
   public static final double wheelCircumference = wheelDiameter * Math.PI;
 
   public static final int elevatorMotorId = 5;
@@ -123,6 +123,9 @@ public final class Constants {
   public static final double driveConversionPositionFactor = (wheelDiameter * Math.PI) / driveGearRatio;
   public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
   public static final double angleConversionFactor = 360.0 /* (2 * Math.PI) */ / angleGearRatio;
+
+  public static final double wheelRotationsPerMeter = 1 / wheelCircumference;
+  public static final double motorRotationsPerMeter = driveGearRatio * wheelRotationsPerMeter;
 
 
    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
