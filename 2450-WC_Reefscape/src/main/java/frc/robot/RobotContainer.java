@@ -70,7 +70,8 @@ public class RobotContainer {
   public final EndEffectorSubsystem m_EndEffectorSubsystem = new EndEffectorSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
-  private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
+  // private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
+  private final GenericHID m_customController = new GenericHID(ControllerConstants.kOperatorControllerPort);
 
   public final JoystickButton dr_aButton = new JoystickButton(m_driverController, Button.kA.value);
   public final JoystickButton dr_bButton = new JoystickButton(m_driverController, Button.kB.value);
