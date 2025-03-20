@@ -14,6 +14,7 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.SquareToAprilTag;
 import frc.robot.commands.StrafeToAprilTag;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.Constants.SwerveMode;
 import frc.robot.Constants.autoConstants.ReefDirection;
@@ -66,6 +67,7 @@ public class RobotContainer {
   public DeepClimbSubsystem m_deepClimbSubsystem = null;
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.NEO,
       m_visionSubsystem);
+  public final EndEffectorSubsystem m_EndEffectorSubsystem = new EndEffectorSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -168,9 +170,9 @@ public class RobotContainer {
           Constants.L2Height));
       op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
           Constants.L3Height));
-      op_rightBumper.onTrue(new CoralOuttake(m_coralSubsystem, 0.2));
-      op_RightDpad.onTrue(new CoralOuttake(m_coralSubsystem, 0.03));
-      op_leftBumper.onTrue(new FullCoralIntake(m_coralSubsystem, 0.2, 0.25));
+      op_rightBumper.onTrue(new CoralOuttake(m_coralSubsystem, m_EndEffectorSubsystem, 0.2));
+      op_RightDpad.onTrue(new CoralOuttake(m_coralSubsystem, m_EndEffectorSubsystem, 0.03));
+      op_leftBumper.onTrue(new FullCoralIntake(m_coralSubsystem, m_EndEffectorSubsystem,  0.2, 0.25));
 
       dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
       dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
@@ -178,12 +180,12 @@ public class RobotContainer {
       dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601,  () -> dr_bButton.getAsBoolean()));
       
       // ELEVATOR COMMANDS COMMENTED OUT FOR NOW
-      op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.2));
-      op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.2));
+      op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.05));
+      op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.05));
 
       m_coralSubsystem.setDefaultCommand(
           new BopAlgae(
-              m_coralSubsystem,
+              m_EndEffectorSubsystem,
               () -> (m_operatorController.getRightTriggerAxis()) * 0.5,
               () -> (m_operatorController.getLeftTriggerAxis()) * 0.5));
     }
@@ -191,7 +193,7 @@ public class RobotContainer {
 
   private Command intakeSequence() {
     return Commands.runOnce(() -> new MoveElevatorToPosition(m_coralSubsystem, Constants.intakeHeight))
-        .andThen(new CoralIntakeStage1(m_coralSubsystem, 0.1));
+        .andThen(new CoralIntakeStage1(m_coralSubsystem, m_EndEffectorSubsystem, 0.1));
   }
 
   private void configureDashboardBindings() {
@@ -273,12 +275,12 @@ public class RobotContainer {
         new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
             strafeOffset, 2, Camera.FRONT, () -> (dr_startButton.getAsBoolean()), 2),
         new MoveElevatorToPosition(m_coralSubsystem, height))
-        .andThen(new CoralOuttake(m_coralSubsystem, 0.5));
+        .andThen(new CoralOuttake(m_coralSubsystem, m_EndEffectorSubsystem, 0.5));
   }
 
   private Command intakePreLoad() {
     return new MoveElevatorToPosition(m_coralSubsystem, Constants.intakeHeight)
-        .andThen(new FullCoralIntake(m_coralSubsystem, 0.2, 0.25));
+        .andThen(new FullCoralIntake(m_coralSubsystem, m_EndEffectorSubsystem,  0.2, 0.25));
   }
 
   private void configureAutoChooser() {

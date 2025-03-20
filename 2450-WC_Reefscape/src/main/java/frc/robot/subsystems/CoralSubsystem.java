@@ -32,7 +32,6 @@ import frc.robot.Constants;
 
 public class CoralSubsystem extends SubsystemBase {
     private TalonFX elevatorMotor = new TalonFX(Constants.elevatorMotorId);
-    private SparkFlex endeffectorMotor = new SparkFlex(Constants.endeffectorMotorId, MotorType.kBrushless);
     private PIDController elevatorPidController = new PIDController(0.02, .001, 0);
 
     // Hall marks
@@ -52,12 +51,7 @@ public class CoralSubsystem extends SubsystemBase {
         slot0Configs.kI = 0; // no output for integrated error
         slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
         elevatorMotor.getConfigurator().apply(slot0Configs);
-
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-
-        SparkFlexConfig driveConfig = new SparkFlexConfig();
-        driveConfig.idleMode(Constants.endEffectorIdleMode);
-        endeffectorMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void setElevatorSpeed(double newSpeed) {
@@ -90,13 +84,6 @@ public class CoralSubsystem extends SubsystemBase {
     //     return elevatorHighSwitch.get();
     // }
 
-    public SparkFlex getEndAffectorMotor() {
-        return endeffectorMotor;
-    }
-
-    public void setEndAffectorSpeed(double newSpeed) {
-        endeffectorMotor.set(newSpeed);
-    }
 
     public void setPIDGoal(double position) {
         // create a position closed-loop request, voltage output, slot 0 configs

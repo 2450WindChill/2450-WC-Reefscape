@@ -38,7 +38,7 @@ public class StrafeToAprilTag extends Command {
         m_camera = camera;
         m_stopSupplier = stopSupplier;
 
-        addRequirements(m_drivetrainSubsystem);
+        addRequirements(m_visionSubsystem, m_drivetrainSubsystem);
     }
 
     public void initialize() {

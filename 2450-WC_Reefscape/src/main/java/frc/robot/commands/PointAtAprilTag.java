@@ -24,7 +24,7 @@ public class PointAtAprilTag extends Command {
         m_visionSubsystem = visionSubsystem;
         m_drivetrainSubsystem = drivetrainSubsystem;
 
-        addRequirements(m_drivetrainSubsystem);
+        addRequirements(m_visionSubsystem, m_drivetrainSubsystem);
     }
 
     public void initialize() {

@@ -58,9 +58,9 @@ public final class Constants {
 
   /* Elevator heights */
   public static final double L1Height = -112;
-  public static final double L2Height = -152.67;
-  public static final double L3Height = -233.01;
-  public static final double intakeHeight = -23.23;
+  public static final double L2Height = -49.750;
+  public static final double L3Height = -75.010;
+  public static final double intakeHeight = -4.892;
 
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);
