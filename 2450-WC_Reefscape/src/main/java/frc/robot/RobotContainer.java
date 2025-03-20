@@ -67,7 +67,7 @@ public class RobotContainer {
   public DeepClimbSubsystem m_deepClimbSubsystem = null;
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.NEO,
       m_visionSubsystem);
-  public final EndEffectorSubsystem m_EndEffectorSubsystem = new EndEffectorSubsystem();
+  public EndEffectorSubsystem m_EndEffectorSubsystem = null;
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -109,6 +109,7 @@ public class RobotContainer {
       m_coralSubsystem = new CoralSubsystem();
       m_coralSubsystem.setAllianceColor();
       m_deepClimbSubsystem = new DeepClimbSubsystem();
+      m_EndEffectorSubsystem = new EndEffectorSubsystem();
     }
     m_drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
@@ -183,7 +184,7 @@ public class RobotContainer {
       op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.05));
       op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.05));
 
-      m_coralSubsystem.setDefaultCommand(
+      m_EndEffectorSubsystem.setDefaultCommand(
           new BopAlgae(
               m_EndEffectorSubsystem,
               () -> (m_operatorController.getRightTriggerAxis()) * 0.5,

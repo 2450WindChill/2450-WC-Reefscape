@@ -70,8 +70,11 @@ public final class Constants {
 
   public static final int elevatorMotorId = 5;
   public static final int endeffectorMotorId = 18;
-  public static final int elevatorLowSwitchChannel = 4;
-  public static final int elevatorHighSwitchChannel = 2;
+
+  public static final int bottomHallSensorChannel = 4;
+  public static final int intakeHallSensorChannel = 7;
+  public static final int topHallSensorChannel = 2;
+
   public static final int horizontalBeamBreakID = 5;
   public static final int verticalBeamBreakID = 6;
   public static final int climbMotorOneId = 6;
@@ -237,7 +240,7 @@ public final class Constants {
   public static final class VisionConstants {
     public static final double frontCameraForwardOffset = Units.inchesToMeters(10.5);
     public static final double frontCameraRightOffset = 0;
-    public static final double frontCameraUpOffest = 0;
+    public static final double frontCameraUpOffest = Units.inchesToMeters(33.549);
 
     public static final double backCameraForwardOffset = 0;
     public static final double backCameraLeftOffest = 0;

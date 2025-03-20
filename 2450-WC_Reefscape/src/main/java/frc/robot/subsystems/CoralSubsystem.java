@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -35,8 +36,9 @@ public class CoralSubsystem extends SubsystemBase {
     private PIDController elevatorPidController = new PIDController(0.02, .001, 0);
 
     // Hall marks
-    private DigitalInput elevatorLowSwitch = new DigitalInput(Constants.elevatorLowSwitchChannel);
-    // private DigitalInput elevatorHighSwitch = new DigitalInput(Constants.elevatorHighSwitchChannel);
+    private DigitalInput bottomHallSensor = new DigitalInput(Constants.bottomHallSensorChannel);
+    private DigitalInput intakeHallSensor = new DigitalInput(Constants.intakeHallSensorChannel);
+    private DigitalInput topHallSensor = new DigitalInput(Constants.topHallSensorChannel);
 
     // Beam Breaks
     private DigitalInput horizontalBeamBreak = new DigitalInput(Constants.horizontalBeamBreakID);
@@ -55,9 +57,12 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     public void setElevatorSpeed(double newSpeed) {
-        elevatorMotor.set(newSpeed);
+        final DutyCycleOut m_dutyCycle = new DutyCycleOut(0.0);
+        elevatorMotor.setControl(m_dutyCycle.withOutput(newSpeed)
+        .withLimitForwardMotion(!bottomHallSensor.get())
+        .withLimitReverseMotion(!topHallSensor.get()));
     }
-
+    
     public CANdle getCANdle() {
         return candle;
     }
@@ -66,24 +71,23 @@ public class CoralSubsystem extends SubsystemBase {
         candle.configBrightnessScalar(1);
         FireAnimation fireAnimation = new FireAnimation(1, 0.4, 68, 0.5, 0.5);
         candle.animate(fireAnimation);
-  }
+    }
 
-  public void setAllianceColor() {
-    if (DriverStation.getAlliance().get() == Alliance.Red) {
-        candle.setLEDs(255, 0, 0);
-      } else {
-        candle.setLEDs(0, 0, 255);
-      }
-  }
+    public void setAllianceColor() {
+        if (DriverStation.getAlliance().get() == Alliance.Red) {
+            candle.setLEDs(255, 0, 0);
+        } else {
+            candle.setLEDs(0, 0, 255);
+        }
+    }
 
-    public boolean getElevatorLowSwitch() {
-        return elevatorLowSwitch.get();
+    public boolean getBottomHallSensor() {
+        return bottomHallSensor.get();
     }
 
     // public boolean getElevatorHighSwitch() {
-    //     return elevatorHighSwitch.get();
+    // return elevatorHighSwitch.get();
     // }
-
 
     public void setPIDGoal(double position) {
         // create a position closed-loop request, voltage output, slot 0 configs
@@ -105,23 +109,29 @@ public class CoralSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // Elevator info
         SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Elevator Speed", elevatorMotor.get());
-        SmartDashboard.putBoolean("Bottom Hall Mark", elevatorLowSwitch.get());
 
+        // Hall sensors
+        SmartDashboard.putBoolean("Bottom Hall Mark", bottomHallSensor.get());
+        SmartDashboard.putBoolean("Intake Hall Mark", intakeHallSensor.get());
+        SmartDashboard.putBoolean("Top Hall Mark", topHallSensor.get());
+
+        // Beam breaks
         SmartDashboard.putBoolean("Horizontal Break One", horizontalBeamBreak.get());
         SmartDashboard.putBoolean("Vertical Break One", verticalBeamBreak.get());
 
         // if (!elevatorLowSwitch.get()) {
-        //     // zeroElevatorMotor();
-        //     resetEncoder();
+        // // zeroElevatorMotor();
+        // resetEncoder();
         // }
         // if (!horizontalBeamBreak.get()) {
-        //     candle.setLEDs(0, 255, 0);
+        // candle.setLEDs(0, 255, 0);
         // } else if (DriverStation.getAlliance().get() == Alliance.Red) {
-        //     candle.setLEDs(255, 0, 0);
+        // candle.setLEDs(255, 0, 0);
         // } else {
-        //     candle.setLEDs(0, 0, 255);
+        // candle.setLEDs(0, 0, 255);
         // }
     }
 
