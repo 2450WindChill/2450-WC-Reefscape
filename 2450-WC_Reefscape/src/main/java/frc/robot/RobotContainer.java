@@ -92,7 +92,7 @@ public class RobotContainer {
   public final JoystickButton op_leftBumper = new JoystickButton(m_operatorController, Button.kLeftBumper.value);
   public final JoystickButton op_rightBumper = new JoystickButton(m_operatorController, Button.kRightBumper.value);
 
-  private final CurrentBot currentBotState = CurrentBot.COMP;
+  private final CurrentBot currentBotState = CurrentBot.TEST;
 
   public SendableChooser<Command> m_chooser;
 
@@ -139,10 +139,12 @@ public class RobotContainer {
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
     //dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
 
-    dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099,  () -> dr_bButton.getAsBoolean()));
-    dr_xButton.onTrue(
-        new MoveToPose(m_drivetrainSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))), () -> dr_bButton.getAsBoolean()));
-    dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
+    // dr_xButton.onTrue(
+        // new MoveToPose(m_drivetrainSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))), () -> dr_bButton.getAsBoolean()));
+    dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))))));
+    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))), () -> dr_bButton.getAsBoolean()));
+
+    dr_leftBumper.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));
 
     // dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem,
     // m_drivetrainSubsystem,
@@ -155,6 +157,8 @@ public class RobotContainer {
 
     // Only use operator buttons if using the comp robot
     if (currentBotState == CurrentBot.COMP) {
+      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099,  () -> dr_bButton.getAsBoolean()));
+
       // Operator Bindings
       op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
           Constants.intakeHeight));

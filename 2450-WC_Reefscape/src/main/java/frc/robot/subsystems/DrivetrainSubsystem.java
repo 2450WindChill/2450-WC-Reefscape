@@ -49,7 +49,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public CANcoder canCoder;
   public HolonomicDriveController holonomicDriveController;
   private static SwerveDrivePoseEstimator drivetrainPoseEstimator;
-  public static Enum<SwerveMode> mymode = Constants.SwerveMode.KRAKEN;
+  public static Enum<SwerveMode> mymode = Constants.SwerveMode.NEO;
   private final Field2d m_field = new Field2d();
 
   public DrivetrainSubsystem(SwerveMode myMode, VisionSubsystem visionSubsystem) {
@@ -144,16 +144,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Robot Y", getBotY());
     // SmartDashboard.putNumber("Robot ROtation", getBotRotation());
 
-    // var visionEst = m_visionSubystem.getEstimatedGlobalPose();
-    // visionEst.ifPresent(
-    //         est -> {
-    //             // Change our trust in the measurement based on the tags we can see
-    //             var estStdDevs = m_visionSubystem.getEstimationStdDevs();
+    var visionEst = m_visionSubystem.getEstimatedGlobalPose();
+    visionEst.ifPresent(
+            est -> {
+                // Change our trust in the measurement based on the tags we can see
+                var estStdDevs = m_visionSubystem.getEstimationStdDevs();
 
-    //             drivetrainPoseEstimator.addVisionMeasurement(
-    //                     est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-    //         });
-            
+                drivetrainPoseEstimator.addVisionMeasurement(
+                        est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+            });
+              
     m_field.setRobotPose(getBotPose());
 
     SmartDashboard.putNumber("Current pose X: ", drivetrainPoseEstimator.getEstimatedPosition().getX());
@@ -273,8 +273,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void resetPose(Pose2d newPose) {
-    drivetrainPoseEstimator.resetPosition(gyro.getRotation2d(), getPositions(),
-        newPose);
+    drivetrainPoseEstimator.resetPose(newPose);
   }
   
 

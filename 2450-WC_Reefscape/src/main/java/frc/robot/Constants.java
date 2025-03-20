@@ -128,7 +128,7 @@ public final class Constants {
   public static final double motorRotationsPerMeter = driveGearRatio * wheelRotationsPerMeter;
 
 
-   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 2);
    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   /* Swerve Profiling Values */
   //public static final double maxSpeed = 3.6576; // meters per second
