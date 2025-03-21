@@ -65,7 +65,7 @@ public final class Constants {
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);
   public static final double wheelBase = Units.inchesToMeters(21.73);
-  public static final double wheelDiameter = Units.inchesToMeters(3.9);
+  public static final double wheelDiameter = Units.inchesToMeters(3.97);
   public static final double wheelCircumference = wheelDiameter * Math.PI;
 
   public static final int elevatorMotorId = 5;
@@ -83,7 +83,7 @@ public final class Constants {
   public static final double openLoopRamp = 0.25;
   public static final double closedLoopRamp = 0.0;
 
-  public static final double rotationsPerOneFoot = 0.25;
+  public static final double rotationsPerOneMeter = wheelDiameter * Math.PI;
 
   public static final double feetToMeters = 0.3048;
 

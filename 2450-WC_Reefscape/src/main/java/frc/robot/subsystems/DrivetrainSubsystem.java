@@ -144,15 +144,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Robot Y", getBotY());
     // SmartDashboard.putNumber("Robot ROtation", getBotRotation());
 
-    var visionEst = m_visionSubystem.getEstimatedGlobalPose();
-    visionEst.ifPresent(
-            est -> {
-                // Change our trust in the measurement based on the tags we can see
-                var estStdDevs = m_visionSubystem.getEstimationStdDevs();
+    // var visionEst = m_visionSubystem.getEstimatedGlobalPose();
+    // visionEst.ifPresent(
+    //         est -> {
+    //             // Change our trust in the measurement based on the tags we can see
+    //             var estStdDevs = m_visionSubystem.getEstimationStdDevs();
 
-                drivetrainPoseEstimator.addVisionMeasurement(
-                        est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-            });
+    //             drivetrainPoseEstimator.addVisionMeasurement(
+    //                     est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+    //         });
               
     m_field.setRobotPose(getBotPose());
 

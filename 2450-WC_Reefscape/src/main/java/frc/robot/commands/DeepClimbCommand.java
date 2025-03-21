@@ -56,8 +56,8 @@ public class DeepClimbCommand extends Command {
         double currentPositionOne = m_DeepClimbSubsystem.absoluteEncoderOne.get();
         double currentPositionTwo = m_DeepClimbSubsystem.absoluteEncoderTwo.get();
 
-        absEncoderOneSpeed = Math.min(absControllerOne.calculate(currentPositionOne), 0.2);
-        absEncoderTwoSpeed = Math.min(absControllerOne.calculate(currentPositionTwo), 0.2);
+        absEncoderOneSpeed = absControllerOne.calculate(currentPositionOne);
+        absEncoderTwoSpeed = absControllerOne.calculate(currentPositionTwo);
 
         m_DeepClimbSubsystem.setClimbMotorOne(absEncoderOneSpeed);
         m_DeepClimbSubsystem.setClimbMotorTwo(absEncoderTwoSpeed);

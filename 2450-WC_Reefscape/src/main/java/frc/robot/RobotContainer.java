@@ -65,7 +65,7 @@ public class RobotContainer {
   public CoralSubsystem m_coralSubsystem = null;
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
   public DeepClimbSubsystem m_deepClimbSubsystem = null;
-  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.NEO,
+  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN,
       m_visionSubsystem);
   public EndEffectorSubsystem m_EndEffectorSubsystem = null;
 
@@ -94,7 +94,7 @@ public class RobotContainer {
   public final JoystickButton op_leftBumper = new JoystickButton(m_operatorController, Button.kLeftBumper.value);
   public final JoystickButton op_rightBumper = new JoystickButton(m_operatorController, Button.kRightBumper.value);
 
-  private final CurrentBot currentBotState = CurrentBot.TEST;
+  private final CurrentBot currentBotState = CurrentBot.COMP;
 
   public SendableChooser<Command> m_chooser;
 
@@ -144,7 +144,8 @@ public class RobotContainer {
 
     // dr_xButton.onTrue(
         // new MoveToPose(m_drivetrainSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))), () -> dr_bButton.getAsBoolean()));
-    dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))))));
+    //dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))))));
+    dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))))));
     dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))), () -> dr_bButton.getAsBoolean()));
 
     dr_leftBumper.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));

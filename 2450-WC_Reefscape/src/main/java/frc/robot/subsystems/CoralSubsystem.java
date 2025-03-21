@@ -94,7 +94,9 @@ public class CoralSubsystem extends SubsystemBase {
         final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
         // set position to 10 rotations
-        elevatorMotor.setControl(m_request.withPosition(position));
+        elevatorMotor.setControl(m_request.withPosition(position)
+        .withLimitForwardMotion(!bottomHallSensor.get())
+        .withLimitReverseMotion(!topHallSensor.get()));
     }
 
     public boolean goalReached(double goal) {
@@ -122,6 +124,8 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Horizontal Break One", horizontalBeamBreak.get());
         SmartDashboard.putBoolean("Vertical Break One", verticalBeamBreak.get());
 
+        resetHeight(Constants.intakeHeight);
+
         // if (!elevatorLowSwitch.get()) {
         // // zeroElevatorMotor();
         // resetEncoder();
@@ -133,6 +137,12 @@ public class CoralSubsystem extends SubsystemBase {
         // } else {
         // candle.setLEDs(0, 0, 255);
         // }
+    }
+
+    public void resetHeight(double height) {
+        if (!intakeHallSensor.get()) {
+            elevatorMotor.setPosition(height);
+        }
     }
 
     public void simulationPeriodic() {

@@ -135,7 +135,7 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
 
   // TODO: Once we get Kraken encoder this should work (done?), make sure where these methods are used the types are correct
   public double getDriveEncoder() {
-    return driveMotor.getPosition().getValueAsDouble();
+    return driveMotor.getPosition().getValueAsDouble() * Constants.rotationsPerOneMeter;
   }
 
   // TODO: Once we get Kraken encoder this should work (done?)
@@ -170,15 +170,14 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
   // TODO: Need to figure out kraken version of configs
   private void configDriveMotor() {
 
-    var talonFXConfigurator = driveMotor.getConfigurator();
     var talonFXConfigs = new TalonFXConfiguration();
-    var motorConfigs = new MotorOutputConfigs();
-    var voltageConfigs = new VoltageConfigs();
+    // var motorConfigs = new MotorOutputConfigs();
+    // var voltageConfigs = new VoltageConfigs();
 
     // enable stator current limit
-    var limitConfigs = new CurrentLimitsConfigs();
-    limitConfigs.StatorCurrentLimit = 30;
-    limitConfigs.StatorCurrentLimitEnable = true;
+    // var limitConfigs = new CurrentLimitsConfigs();
+    talonFXConfigs.CurrentLimits.StatorCurrentLimit = 30;
+    talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // TODO: Look at this current limiting code compared to what you have
     // talonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = Constants.Swerve.driveEnableCurrentLimit;
@@ -186,50 +185,23 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
     // talonFXConfigs.CurrentLimits.SupplyCurrentThreshold = Constants.Swerve.driveCurrentThreshold;
     // talonFXConfigs.CurrentLimits.SupplyTimeThreshold = Constants.Swerve.driveCurrentThresholdTime;
   
-    motorConfigs.Inverted = invertedValue;
-    motorConfigs.NeutralMode = idleMode;
-
+    talonFXConfigs.MotorOutput.Inverted = invertedValue;
+    talonFXConfigs.MotorOutput.NeutralMode = idleMode;
+    talonFXConfigs.Feedback.RotorToSensorRatio = Constants.driveGearRatio;
     // in init function, set slot 0 gains
-    var slot0Configs = new Slot0Configs();
+    // var slot0Configs = new Slot0Configs();
   
     // Setting PID values
-    slot0Configs.kP = 0.11;
-    slot0Configs.kI = 0;
-    slot0Configs.kD = 0;
+    talonFXConfigs.Slot0.kP = 0.11;
+    talonFXConfigs.Slot0.kI = 0;
+    talonFXConfigs.Slot0.kD = 0;
 
     /* Gear Ratio Config */
-    talonFXConfigs.Feedback.SensorToMechanismRatio = Constants.driveGearRatio;
-
-    /* Open and Closed Loop Ramping */
-    talonFXConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.openLoopRamp;
-    talonFXConfigs.OpenLoopRamps.VoltageOpenLoopRampPeriod = Constants.openLoopRamp;
-
-    talonFXConfigs.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = Constants.closedLoopRamp;
-    talonFXConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = Constants.closedLoopRamp;
-
-    driveMotor.setPosition(0.0);
-
     // Applying configs to the configurator
-    talonFXConfigurator.apply(limitConfigs);
-    talonFXConfigurator.apply(motorConfigs);
-    driveMotor.getConfigurator().apply(slot0Configs);
-
-
-// ------------------------------------------------------------
-    // talonFXConfigs
-        //.smartCurrentLimit(Constants.driveContinuousCurrentLimit)
-        // .idleMode(Constants.driveIdleMode)
-        // .inverted(Constants.driveInvert)
-    //     .voltageCompensation(Constants.voltageComp); // ?
-    // driveConfig.encoder
-    //     .positionConversionFactor(Constants.driveConversionPositionFactor)
-    //     .velocityConversionFactor(Constants.driveConversionVelocityFactor);
-    // // driveConfig.closedLoop
-    //     .pidf(Constants.driveKP, Constants.driveKI, Constants.driveKD, Constants.driveKFF);
-
-    // driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    // driveEncoder.setPosition(0.0);
+    // driveMotor.getConfigurator().apply(limitConfigs);
+    // driveMotor.getConfigurator().apply(motorConfigs);
+    // driveMotor.getConfigurator().apply(slot0Configs);
+    driveMotor.getConfigurator().apply(talonFXConfigs);
   }
 
   // public SwerveModulePosition getPosition() {
@@ -241,7 +213,7 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        -((getDriveEncoder() / Constants.rotationsPerOneFoot) * Constants.feetToMeters) * 0.9,
+        -((getDriveEncoder() / Constants.rotationsPerOneMeter) * Constants.feetToMeters) * 0.9,
         Rotation2d.fromDegrees(getCanCoderInDegrees()));
   }
 
