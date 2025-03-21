@@ -11,44 +11,41 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class CoralIntakeStage1 extends Command {
+public class CoralIntake extends Command {
 
-  private final CoralSubsystem m_coralSubsystem;
-  private final EndEffectorSubsystem m_EndEffectorSubsystem;
+  private final EndEffectorSubsystem m_endEffectorSubsystem;
   private final double m_speed;
-  private DigitalInput beamBreak;
+  private DigitalInput verticalBeamBreak;
 
   private boolean currentBeamBreakState;
   private int stateChanges;
 
-  public CoralIntakeStage1(CoralSubsystem coralSubsystem, EndEffectorSubsystem endEffectorSubsystem, double speed) {
-    m_coralSubsystem = coralSubsystem;
+  public CoralIntake(EndEffectorSubsystem endEffectorSubsystem, double speed) {
     m_speed = speed;
-    m_EndEffectorSubsystem = endEffectorSubsystem;
-    beamBreak = coralSubsystem.getVerticalBeamBreak();
+    m_endEffectorSubsystem = endEffectorSubsystem;
+    verticalBeamBreak = endEffectorSubsystem.getVerticalBeamBreak();
 
-    currentBeamBreakState = beamBreak.get();
+    currentBeamBreakState = verticalBeamBreak.get();
 
-    addRequirements(m_coralSubsystem);
+    addRequirements(m_endEffectorSubsystem);
   }
 
   public void initialize() {
     stateChanges = 0;
-    m_EndEffectorSubsystem.getEndAffectorMotor().set(m_speed);
+    m_endEffectorSubsystem.getEndAffectorMotor().set(m_speed);
   }
 
   public void execute() {
-    if (beamBreak.get() != currentBeamBreakState) {
+    if (verticalBeamBreak.get() != currentBeamBreakState) {
+      System.err.println("State Change from " + currentBeamBreakState + " to " + verticalBeamBreak.get());
       stateChanges += 1;
-      currentBeamBreakState = beamBreak.get();
+      currentBeamBreakState = verticalBeamBreak.get();
     }
   }
 
   public void end(boolean interrupted) {
     System.out.println("Coral intake done");
-    m_EndEffectorSubsystem.getEndAffectorMotor().set(0);
-    m_coralSubsystem.fireLEDS();
-
+    m_endEffectorSubsystem.getEndAffectorMotor().set(0);
   }
 
   public boolean isFinished() {

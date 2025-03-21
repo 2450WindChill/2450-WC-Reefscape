@@ -55,9 +55,9 @@ public final class Constants {
   public static final int pigeonID = 5;
   public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
-
   /* Elevator heights */
-  public static final double L1Height = -112;
+  public static final double L1Height = -37.333
+  ;
   public static final double L2Height = -49.750;
   public static final double L3Height = -75.010;
   public static final double intakeHeight = -4.892;
@@ -131,7 +131,7 @@ public final class Constants {
   public static final double motorRotationsPerMeter = driveGearRatio * wheelRotationsPerMeter;
 
 
-   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 2);
+   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(0.5, 0.5, 9999999);
    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   /* Swerve Profiling Values */
   //public static final double maxSpeed = 3.6576; // meters per second

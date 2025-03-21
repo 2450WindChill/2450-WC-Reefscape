@@ -40,18 +40,14 @@ public class CoralSubsystem extends SubsystemBase {
     private DigitalInput intakeHallSensor = new DigitalInput(Constants.intakeHallSensorChannel);
     private DigitalInput topHallSensor = new DigitalInput(Constants.topHallSensorChannel);
 
-    // Beam Breaks
-    private DigitalInput horizontalBeamBreak = new DigitalInput(Constants.horizontalBeamBreakID);
-    private DigitalInput verticalBeamBreak = new DigitalInput(Constants.verticalBeamBreakID);
-
     private CANdle candle = new CANdle(5);
 
     /** Creates a new ExampleSubsystem. */
     public CoralSubsystem() {
         Slot0Configs slot0Configs = new Slot0Configs();
         slot0Configs.kP = 2.4; // An error of 1 rotation results in 2.4 V output
-        slot0Configs.kI = 0; // no output for integrated error
-        slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
+        slot0Configs.kI = 0.2; // no output for integrated error
+        slot0Configs.kD = 0.3; // A velocity of 1 rps results in 0.1 V output
         elevatorMotor.getConfigurator().apply(slot0Configs);
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     }
@@ -100,8 +96,9 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     public boolean goalReached(double goal) {
-        double tolerance = 0.2;
+        double tolerance = 0.005;
         double currentPosition = elevatorMotor.getPosition().getValueAsDouble();
+        System.err.println("Error: " + Math.abs(currentPosition - goal));
         if ((Math.abs(currentPosition - goal) < tolerance)) {
             return true;
         } else {
@@ -119,10 +116,6 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Bottom Hall Mark", bottomHallSensor.get());
         SmartDashboard.putBoolean("Intake Hall Mark", intakeHallSensor.get());
         SmartDashboard.putBoolean("Top Hall Mark", topHallSensor.get());
-
-        // Beam breaks
-        SmartDashboard.putBoolean("Horizontal Break One", horizontalBeamBreak.get());
-        SmartDashboard.putBoolean("Vertical Break One", verticalBeamBreak.get());
 
         resetHeight(Constants.intakeHeight);
 
@@ -163,13 +156,5 @@ public class CoralSubsystem extends SubsystemBase {
 
     public void zeroElevatorMotor() {
         elevatorMotor.set(0);
-    }
-
-    public DigitalInput getHorizontalBeamBreak() {
-        return horizontalBeamBreak;
-    }
-
-    public DigitalInput getVerticalBeamBreak() {
-        return verticalBeamBreak;
     }
 }
