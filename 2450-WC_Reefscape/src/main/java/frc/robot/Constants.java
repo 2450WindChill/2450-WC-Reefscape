@@ -83,7 +83,7 @@ public final class Constants {
   public static final double openLoopRamp = 0.25;
   public static final double closedLoopRamp = 0.0;
 
-  public static final double rotationsPerOneMeter = wheelDiameter * Math.PI;
+  public static final double rotationsToMeters = wheelDiameter * Math.PI;
 
   public static final double feetToMeters = 0.3048;
 

@@ -135,7 +135,7 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
 
   // TODO: Once we get Kraken encoder this should work (done?), make sure where these methods are used the types are correct
   public double getDriveEncoder() {
-    return driveMotor.getPosition().getValueAsDouble() * Constants.rotationsPerOneMeter;
+    return driveMotor.getPosition().getValueAsDouble() * Constants.rotationsToMeters;
   }
 
   // TODO: Once we get Kraken encoder this should work (done?)
@@ -187,7 +187,7 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
   
     talonFXConfigs.MotorOutput.Inverted = invertedValue;
     talonFXConfigs.MotorOutput.NeutralMode = idleMode;
-    talonFXConfigs.Feedback.RotorToSensorRatio = Constants.driveGearRatio;
+    talonFXConfigs.Feedback.SensorToMechanismRatio = Constants.driveGearRatio;
     // in init function, set slot 0 gains
     // var slot0Configs = new Slot0Configs();
   
@@ -195,6 +195,7 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
     talonFXConfigs.Slot0.kP = 0.11;
     talonFXConfigs.Slot0.kI = 0;
     talonFXConfigs.Slot0.kD = 0;
+
 
     /* Gear Ratio Config */
     // Applying configs to the configurator
@@ -213,7 +214,8 @@ public class WindChillKrakenSwerveModule extends BaseWindChillSwerveModule{
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        -((getDriveEncoder() / Constants.rotationsPerOneMeter) * Constants.feetToMeters) * 0.9,
+        // -((getDriveEncoder() / Constants.rotationsPerOneMeter) * Constants.feetToMeters) * 0.9,
+        getDriveEncoder(),
         Rotation2d.fromDegrees(getCanCoderInDegrees()));
   }
 
