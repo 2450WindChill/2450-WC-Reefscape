@@ -61,12 +61,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import edu.wpi.first.wpilibj.GenericHID;
+
+
 public class RobotContainer {
   public CoralSubsystem m_coralSubsystem = null;
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
   public DeepClimbSubsystem m_deepClimbSubsystem = null;
-  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.NEO,
-      m_visionSubsystem);
+  public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.NEO, m_visionSubsystem);
   public final EndEffectorSubsystem m_EndEffectorSubsystem = new EndEffectorSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
@@ -82,18 +84,45 @@ public class RobotContainer {
   public final JoystickButton dr_rightBumper = new JoystickButton(m_driverController, Button.kRightBumper.value);
   public final JoystickButton dr_startButton = new JoystickButton(m_driverController, Button.kStart.value);
 
-  public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
-  public final JoystickButton op_bButton = new JoystickButton(m_operatorController, Button.kB.value);
-  public final JoystickButton op_xButton = new JoystickButton(m_operatorController, Button.kX.value);
-  public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
+  public final POVButton dr_upDPad = new POVButton(m_driverController, 0);
+  public final POVButton dr_downDPad = new POVButton(m_driverController, 180);
 
-  public final POVButton op_UpDpad = new POVButton(m_operatorController, 0);
-  public final POVButton op_DownDpad = new POVButton(m_operatorController, 180);
-  public final POVButton op_LeftDpad = new POVButton(m_operatorController, 270);
-  public final POVButton op_RightDpad = new POVButton(m_operatorController, 90);
 
-  public final JoystickButton op_leftBumper = new JoystickButton(m_operatorController, Button.kLeftBumper.value);
-  public final JoystickButton op_rightBumper = new JoystickButton(m_operatorController, Button.kRightBumper.value);
+  // public final JoystickButton op_aButton = new JoystickButton(m_operatorController, Button.kA.value);
+  // public final JoystickButton op_bButton = new JoystickButton(m_operatorController, Button.kB.value);
+  // public final JoystickButton op_xButton = new JoystickButton(m_operatorController, Button.kX.value);
+  // public final JoystickButton op_yButton = new JoystickButton(m_operatorController, Button.kY.value);
+
+  // public final POVButton op_UpDpad = new POVButton(m_operatorController, 0);
+  // public final POVButton op_DownDpad = new POVButton(m_operatorController, 180);
+  // public final POVButton op_LeftDpad = new POVButton(m_operatorController, 270);
+  // public final POVButton op_RightDpad = new POVButton(m_operatorController, 90);
+
+  // public final JoystickButton op_leftBumper = new JoystickButton(m_operatorController, Button.kLeftBumper.value);
+  // public final JoystickButton op_rightBumper = new JoystickButton(m_operatorController, Button.kRightBumper.value);
+
+  public final JoystickButton op_intake = new JoystickButton(m_customController, 1);
+  public final JoystickButton op_outtake = new JoystickButton(m_customController, 2);
+
+  public final JoystickButton op_bonk1 = new JoystickButton(m_customController, 3);
+  public final JoystickButton op_bonk2 = new JoystickButton(m_customController, 4);
+
+  public final JoystickButton op_elevatorIntakeHeight = new JoystickButton(m_customController, 5);
+
+  public final JoystickButton op_L1 = new JoystickButton(m_customController, 6);
+
+  public final JoystickButton op_L2Left = new JoystickButton(m_customController, 7);
+  public final JoystickButton op_L2Right = new JoystickButton(m_customController, 8);
+
+  public final JoystickButton op_L3Left = new JoystickButton(m_customController, 9);
+  public final JoystickButton op_L3Right = new JoystickButton(m_customController, 10);
+
+  public final JoystickButton op_reefSide1 = new JoystickButton(m_customController, 11);
+  public final JoystickButton op_reefSide2 = new JoystickButton(m_customController, 12);
+  public final JoystickButton op_reefSide3 = new JoystickButton(m_customController, 13);
+  public final JoystickButton op_reefSide4 = new JoystickButton(m_customController, 14);
+  public final JoystickButton op_reefSide5 = new JoystickButton(m_customController, 15);
+  public final JoystickButton op_reefSide6 = new JoystickButton(m_customController, 16);
 
   private final CurrentBot currentBotState = CurrentBot.COMP;
 
@@ -158,18 +187,26 @@ public class RobotContainer {
 
     // Only use operator buttons if using the comp robot
     if (currentBotState == CurrentBot.COMP) {
+      
       // Operator Bindings
-      op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+
+      op_elevatorIntakeHeight.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
           Constants.intakeHeight));
-      op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+      
+
+      op_L1.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
           Constants.L1Height));
-      op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+      op_L2Left.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
           Constants.L2Height));
-      op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
-          Constants.L3Height));
-      op_rightBumper.onTrue(new CoralOuttake(m_coralSubsystem, m_EndEffectorSubsystem, 0.2));
-      op_RightDpad.onTrue(new CoralOuttake(m_coralSubsystem, m_EndEffectorSubsystem, 0.03));
-      op_leftBumper.onTrue(new FullCoralIntake(m_coralSubsystem, m_EndEffectorSubsystem,  0.2, 0.25));
+      op_L2Right.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+        Constants.L2Height));
+      op_L3Left.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+        Constants.L3Height));
+      op_L3Right.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+        Constants.L3Height));
+      op_outtake.onTrue(new CoralOuttake(m_coralSubsystem, m_EndEffectorSubsystem, 0.2));
+      // op_RightDpad.onTrue(new CoralOuttake(m_coralSubsystem, m_EndEffectorSubsystem, 0.03));
+      op_intake.onTrue(new FullCoralIntake(m_coralSubsystem, m_EndEffectorSubsystem,  0.2, 0.25));
 
       dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
       dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
@@ -177,8 +214,8 @@ public class RobotContainer {
       dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601,  () -> dr_bButton.getAsBoolean()));
       
       // ELEVATOR COMMANDS COMMENTED OUT FOR NOW
-      op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.05));
-      op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.05));
+      dr_upDPad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.05));
+      dr_downDPad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.05));
 
       m_coralSubsystem.setDefaultCommand(
           new BopAlgae(
