@@ -32,7 +32,7 @@ public class MoveToPose extends Command {
     double ySpeed;
     double rotSpeed;
 
-    boolean isInverted;
+    boolean rotIsInverted;
 
     public MoveToPose(DrivetrainSubsystem drivetrainSubsystem, Pose2d target, BooleanSupplier overrideSupplier) {
         m_drivetrainSubsystem = drivetrainSubsystem;
