@@ -79,6 +79,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new WindChillKrakenSwerveModule(3, Constants.BackRightKrakenModule.constants) };
           break;
     }
+    
     gyro = new Pigeon2(Constants.pigeonID, "canivore");
     drivetrainPoseEstimator = new SwerveDrivePoseEstimator(
         Constants.swerveKinematics,
@@ -92,11 +93,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new TrapezoidProfile.Constraints(6.28, 3.14)));
     zeroGyro();
 
-   
-    // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
-    // Do this in either robot periodic or subsystem periodic
-    m_field.setRobotPose(getBotPose());
 
   // -----------------------------------------------------------------------------------------------------------------------------------------
   // Pathplanner:

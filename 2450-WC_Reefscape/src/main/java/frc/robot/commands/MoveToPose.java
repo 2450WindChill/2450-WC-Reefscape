@@ -56,6 +56,8 @@ public class MoveToPose extends Command {
 
         xController.setGoal(xTarget);
         yController.setGoal(yTarget);
+
+        rotController.enableContinuousInput(-Math.PI, Math.PI);
         rotController.setGoal(rotTarget);
 
         SmartDashboard.putNumber("Initial pose X: ", initialPose.getX());
@@ -70,7 +72,6 @@ public class MoveToPose extends Command {
     public void execute() {
         Pose2d currPose = m_drivetrainSubsystem.getThisPose();
         
-        // TODO confirm this should be negative
         xSpeed = xController.calculate(currPose.getX());
         ySpeed = yController.calculate(currPose.getY());
         rotSpeed = -rotController.calculate(currPose.getRotation().getRadians());

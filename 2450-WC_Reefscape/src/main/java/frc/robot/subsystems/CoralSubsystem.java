@@ -54,7 +54,7 @@ public class CoralSubsystem extends SubsystemBase {
         slot0Configs.kD = 0.3; // A velocity of 1 rps results in 0.1 V output
         elevatorMotor.getConfigurator().apply(slot0Configs);
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        // intakeHallTrigger.toggleOnTrue(Commands.runOnce(() -> resetHeight(Constants.intakeHeight)));
+        // intakeHallTrigger.onTrue(Commands.runOnce(() -> resetHeight(Constants.intakeHeight)));
     }
 
     public void setElevatorSpeed(double newSpeed) {
@@ -121,8 +121,6 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Bottom Hall Mark", bottomHallSensor.get());
         SmartDashboard.putBoolean("Intake Hall Mark", intakeHallSensor.get());
         SmartDashboard.putBoolean("Top Hall Mark", topHallSensor.get());
-
-        resetHeight(Constants.intakeHeight);
 
         // if (!elevatorLowSwitch.get()) {
         // // zeroElevatorMotor();

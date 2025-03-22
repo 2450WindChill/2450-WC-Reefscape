@@ -6,15 +6,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
-public class BopAlgae extends Command {
+public class BopAlgaeWithTriggers extends Command {
     EndEffectorSubsystem m_EndEffectorSubsystem;
-    double m_Speed;
+    DoubleSupplier m_forwardSpeed;
+    DoubleSupplier m_backwardSpeed;
 
     String m_direction;
 
-    public BopAlgae(EndEffectorSubsystem endEffectorSubsystem, double speed) {
+    public BopAlgaeWithTriggers(EndEffectorSubsystem endEffectorSubsystem, DoubleSupplier forwardSpeed, DoubleSupplier backwardSpeed) {
         m_EndEffectorSubsystem = endEffectorSubsystem;
-        m_Speed = speed;
+        m_backwardSpeed = backwardSpeed;
+        m_forwardSpeed = forwardSpeed;
 
         addRequirements(m_EndEffectorSubsystem);
     }
@@ -23,7 +25,8 @@ public class BopAlgae extends Command {
     }
 
     public void execute() {
-        m_EndEffectorSubsystem.setEndAffectorSpeed(m_Speed);
+        double fS = (m_backwardSpeed.getAsDouble() - m_forwardSpeed.getAsDouble()) * 0.5;
+        m_EndEffectorSubsystem.setEndAffectorSpeed(fS);
     }
 
     public void end(boolean interrupted) {
@@ -33,4 +36,5 @@ public class BopAlgae extends Command {
     public boolean isFinished() {
         return false;
     }
+
 }
