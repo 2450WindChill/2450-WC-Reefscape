@@ -71,8 +71,8 @@ public class MoveToPose extends Command {
         Pose2d currPose = m_drivetrainSubsystem.getThisPose();
         
         // TODO confirm this should be negative
-        xSpeed = -xController.calculate(currPose.getX());
-        ySpeed = -yController.calculate(currPose.getY());
+        xSpeed = xController.calculate(currPose.getX());
+        ySpeed = yController.calculate(currPose.getY());
         rotSpeed = -rotController.calculate(currPose.getRotation().getRadians());
 
         m_drivetrainSubsystem.drive(new Translation2d(xSpeed, ySpeed), rotSpeed, false, false);

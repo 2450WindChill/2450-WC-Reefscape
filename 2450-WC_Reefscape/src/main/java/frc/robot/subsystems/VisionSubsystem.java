@@ -40,7 +40,7 @@ import frc.robot.Robot;
 public class VisionSubsystem extends SubsystemBase {
 
     PhotonCamera frontCamera = new PhotonCamera("frontCamera");
-    //PhotonCamera backCamera = new PhotonCamera("backCamera");
+    PhotonCamera backCamera = new PhotonCamera("backCamera");
 
     List<PhotonPipelineResult> frontCameraResults;
     List<PhotonPipelineResult> backCameraResults;
@@ -72,14 +72,7 @@ public class VisionSubsystem extends SubsystemBase {
     PhotonPoseEstimator frontPoseEstimator = null;
     EstimatedRobotPose frontPoseEstimate;
 
-    /*
-    PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(null, 
-                                                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
-                                                        new Transform3d(VisionConstants.backCameraForwardOffset, 
-                                                                        VisionConstants.backCameraLeftOffest, 
-                                                                        VisionConstants.backCameraUpOffest,
-                                                                        new Rotation3d(0, 0, Math.PI)));
-    */
+    PhotonPoseEstimator backPoseEstimator = null;
 
     public VisionSubsystem() {
         File field = new File(Filesystem.getDeployDirectory(), "AprilTagFieldLayout.json");
@@ -99,7 +92,14 @@ public class VisionSubsystem extends SubsystemBase {
                                                     new Transform3d(VisionConstants.frontCameraForwardOffset, 
                                                                     VisionConstants.frontCameraRightOffset, 
                                                                     VisionConstants.frontCameraUpOffest,
-                                                                    new Rotation3d(0, 0, 0)));
+                                                                    VisionConstants.frontCameraRotation));
+
+        backPoseEstimator = new PhotonPoseEstimator(fieldLayout, 
+                                                    PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                                                    new Transform3d(VisionConstants.backCameraForwardOffset, 
+                                                        VisionConstants.backCameraRightOffest, 
+                                                        VisionConstants.backCameraUpOffest,
+                                                        new Rotation3d(0, 0, Math.PI)));
     }
 
 
@@ -107,7 +107,7 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         // Read in relevant data from the Camera
         frontCameraResults = frontCamera.getAllUnreadResults();
-       // backCameraResults = backCamera.getAllUnreadResults();
+        backCameraResults = backCamera.getAllUnreadResults();
 
         if (!frontCameraResults.isEmpty()) {
             // Camera processed a new frame since last
@@ -120,8 +120,6 @@ public class VisionSubsystem extends SubsystemBase {
             frontCameraHasTarget = frontResult.hasTargets();
         }
 
-
-        /*
         if (!backCameraResults.isEmpty()) {
             // Camera processed a new frame since last
             // Get the last one in the list.
@@ -132,9 +130,8 @@ public class VisionSubsystem extends SubsystemBase {
                     // }
                 // }
             }
-            frontCameraHasTarget = frontResult.hasTargets();
+            backCameraHasTarget = frontResult.hasTargets();
         }
-        */
 
         // Optional<EstimatedRobotPose> frontPoseEstimateOptional = frontPoseEstimator.update(frontResult);
         // if (frontPoseEstimateOptional.isPresent()) {
@@ -240,10 +237,19 @@ public class VisionSubsystem extends SubsystemBase {
         return frontPoseEstimate.timestampSeconds;
     }
 
-     Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+    Optional<EstimatedRobotPose> getFrontEstimatedGlobalPose() {
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var change : frontCamera.getAllUnreadResults()) {
             visionEst = frontPoseEstimator.update(change);
+            updateEstimationStdDevs(visionEst, change.getTargets());
+        }
+        return visionEst;
+    }
+
+    Optional<EstimatedRobotPose> getBackEstimatedGlobalPose() {
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+        for (var change : backCamera.getAllUnreadResults()) {
+            visionEst = backPoseEstimator.update(change);
             updateEstimationStdDevs(visionEst, change.getTargets());
         }
         return visionEst;

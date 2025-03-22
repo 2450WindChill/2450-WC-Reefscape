@@ -8,6 +8,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
@@ -83,7 +85,7 @@ public final class Constants {
   public static final double openLoopRamp = 0.25;
   public static final double closedLoopRamp = 0.0;
 
-  public static final double rotationsToMeters = wheelDiameter * Math.PI;
+  public static final double rotationsToMeters = -wheelDiameter * Math.PI;
 
   public static final double feetToMeters = 0.3048;
 
@@ -131,8 +133,8 @@ public final class Constants {
   public static final double motorRotationsPerMeter = driveGearRatio * wheelRotationsPerMeter;
 
 
-   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(0.5, 0.5, 9999999);
-   public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(0.2, 0.2, 99999);
+   public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.2, 0.2, 99999);
   /* Swerve Profiling Values */
   //public static final double maxSpeed = 3.6576; // meters per second
 
@@ -238,13 +240,15 @@ public final class Constants {
   public static final double moveToPoseRotationSpeed = 0.5;
 
   public static final class VisionConstants {
-    public static final double frontCameraForwardOffset = Units.inchesToMeters(10.5);
-    public static final double frontCameraRightOffset = 0;
-    public static final double frontCameraUpOffest = Units.inchesToMeters(33.549);
+    public static final double frontCameraForwardOffset = Units.inchesToMeters(14.5);
+    public static final double frontCameraRightOffset = Units.inchesToMeters(0.875);
+    public static final double frontCameraUpOffest = Units.inchesToMeters(8.28);
+    public static final Rotation3d frontCameraRotation = new Rotation3d(0, 0, 0);
 
-    public static final double backCameraForwardOffset = 0;
-    public static final double backCameraLeftOffest = 0;
-    public static final double backCameraUpOffest = 0;
+    public static final double backCameraForwardOffset = Units.inchesToMeters(4.011);
+    public static final double backCameraRightOffest = Units.inchesToMeters(-7.25);
+    public static final double backCameraUpOffest = Units.inchesToMeters(33.55);
+    public static final Rotation3d backCameraRotation = new Rotation3d(0, Math.toRadians(7.679), Math.PI);
 
     public static final double postOffset = Units.inchesToMeters(6.5);
   }
