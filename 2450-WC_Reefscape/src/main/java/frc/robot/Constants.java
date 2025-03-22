@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -62,6 +63,8 @@ public final class Constants {
   public static final double L2Height = -49.750;
   public static final double L3Height = -75.010;
   public static final double intakeHeight = -4.892;
+
+  public static final Pose2d autoPose = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(0.0)));
 
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);

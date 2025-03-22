@@ -32,7 +32,7 @@ public class MoveToPose extends Command {
     double ySpeed;
     double rotSpeed;
 
-    boolean isInverted;
+    boolean rotIsInverted;
 
     public MoveToPose(DrivetrainSubsystem drivetrainSubsystem, Pose2d target, BooleanSupplier overrideSupplier) {
         m_drivetrainSubsystem = drivetrainSubsystem;
@@ -56,6 +56,8 @@ public class MoveToPose extends Command {
 
         xController.setGoal(xTarget);
         yController.setGoal(yTarget);
+
+        rotController.enableContinuousInput(-180, 180);
         rotController.setGoal(rotTarget);
 
         SmartDashboard.putNumber("Initial pose X: ", initialPose.getX());

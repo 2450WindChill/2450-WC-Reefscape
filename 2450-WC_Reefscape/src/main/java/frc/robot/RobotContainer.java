@@ -139,13 +139,17 @@ public class RobotContainer {
 
     // Driver Bindings
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
-    //dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
+    // dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
 
     // dr_xButton.onTrue(
-        // new MoveToPose(m_drivetrainSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))), () -> dr_bButton.getAsBoolean()));
-    //dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))))));
-    dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(13.18, 0.5, new Rotation2d(Math.toRadians(-180))))));
-    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(11.9, 2.2, new Rotation2d(Math.toRadians(-180))), () -> dr_bButton.getAsBoolean()));
+    // new MoveToPose(m_drivetrainSubsystem, new Pose2d(0, 0, new
+    // Rotation2d(Math.toRadians(0))), () -> dr_bButton.getAsBoolean()));
+    // dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new
+    // Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))))));
+    dr_bButton.onTrue(Commands
+        .runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(13.18, 0.5, new Rotation2d(Math.toRadians(-180))))));
+    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(11.9, 2.2, new Rotation2d(Math.toRadians(-180))),
+        () -> dr_bButton.getAsBoolean()));
 
     dr_leftBumper.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));
 
@@ -160,26 +164,26 @@ public class RobotContainer {
 
     // Only use operator buttons if using the comp robot
     if (currentBotState == CurrentBot.COMP) {
-      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099,  () -> dr_bButton.getAsBoolean()));
+      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099, () -> dr_bButton.getAsBoolean()));
 
       // Operator Bindings
       op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
           Constants.intakeHeight));
-      op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, 
+      op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
           Constants.L1Height));
-      op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, 
+      op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
           Constants.L2Height));
-      op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, 
+      op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
           Constants.L3Height));
       op_rightBumper.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.2));
       op_RightDpad.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.03));
-      op_leftBumper.onTrue(new CoralIntake(m_endEffectorSubsystem,  0.2));
+      op_leftBumper.onTrue(new CoralIntake(m_endEffectorSubsystem, 0.2));
 
       dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
       dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
 
-      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601,  () -> dr_bButton.getAsBoolean()));
-      
+      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601, () -> dr_bButton.getAsBoolean()));
+
       // ELEVATOR COMMANDS COMMENTED OUT FOR NOW
       op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.05));
       op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.05));
@@ -193,7 +197,8 @@ public class RobotContainer {
   }
 
   private Command intakeSequence() {
-    return Commands.runOnce(() -> new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight))
+    return Commands
+        .runOnce(() -> new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight))
         .andThen(new CoralIntake(m_endEffectorSubsystem, 0.1));
   }
 
@@ -221,7 +226,8 @@ public class RobotContainer {
             () -> (dr_startButton.getAsBoolean()), 4))
         .withWidget(BuiltInWidgets.kCommand);
 
-    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, -25)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, -25))
+        .withWidget(BuiltInWidgets.kCommand);
     tab.add("L1 height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L1Height))
         .withWidget(BuiltInWidgets.kCommand);
     tab.add("L2 height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L2Height))
@@ -254,9 +260,15 @@ public class RobotContainer {
             m_drivetrainSubsystem.gyro.getYaw().getValueAsDouble(), true, false)));
   }
 
-  // private Command autonomous() {
-  //   return Commands.runOnce()
-  // }
+  private Command oneCoralAuto() {
+    return Commands.parallel(
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight),
+      new CoralIntake(m_endEffectorSubsystem, 0.2))
+    .andThen(Commands.parallel(
+      new MoveToPose(m_drivetrainSubsystem, Constants.autoPose, dr_aButton),
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L2Height)))
+      .andThen(new CoralOuttake(m_endEffectorSubsystem, 0.2));
+  }
 
   private Command scoreCoral(ReefDirection direction, ReefLevel level) {
     double strafeOffset = Constants.VisionConstants.postOffset;
@@ -285,7 +297,8 @@ public class RobotContainer {
 
   private Command intakePreLoad() {
     return new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight);
-        // .andThen(new FullCoralIntake(m_coralSubsystem, m_endEffectorSubsystem,  0.2, 0.25));
+    // .andThen(new FullCoralIntake(m_coralSubsystem, m_endEffectorSubsystem, 0.2,
+    // 0.25));
   }
 
   private void configureAutoChooser() {
@@ -297,7 +310,7 @@ public class RobotContainer {
 
   // Auto command
   public Command getAutonomousCommand() {
-    return autoBackUp();
+    return oneCoralAuto();
     // return scoreCoral(ReefDirection.LEFT, ReefLevel.L2);
     // return m_chooser.getSelected();
     // return new InstantCommand();
@@ -316,5 +329,4 @@ public class RobotContainer {
     // .andThen(scoreCoral(ReefDirection.LEFT, ReefLevel.L2)));
   }
 
-  
 }
