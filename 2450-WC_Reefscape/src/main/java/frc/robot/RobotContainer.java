@@ -163,13 +163,13 @@ public class RobotContainer {
       dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099,  () -> dr_bButton.getAsBoolean()));
 
       // Operator Bindings
-      op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+      op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
           Constants.intakeHeight));
-      op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+      op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, 
           Constants.L1Height));
-      op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+      op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, 
           Constants.L2Height));
-      op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem,
+      op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, 
           Constants.L3Height));
       op_rightBumper.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.2));
       op_RightDpad.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.03));
@@ -193,7 +193,7 @@ public class RobotContainer {
   }
 
   private Command intakeSequence() {
-    return Commands.runOnce(() -> new MoveElevatorToPosition(m_coralSubsystem, Constants.intakeHeight))
+    return Commands.runOnce(() -> new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight))
         .andThen(new CoralIntake(m_endEffectorSubsystem, 0.1));
   }
 
@@ -221,12 +221,12 @@ public class RobotContainer {
             () -> (dr_startButton.getAsBoolean()), 4))
         .withWidget(BuiltInWidgets.kCommand);
 
-    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, -25)).withWidget(BuiltInWidgets.kCommand);
-    tab.add("L1 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L1Height))
+    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, -25)).withWidget(BuiltInWidgets.kCommand);
+    tab.add("L1 height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L1Height))
         .withWidget(BuiltInWidgets.kCommand);
-    tab.add("L2 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L2Height))
+    tab.add("L2 height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L2Height))
         .withWidget(BuiltInWidgets.kCommand);
-    tab.add("L3 height", new MoveElevatorToPosition(m_coralSubsystem, Constants.L3Height))
+    tab.add("L3 height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L3Height))
         .withWidget(BuiltInWidgets.kCommand);
   }
 
@@ -254,6 +254,10 @@ public class RobotContainer {
             m_drivetrainSubsystem.gyro.getYaw().getValueAsDouble(), true, false)));
   }
 
+  // private Command autonomous() {
+  //   return Commands.runOnce()
+  // }
+
   private Command scoreCoral(ReefDirection direction, ReefLevel level) {
     double strafeOffset = Constants.VisionConstants.postOffset;
     double height;
@@ -275,12 +279,12 @@ public class RobotContainer {
     return Commands.parallel(
         new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
             strafeOffset, 2, Camera.FRONT, () -> (dr_startButton.getAsBoolean()), 2),
-        new MoveElevatorToPosition(m_coralSubsystem, height))
+        new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, height))
         .andThen(new CoralOuttake(m_endEffectorSubsystem, 0.5));
   }
 
   private Command intakePreLoad() {
-    return new MoveElevatorToPosition(m_coralSubsystem, Constants.intakeHeight);
+    return new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight);
         // .andThen(new FullCoralIntake(m_coralSubsystem, m_endEffectorSubsystem,  0.2, 0.25));
   }
 

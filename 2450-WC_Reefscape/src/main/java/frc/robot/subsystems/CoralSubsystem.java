@@ -54,7 +54,7 @@ public class CoralSubsystem extends SubsystemBase {
         slot0Configs.kD = 0.3; // A velocity of 1 rps results in 0.1 V output
         elevatorMotor.getConfigurator().apply(slot0Configs);
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        intakeHallTrigger.onTrue(Commands.runOnce(() -> resetHeight(Constants.intakeHeight)));
+        // intakeHallTrigger.toggleOnTrue(Commands.runOnce(() -> resetHeight(Constants.intakeHeight)));
     }
 
     public void setElevatorSpeed(double newSpeed) {
@@ -139,6 +139,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     public void resetHeight(double height) {
         elevatorMotor.setPosition(height);
+        System.out.println("Reset Height RAN!");
     }
 
     public void simulationPeriodic() {
