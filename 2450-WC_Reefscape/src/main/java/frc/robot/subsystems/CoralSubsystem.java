@@ -28,7 +28,9 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 public class CoralSubsystem extends SubsystemBase {
@@ -42,6 +44,8 @@ public class CoralSubsystem extends SubsystemBase {
 
     private CANdle candle = new CANdle(5);
 
+    private Trigger intakeHallTrigger = new Trigger(bottomHallSensor::get);
+
     /** Creates a new ExampleSubsystem. */
     public CoralSubsystem() {
         Slot0Configs slot0Configs = new Slot0Configs();
@@ -50,15 +54,16 @@ public class CoralSubsystem extends SubsystemBase {
         slot0Configs.kD = 0.3; // A velocity of 1 rps results in 0.1 V output
         elevatorMotor.getConfigurator().apply(slot0Configs);
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+        intakeHallTrigger.onTrue(Commands.runOnce(() -> resetHeight(Constants.intakeHeight)));
     }
 
     public void setElevatorSpeed(double newSpeed) {
         final DutyCycleOut m_dutyCycle = new DutyCycleOut(0.0);
         elevatorMotor.setControl(m_dutyCycle.withOutput(newSpeed)
-        .withLimitForwardMotion(!bottomHallSensor.get())
-        .withLimitReverseMotion(!topHallSensor.get()));
+                .withLimitForwardMotion(!bottomHallSensor.get())
+                .withLimitReverseMotion(!topHallSensor.get()));
     }
-    
+
     public CANdle getCANdle() {
         return candle;
     }
@@ -91,8 +96,8 @@ public class CoralSubsystem extends SubsystemBase {
 
         // set position to 10 rotations
         elevatorMotor.setControl(m_request.withPosition(position)
-        .withLimitForwardMotion(!bottomHallSensor.get())
-        .withLimitReverseMotion(!topHallSensor.get()));
+                .withLimitForwardMotion(!bottomHallSensor.get())
+                .withLimitReverseMotion(!topHallSensor.get()));
     }
 
     public boolean goalReached(double goal) {
@@ -133,9 +138,7 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     public void resetHeight(double height) {
-        if (!intakeHallSensor.get()) {
-            elevatorMotor.setPosition(height);
-        }
+        elevatorMotor.setPosition(height);
     }
 
     public void simulationPeriodic() {
