@@ -68,7 +68,7 @@ public final class Constants {
   public static final double lowBopAlgae = -40.677;
   public static final double highBopAlgae = -67.102;
 
-  public static final Pose2d autoPose = new Pose2d(0.0, 0.0, new Rotation2d(Math.toRadians(0.0)));
+  public static final Pose2d autoRedPose = new Pose2d(12.478, 3.036, new Rotation2d(Math.toRadians(57.299)));
 
   /* Drivetrain Constants */
   public static final double trackWidth = Units.inchesToMeters(21.73);

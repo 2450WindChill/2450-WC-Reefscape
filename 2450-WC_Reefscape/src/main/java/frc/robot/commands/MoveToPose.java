@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -27,24 +28,28 @@ public class MoveToPose extends Command {
     double xTarget;
     double yTarget;
     double rotTarget;
+    Timer timer_seconds = new Timer();
 
     double xSpeed;
     double ySpeed;
     double rotSpeed;
+    double m_time;
 
     boolean rotIsInverted;
 
-    public MoveToPose(DrivetrainSubsystem drivetrainSubsystem, Pose2d target, BooleanSupplier overrideSupplier) {
+    public MoveToPose(DrivetrainSubsystem drivetrainSubsystem, Pose2d target, BooleanSupplier overrideSupplier, double time) {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_overrideSupplier = overrideSupplier;
         xTarget = target.getX();
         yTarget = target.getY();
         rotTarget = target.getRotation().getRadians();
+        m_time = time;
 
         addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {
+        timer_seconds.restart();
         Pose2d initialPose = m_drivetrainSubsystem.getThisPose();
         xController.reset(initialPose.getX());
         yController.reset(initialPose.getY());
@@ -82,6 +87,9 @@ public class MoveToPose extends Command {
     }
 
     public boolean isFinished() {
+        if (timer_seconds.get() >= m_time) {
+            return true;
+        }
         // return false;
         return (xController.atGoal() && yController.atGoal() && rotController.atGoal()) || m_overrideSupplier.getAsBoolean();
     }

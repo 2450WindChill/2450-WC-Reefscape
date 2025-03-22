@@ -146,7 +146,7 @@ public class RobotContainer {
         // new MoveToPose(m_drivetrainSubsystem, new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))), () -> dr_bButton.getAsBoolean()));
     //dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))))));
     dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(13.18, 0.5, new Rotation2d(Math.toRadians(-180))))));
-    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(13.647, 3.11, new Rotation2d(Math.toRadians(120))), () -> dr_bButton.getAsBoolean()));
+    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(13.647, 3.11, new Rotation2d(Math.toRadians(120))), () -> dr_bButton.getAsBoolean() ,3));
 
     dr_yButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));
 
@@ -270,14 +270,25 @@ public class RobotContainer {
             m_drivetrainSubsystem.gyro.getYaw().getValueAsDouble(), true, false)));
   }
 
-  private Command oneCoralAuto() {
+  private Command oneCoralL2Auto() {
     return Commands.parallel(
       new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight),
       new CoralIntake(m_endEffectorSubsystem, 0.2))
     .andThen(Commands.parallel(
-      new MoveToPose(m_drivetrainSubsystem, Constants.autoPose, dr_aButton),
+      new MoveToPose(m_drivetrainSubsystem, Constants.autoRedPose, dr_aButton, 3),
       new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L2Height)))
       .andThen(new CoralOuttake(m_endEffectorSubsystem, 0.2));
+  }
+
+  private Command oneCoralL1Auto() {
+    return Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(10.5, 0.22, new Rotation2d(0))))
+    .andThen(Commands.parallel(
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight),
+      new CoralIntake(m_endEffectorSubsystem, 0.2)))
+    .andThen(Commands.parallel(
+      new MoveToPose(m_drivetrainSubsystem, Constants.autoRedPose, dr_aButton, 3),
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L2Height)))
+      .andThen(new CoralOuttake(m_endEffectorSubsystem, 0.05));
   }
 
   private Command scoreCoral(ReefDirection direction, ReefLevel level) {
@@ -320,7 +331,7 @@ public class RobotContainer {
 
   // Auto command
   public Command getAutonomousCommand() {
-    return oneCoralAuto();
+    return oneCoralL1Auto();
     // return scoreCoral(ReefDirection.LEFT, ReefLevel.L2);
     // return m_chooser.getSelected();
     // return new InstantCommand();
