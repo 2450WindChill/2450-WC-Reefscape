@@ -14,6 +14,7 @@ import frc.robot.commands.BopAlgae;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.SquareToAprilTag;
 import frc.robot.commands.StrafeToAprilTag;
+import frc.robot.commands.LEDCommands.LEDBlueCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -123,6 +124,9 @@ public class RobotContainer {
     configureControllerBindings();
     configureAutoChooser();
     configureDashboardBindings();
+
+    ShuffleboardTab tab = Shuffleboard.getTab("testing");
+    tab.add("TimeMotor", new LEDBlueCommand(m_coralSubsystem)).withWidget(BuiltInWidgets.kCommand);
   }
 
   private void configureControllerBindings() {

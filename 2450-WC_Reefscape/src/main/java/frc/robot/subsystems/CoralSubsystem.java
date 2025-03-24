@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -54,7 +55,8 @@ public class CoralSubsystem extends SubsystemBase {
         slot0Configs.kD = 0.3; // A velocity of 1 rps results in 0.1 V output
         elevatorMotor.getConfigurator().apply(slot0Configs);
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        // intakeHallTrigger.onTrue(Commands.runOnce(() -> resetHeight(Constants.intakeHeight)));
+        // intakeHallTrigger.onTrue(Commands.runOnce(() ->
+        // resetHeight(Constants.intakeHeight)));
     }
 
     public void setElevatorSpeed(double newSpeed) {
@@ -74,6 +76,15 @@ public class CoralSubsystem extends SubsystemBase {
         candle.animate(fireAnimation);
     }
 
+    public void setLEDS(int r, int g, int b) {
+        candle.setLEDs (r, g, b );
+    }
+
+    public void setLEDSBlinking(int r, int g, int b) {
+         StrobeAnimation strobeAnimation = new StrobeAnimation(r, g, b, 0, 1.5, 68);
+         candle.animate(strobeAnimation);
+    }
+    
     public void setAllianceColor() {
         if (DriverStation.getAlliance().get() == Alliance.Red) {
             candle.setLEDs(255, 0, 0);
