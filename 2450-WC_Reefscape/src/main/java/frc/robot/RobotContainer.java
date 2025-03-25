@@ -69,6 +69,7 @@ public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN,
       m_visionSubsystem);
   public EndEffectorSubsystem m_endEffectorSubsystem = null;
+  public final LEDSubsystem m_LEDSubsystem = new LEDSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -108,7 +109,13 @@ public class RobotContainer {
   public RobotContainer() {
     if (currentBotState == CurrentBot.COMP) {
       m_coralSubsystem = new CoralSubsystem();
-      m_coralSubsystem.setAllianceColor();
+
+      /*
+       * UNCOMMENT!!!!!!!!!!!!!!!
+       * !!!!!!!!!!!!!!!!!!!!!!
+       * !!!!!!!!!!!!!!
+       */
+      // m_coralSubsystem.setAllianceColor();
       m_deepClimbSubsystem = new DeepClimbSubsystem();
       m_endEffectorSubsystem = new EndEffectorSubsystem();
     }
@@ -126,7 +133,6 @@ public class RobotContainer {
     configureDashboardBindings();
 
     ShuffleboardTab tab = Shuffleboard.getTab("testing");
-    tab.add("TimeMotor", new LEDBlueCommand(m_coralSubsystem)).withWidget(BuiltInWidgets.kCommand);
   }
 
   private void configureControllerBindings() {
@@ -144,6 +150,7 @@ public class RobotContainer {
 
     // Driver Bindings
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
+
     // dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
 
     // dr_xButton.onTrue(

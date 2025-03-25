@@ -39,17 +39,18 @@ public class MoveElevatorToPosition extends Command {
   public void end(boolean interrupted) {
     m_coralSubsystem.getElevatorMotorFx().set(0);
 
-    if (m_target == Constants.intakeHeight) {
-      m_coralSubsystem.getCANdle().setLEDs(0, 255, 0);
-    }
+    // if (m_target == Constants.intakeHeight) {
+    //   m_coralSubsystem.setLEDS(0, 255, 0);
+    // }
 
-    // TODO: Need to test
-    if (m_target == Constants.L1Height || m_target == Constants.L2Height || m_target == Constants.L3Height) {
-      m_coralSubsystem.blinkLEDSWhite();
-    }
+    // if (m_target == Constants.L1Height || m_target == Constants.L2Height || m_target == Constants.L3Height) {
+    //   m_coralSubsystem.blinkLEDSWhite();
+    // }
   }
 
   public boolean isFinished() {
     return m_coralSubsystem.goalReached(m_target) || !m_endEffectorSubsystem.getVerticalBeamBreak().get();
   }
 }
+
+

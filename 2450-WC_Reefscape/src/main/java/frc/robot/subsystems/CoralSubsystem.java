@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,9 +44,9 @@ public class CoralSubsystem extends SubsystemBase {
     private DigitalInput intakeHallSensor = new DigitalInput(Constants.intakeHallSensorChannel);
     private DigitalInput topHallSensor = new DigitalInput(Constants.topHallSensorChannel);
 
-    private CANdle candle = new CANdle(5);
-
     private Trigger intakeHallTrigger = new Trigger(bottomHallSensor::get);
+
+    private Timer timer = new Timer();
 
     /** Creates a new ExampleSubsystem. */
     public CoralSubsystem() {
@@ -66,32 +67,6 @@ public class CoralSubsystem extends SubsystemBase {
                 .withLimitReverseMotion(!topHallSensor.get()));
     }
 
-    public CANdle getCANdle() {
-        return candle;
-    }
-
-    public void fireLEDS() {
-        candle.configBrightnessScalar(1);
-        FireAnimation fireAnimation = new FireAnimation(1, 0.4, 68, 0.5, 0.5);
-        candle.animate(fireAnimation);
-    }
-
-    public void setLEDS(int r, int g, int b) {
-        candle.setLEDs (r, g, b );
-    }
-
-    public void setLEDSBlinking(int r, int g, int b) {
-         StrobeAnimation strobeAnimation = new StrobeAnimation(r, g, b, 0, 1.5, 68);
-         candle.animate(strobeAnimation);
-    }
-    
-    public void setAllianceColor() {
-        if (DriverStation.getAlliance().get() == Alliance.Red) {
-            candle.setLEDs(255, 0, 0);
-        } else {
-            candle.setLEDs(0, 0, 255);
-        }
-    }
 
     public boolean getBottomHallSensor() {
         return bottomHallSensor.get();
