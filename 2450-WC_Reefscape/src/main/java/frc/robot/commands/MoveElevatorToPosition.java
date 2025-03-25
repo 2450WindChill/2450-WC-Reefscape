@@ -15,18 +15,21 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.LEDSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class MoveElevatorToPosition extends Command {
-  private final CoralSubsystem m_coralSubsystem;
+  private final LEDSubsystem m_ledsubsystem;
   private final EndEffectorSubsystem m_endEffectorSubsystem;
+  private final CoralSubsystem m_coralSubsystem;
   private double m_target;
 
-  public MoveElevatorToPosition(CoralSubsystem coralSubsystem, EndEffectorSubsystem endEffectorSubsystem, double target) {
-    m_coralSubsystem = coralSubsystem;
+  public MoveElevatorToPosition(CoralSubsystem coralSubsystem, EndEffectorSubsystem endEffectorSubsystem, LEDSubsystem ledsubsystem, double target) {
+    m_ledsubsystem = ledsubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
+    m_coralSubsystem = coralSubsystem;
     m_target = target;
-    addRequirements(m_coralSubsystem);
+    addRequirements(m_ledsubsystem);
   }
 
   public void initialize() {
@@ -39,13 +42,13 @@ public class MoveElevatorToPosition extends Command {
   public void end(boolean interrupted) {
     m_coralSubsystem.getElevatorMotorFx().set(0);
 
-    // if (m_target == Constants.intakeHeight) {
-    //   m_coralSubsystem.setLEDS(0, 255, 0);
-    // }
+    if (m_target == Constants.intakeHeight) {
+      m_ledsubsystem.setLEDS(0, 255, 0, 0);
+    }
 
-    // if (m_target == Constants.L1Height || m_target == Constants.L2Height || m_target == Constants.L3Height) {
-    //   m_coralSubsystem.blinkLEDSWhite();
-    // }
+    if (m_target == Constants.L1Height || m_target == Constants.L2Height || m_target == Constants.L3Height) {
+      m_ledsubsystem.setLEDS(0, 0, 0, 255);
+    }
   }
 
   public boolean isFinished() {

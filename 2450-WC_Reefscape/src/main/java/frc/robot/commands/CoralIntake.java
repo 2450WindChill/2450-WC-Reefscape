@@ -10,29 +10,33 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class CoralIntake extends Command {
 
   private final EndEffectorSubsystem m_endEffectorSubsystem;
+  private final LEDSubsystem m_ledsubsystem;
   private final double m_speed;
   private DigitalInput verticalBeamBreak;
 
   private boolean currentBeamBreakState;
   private int stateChanges;
 
-  public CoralIntake(EndEffectorSubsystem endEffectorSubsystem, double speed) {
+  public CoralIntake(EndEffectorSubsystem endEffectorSubsystem, LEDSubsystem ledSubsystem, double speed) {
     m_speed = speed;
     m_endEffectorSubsystem = endEffectorSubsystem;
+    m_ledsubsystem = ledSubsystem;
     verticalBeamBreak = endEffectorSubsystem.getVerticalBeamBreak();
 
     currentBeamBreakState = verticalBeamBreak.get();
 
-    addRequirements(m_endEffectorSubsystem);
+    addRequirements(m_endEffectorSubsystem, m_ledsubsystem);
   }
 
   public void initialize() {
     stateChanges = 0;
     m_endEffectorSubsystem.getEndAffectorMotor().set(m_speed);
+    m_ledsubsystem.setLEDSBlinking(0, 255, 0, 0);
   }
 
   public void execute() {
@@ -44,6 +48,7 @@ public class CoralIntake extends Command {
   }
 
   public void end(boolean interrupted) {
+    m_ledsubsystem.setAllianceColor();
     System.out.println("Coral intake done");
     m_endEffectorSubsystem.getEndAffectorMotor().set(0);
   }
