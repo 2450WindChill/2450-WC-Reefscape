@@ -14,9 +14,9 @@ import frc.robot.commands.BopAlgae;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.SquareToAprilTag;
 import frc.robot.commands.StrafeToAprilTag;
-import frc.robot.commands.LEDCommands.LEDBlueCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.Constants.SwerveMode;
 import frc.robot.Constants.AutoConstants;
@@ -68,7 +68,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   public CoralSubsystem m_coralSubsystem = null;
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
-  public DeepClimbSubsystem m_deepClimbSubsystem = null;
+  // public DeepClimbSubsystem m_deepClimbSubsystem = null;
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN,
       m_visionSubsystem);
   public EndEffectorSubsystem m_endEffectorSubsystem = null;
@@ -115,14 +115,7 @@ public class RobotContainer {
   public RobotContainer() {
     if (currentBotState == CurrentBot.COMP) {
       m_coralSubsystem = new CoralSubsystem();
-
-      /*
-       * UNCOMMENT!!!!!!!!!!!!!!!
-       * !!!!!!!!!!!!!!!!!!!!!!
-       * !!!!!!!!!!!!!!
-       */
-      // m_coralSubsystem.setAllianceColor();
-      m_deepClimbSubsystem = new DeepClimbSubsystem();
+      // m_deepClimbSubsystem = new DeepClimbSubsystem();
       m_endEffectorSubsystem = new EndEffectorSubsystem();
     }
     m_drivetrainSubsystem.setDefaultCommand(
@@ -154,16 +147,17 @@ public class RobotContainer {
 
     // Only use operator buttons if using the comp robot
     if (currentBotState == CurrentBot.COMP) {
-      // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099,  () -> dr_bButton.getAsBoolean()));
+      // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099, ()
+      // -> dr_bButton.getAsBoolean()));
 
       // Operator Bindings
-      op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
+      op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
           Constants.intakeHeight));
-      op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
+      op_xButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
           Constants.L1Height));
-      op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
+      op_yButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
           Constants.L2Height));
-      op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
+      op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
           Constants.L3Height));
       op_rightBumper.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.2));
       op_RightDpad.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.03));
@@ -174,8 +168,9 @@ public class RobotContainer {
       dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
       dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
 
-      // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601,  () -> dr_bButton.getAsBoolean()));
-      
+      // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601, ()
+      // -> dr_bButton.getAsBoolean()));
+
       op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.15));
       op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.15));
       op_LeftDpad.whileTrue(bopLowAlgaeSequence());
@@ -191,20 +186,21 @@ public class RobotContainer {
 
   private Command intakeSequence() {
     return Commands
-        .runOnce(() -> new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight))
-        .andThen(new CoralIntake(m_endEffectorSubsystem, 0.1));
+        .runOnce(() -> new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
+            Constants.intakeHeight))
+        .andThen(new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, .1));
   }
 
   private Command bopLowAlgaeSequence() {
     return Commands.parallel(
-      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.lowBopAlgae),
-      new BopAlgae(m_endEffectorSubsystem, 0.2));
+        new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.lowBopAlgae),
+        new BopAlgae(m_endEffectorSubsystem, 0.2));
   }
 
   private Command bopHighAlgaeSequence() {
     return Commands.parallel(
-      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.highBopAlgae),
-      new BopAlgae(m_endEffectorSubsystem, 0.2));
+        new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.highBopAlgae),
+        new BopAlgae(m_endEffectorSubsystem, 0.2));
   }
 
   private void configureDashboardBindings() {
@@ -217,11 +213,14 @@ public class RobotContainer {
 
     tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, -25))
         .withWidget(BuiltInWidgets.kCommand);
-    tab.add("L1 height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L1Height))
+    tab.add("L1 height",
+        new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L1Height))
         .withWidget(BuiltInWidgets.kCommand);
-    tab.add("L2 height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L2Height))
+    tab.add("L2 height",
+        new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L2Height))
         .withWidget(BuiltInWidgets.kCommand);
-    tab.add("L3 height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L3Height))
+    tab.add("L3 height",
+        new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L3Height))
         .withWidget(BuiltInWidgets.kCommand);
   }
 
