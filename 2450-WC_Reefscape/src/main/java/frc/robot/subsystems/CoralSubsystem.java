@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.FireAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,9 +44,9 @@ public class CoralSubsystem extends SubsystemBase {
     private DigitalInput intakeHallSensor = new DigitalInput(Constants.intakeHallSensorChannel);
     private DigitalInput topHallSensor = new DigitalInput(Constants.topHallSensorChannel);
 
-    private CANdle candle = new CANdle(5);
-
     private Trigger intakeHallTrigger = new Trigger(bottomHallSensor::get);
+
+    private Timer timer = new Timer();
 
     /** Creates a new ExampleSubsystem. */
     public CoralSubsystem() {
@@ -54,7 +56,8 @@ public class CoralSubsystem extends SubsystemBase {
         slot0Configs.kD = 0.3; // A velocity of 1 rps results in 0.1 V output
         elevatorMotor.getConfigurator().apply(slot0Configs);
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        // intakeHallTrigger.toggleOnTrue(Commands.runOnce(() -> resetHeight(Constants.intakeHeight)));
+        // intakeHallTrigger.onTrue(Commands.runOnce(() ->
+        // resetHeight(Constants.intakeHeight)));
     }
 
     public void setElevatorSpeed(double newSpeed) {
@@ -64,23 +67,6 @@ public class CoralSubsystem extends SubsystemBase {
                 .withLimitReverseMotion(!topHallSensor.get()));
     }
 
-    public CANdle getCANdle() {
-        return candle;
-    }
-
-    public void fireLEDS() {
-        candle.configBrightnessScalar(1);
-        FireAnimation fireAnimation = new FireAnimation(1, 0.4, 68, 0.5, 0.5);
-        candle.animate(fireAnimation);
-    }
-
-    public void setAllianceColor() {
-        if (DriverStation.getAlliance().get() == Alliance.Red) {
-            candle.setLEDs(255, 0, 0);
-        } else {
-            candle.setLEDs(0, 0, 255);
-        }
-    }
 
     public boolean getBottomHallSensor() {
         return bottomHallSensor.get();
@@ -121,8 +107,6 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Bottom Hall Mark", bottomHallSensor.get());
         SmartDashboard.putBoolean("Intake Hall Mark", intakeHallSensor.get());
         SmartDashboard.putBoolean("Top Hall Mark", topHallSensor.get());
-
-        resetHeight(Constants.intakeHeight);
 
         // if (!elevatorLowSwitch.get()) {
         // // zeroElevatorMotor();

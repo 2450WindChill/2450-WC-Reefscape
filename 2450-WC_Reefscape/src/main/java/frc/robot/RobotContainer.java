@@ -10,9 +10,11 @@ import frc.robot.Constants.CurrentBot;
 import frc.robot.commands.AlignToAprilTagParallel;
 import frc.robot.commands.AlignToAprilTagSequential;
 import frc.robot.commands.ApproachAprilTag;
+import frc.robot.commands.BopAlgae;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.SquareToAprilTag;
 import frc.robot.commands.StrafeToAprilTag;
+import frc.robot.commands.LEDCommands.LEDBlueCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -20,7 +22,7 @@ import frc.robot.Constants.SwerveMode;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.AutoConstants.StartingPosition;
 import frc.robot.commands.AlignToAprilTagSequential;
-import frc.robot.commands.BopAlgae;
+import frc.robot.commands.BopAlgaeWithTriggers;
 import frc.robot.commands.ClimberMovement;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOuttake;
@@ -70,6 +72,7 @@ public class RobotContainer {
   public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem(SwerveMode.KRAKEN,
       m_visionSubsystem);
   public EndEffectorSubsystem m_endEffectorSubsystem = null;
+  public final LEDSubsystem m_LEDSubsystem = new LEDSubsystem();
 
   private final XboxController m_driverController = new XboxController(ControllerConstants.kDriverControllerPort);
   private final XboxController m_operatorController = new XboxController(ControllerConstants.kOperatorControllerPort);
@@ -112,7 +115,13 @@ public class RobotContainer {
   public RobotContainer() {
     if (currentBotState == CurrentBot.COMP) {
       m_coralSubsystem = new CoralSubsystem();
-      m_coralSubsystem.setAllianceColor();
+
+      /*
+       * UNCOMMENT!!!!!!!!!!!!!!!
+       * !!!!!!!!!!!!!!!!!!!!!!
+       * !!!!!!!!!!!!!!
+       */
+      // m_coralSubsystem.setAllianceColor();
       m_deepClimbSubsystem = new DeepClimbSubsystem();
       m_endEffectorSubsystem = new EndEffectorSubsystem();
     }
@@ -128,6 +137,8 @@ public class RobotContainer {
     configureControllerBindings();
     configureAutoChooser();
     configureDashboardBindings();
+
+    ShuffleboardTab tab = Shuffleboard.getTab("testing");
   }
 
   private void configureControllerBindings() {
@@ -143,7 +154,7 @@ public class RobotContainer {
 
     // Only use operator buttons if using the comp robot
     if (currentBotState == CurrentBot.COMP) {
-      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099, () -> dr_bButton.getAsBoolean()));
+      // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099,  () -> dr_bButton.getAsBoolean()));
 
       // Operator Bindings
       op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem,
@@ -163,14 +174,15 @@ public class RobotContainer {
       dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
       dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
 
-      dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601, () -> dr_bButton.getAsBoolean()));
-
-      // ELEVATOR COMMANDS COMMENTED OUT FOR NOW
-      op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.05));
-      op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.05));
+      // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601,  () -> dr_bButton.getAsBoolean()));
+      
+      op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.15));
+      op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.15));
+      op_LeftDpad.whileTrue(bopLowAlgaeSequence());
+      op_RightDpad.whileTrue(bopHighAlgaeSequence());
 
       m_endEffectorSubsystem.setDefaultCommand(
-          new BopAlgae(
+          new BopAlgaeWithTriggers(
               m_endEffectorSubsystem,
               () -> (m_operatorController.getRightTriggerAxis()) * 0.5,
               () -> (m_operatorController.getLeftTriggerAxis()) * 0.5));
@@ -181,6 +193,18 @@ public class RobotContainer {
     return Commands
         .runOnce(() -> new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight))
         .andThen(new CoralIntake(m_endEffectorSubsystem, 0.1));
+  }
+
+  private Command bopLowAlgaeSequence() {
+    return Commands.parallel(
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.lowBopAlgae),
+      new BopAlgae(m_endEffectorSubsystem, 0.2));
+  }
+
+  private Command bopHighAlgaeSequence() {
+    return Commands.parallel(
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.highBopAlgae),
+      new BopAlgae(m_endEffectorSubsystem, 0.2));
   }
 
   private void configureDashboardBindings() {
