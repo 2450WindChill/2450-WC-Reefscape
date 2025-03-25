@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import org.opencv.photo.Photo;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -41,18 +42,28 @@ public class VisionSubsystem extends SubsystemBase {
 
     PhotonCamera frontCamera = new PhotonCamera("frontCamera");
     PhotonCamera backCamera = new PhotonCamera("backCamera");
+    PhotonCamera leftCamera = new PhotonCamera("leftCamera");
+    PhotonCamera rightCamera = new PhotonCamera("rightCamera");
 
     List<PhotonPipelineResult> frontCameraResults;
     List<PhotonPipelineResult> backCameraResults;
+    List<PhotonPipelineResult> rightCameraResults;
+    List<PhotonPipelineResult> leftCameraResults;
 
     PhotonTrackedTarget frontCameraBestTarget;
     PhotonTrackedTarget backCameraBestTarget;
+    PhotonTrackedTarget rightCameraBestTarget;
+    PhotonTrackedTarget leftCameraBestTarget;
 
     PhotonPipelineResult frontResult;
     PhotonPipelineResult backResult;
+    PhotonPipelineResult rightResult;
+    PhotonPipelineResult leftResult;
 
     boolean frontCameraHasTarget;
     boolean backCameraHasTarget;
+    boolean rightCameraHasTarget;
+    boolean leftCameraHasTarget;
 
     double apriltagX = 0.0;
     double apriltagY = 0.0;
@@ -73,6 +84,8 @@ public class VisionSubsystem extends SubsystemBase {
     EstimatedRobotPose frontPoseEstimate;
 
     PhotonPoseEstimator backPoseEstimator = null;
+    PhotonPoseEstimator rightPoseEstimator = null;
+    PhotonPoseEstimator leftPoseEstimator = null;
 
     public VisionSubsystem() {
         File field = new File(Filesystem.getDeployDirectory(), "AprilTagFieldLayout.json");
@@ -97,9 +110,23 @@ public class VisionSubsystem extends SubsystemBase {
         backPoseEstimator = new PhotonPoseEstimator(fieldLayout, 
                                                     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
                                                     new Transform3d(VisionConstants.backCameraForwardOffset, 
-                                                        VisionConstants.backCameraRightOffest, 
-                                                        VisionConstants.backCameraUpOffest,
-                                                        new Rotation3d(0, 0, Math.PI)));
+                                                                    VisionConstants.backCameraRightOffest, 
+                                                                    VisionConstants.backCameraUpOffest,
+                                                                    VisionConstants.backCameraRotation));
+
+        leftPoseEstimator = new PhotonPoseEstimator(fieldLayout, 
+                                                    PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                                                    new Transform3d(VisionConstants.leftCameraForwardOffset, 
+                                                                    VisionConstants.leftCameraRightOffset, 
+                                                                    VisionConstants.leftCameraUpOffest,
+                                                                    VisionConstants.leftCameraRotation));
+
+        rightPoseEstimator = new PhotonPoseEstimator(fieldLayout, 
+                                                    PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                                                    new Transform3d(VisionConstants.rightCameraForwardOffset, 
+                                                                    VisionConstants.rightCameraRightOffset, 
+                                                                    VisionConstants.rightCameraUpOffest,
+                                                                    VisionConstants.rightCameraRotation));
     }
 
 
@@ -108,6 +135,8 @@ public class VisionSubsystem extends SubsystemBase {
         // Read in relevant data from the Camera
         frontCameraResults = frontCamera.getAllUnreadResults();
         backCameraResults = backCamera.getAllUnreadResults();
+        leftCameraResults = leftCamera.getAllUnreadResults();
+        rightCameraResults = rightCamera.getAllUnreadResults();
 
         if (!frontCameraResults.isEmpty()) {
             // Camera processed a new frame since last
@@ -126,11 +155,37 @@ public class VisionSubsystem extends SubsystemBase {
             backResult = backCameraResults.get(backCameraResults.size() - 1);
             if (backResult.hasTargets()) {
                 // At least one AprilTag was seen by the camera
-                backCameraBestTarget = frontResult.getBestTarget();
+                backCameraBestTarget = backResult.getBestTarget();
                     // }
                 // }
             }
-            backCameraHasTarget = frontResult.hasTargets();
+            backCameraHasTarget = backResult.hasTargets();
+        }
+
+        if (!leftCameraResults.isEmpty()) {
+            // Camera processed a new frame since last
+            // Get the last one in the list.
+            leftResult = leftCameraResults.get(leftCameraResults.size() - 1);
+            if (leftResult.hasTargets()) {
+                // At least one AprilTag was seen by the camera
+                leftCameraBestTarget = leftResult.getBestTarget();
+                    // }
+                // }
+            }
+            leftCameraHasTarget = leftResult.hasTargets();
+        }
+
+        if (!rightCameraResults.isEmpty()) {
+            // Camera processed a new frame since last
+            // Get the last one in the list.
+            rightResult = rightCameraResults.get(rightCameraResults.size() - 1);
+            if (rightResult.hasTargets()) {
+                // At least one AprilTag was seen by the camera
+                rightCameraBestTarget = rightResult.getBestTarget();
+                    // }
+                // }
+            }
+            rightCameraHasTarget = rightResult.hasTargets();
         }
 
         // Optional<EstimatedRobotPose> frontPoseEstimateOptional = frontPoseEstimator.update(frontResult);
@@ -250,6 +305,24 @@ public class VisionSubsystem extends SubsystemBase {
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var change : backCamera.getAllUnreadResults()) {
             visionEst = backPoseEstimator.update(change);
+            updateEstimationStdDevs(visionEst, change.getTargets());
+        }
+        return visionEst;
+    }
+
+    Optional<EstimatedRobotPose> getLeftEstimatedGlobalPose() {
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+        for (var change : leftCamera.getAllUnreadResults()) {
+            visionEst = leftPoseEstimator.update(change);
+            updateEstimationStdDevs(visionEst, change.getTargets());
+        }
+        return visionEst;
+    }
+
+    Optional<EstimatedRobotPose> getRightEstimatedGlobalPose() {
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+        for (var change : rightCamera.getAllUnreadResults()) {
+            visionEst = rightPoseEstimator.update(change);
             updateEstimationStdDevs(visionEst, change.getTargets());
         }
         return visionEst;

@@ -242,30 +242,54 @@ public final class Constants {
   public static final double moveToPoseRotationSpeed = 0.5;
 
   public static final class VisionConstants {
-    public static final double frontCameraForwardOffset = Units.inchesToMeters(14.5);
-    public static final double frontCameraRightOffset = Units.inchesToMeters(0.875);
-    public static final double frontCameraUpOffest = Units.inchesToMeters(8.28);
+    public static final double frontCameraForwardOffset = Units.inchesToMeters(11.229);
+    public static final double frontCameraRightOffset = Units.inchesToMeters(-0.901);
+    public static final double frontCameraUpOffest = Units.inchesToMeters(8.161);
     public static final Rotation3d frontCameraRotation = new Rotation3d(0, 0, 0);
 
-    public static final double backCameraForwardOffset = Units.inchesToMeters(4.011);
-    public static final double backCameraRightOffest = Units.inchesToMeters(-7.25);
-    public static final double backCameraUpOffest = Units.inchesToMeters(33.55);
+    public static final double backCameraForwardOffset = Units.inchesToMeters(4.233);
+    public static final double backCameraRightOffest = Units.inchesToMeters(-7.817);
+    public static final double backCameraUpOffest = Units.inchesToMeters(33.984);
     public static final Rotation3d backCameraRotation = new Rotation3d(0, Math.toRadians(7.679), Math.PI);
+
+    public static final double leftCameraForwardOffset = Units.inchesToMeters(-4.63);
+    public static final double leftCameraRightOffset = Units.inchesToMeters(-14.899);
+    public static final double leftCameraUpOffest = Units.inchesToMeters(20.6);
+    public static final Rotation3d leftCameraRotation = new Rotation3d(0, 0, Math.PI/2);
+
+    public static final double rightCameraForwardOffset = Units.inchesToMeters(7.62);
+    public static final double rightCameraRightOffset = Units.inchesToMeters(0.853);
+    public static final double rightCameraUpOffest = Units.inchesToMeters(30.758);
+    public static final Rotation3d rightCameraRotation = new Rotation3d(0, 0, (3*Math.PI)/2);
 
     public static final double postOffset = Units.inchesToMeters(6.5);
   }
 
-  public static final class autoConstants {
-    public static enum ReefDirection {
-      LEFT,
-      RIGHT;
+  public static final class AutoConstants {
+    public static enum StartingPosition {
+      redLeft,
+      redMiddle,
+      redRight,
+      blueLeft,
+      blueMiddle,
+      blueRight;
     }
 
-    public static enum ReefLevel {
-      L1,
-      L2,
-      L3;
-    }
+    public static final Pose2d redRightStartingPose = new Pose2d(0, 0, new Rotation2d());
+    public static final Pose2d redMiddleStartingPose = new Pose2d(0, 0, new Rotation2d());
+    public static final Pose2d redLeftStartingPose = new Pose2d(0, 0, new Rotation2d());
+
+    public static final Pose2d redRightScoringPose = new Pose2d(0, 0, new Rotation2d(Math.toRadians(-60)));
+    public static final Pose2d redMiddleScoringPose = new Pose2d(0, 0, new Rotation2d());
+    public static final Pose2d redLeftScoringPose = new Pose2d(0, 0, new Rotation2d(Math.toRadians(60)));
+
+    public static final Pose2d blueRightStartingPose = new Pose2d(0, 0, new Rotation2d(Math.PI));
+    public static final Pose2d blueMiddleStartingPose = new Pose2d(0, 0, new Rotation2d(Math.PI));
+    public static final Pose2d blueLeftStartingPose = new Pose2d(0, 0, new Rotation2d(Math.PI));
+
+    public static final Pose2d blueRightScoringPose = new Pose2d(0, 0, new Rotation2d(Math.toRadians(60)));
+    public static final Pose2d blueMiddleScoringPose = new Pose2d(0, 0, new Rotation2d());
+    public static final Pose2d blueLeftScoringPose = new Pose2d(0, 0, new Rotation2d(Math.toRadians(-60)));
   }
 
   public static enum Camera {
