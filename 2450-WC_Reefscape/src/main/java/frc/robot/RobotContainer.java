@@ -7,6 +7,9 @@ package frc.robot;
 import frc.robot.Constants.Camera;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.CurrentBot;
+import frc.robot.Constants.AutoConstants.StartingPosition;
+import frc.robot.Constants.AutoConstants.BopHeight;
+import frc.robot.Constants.AutoConstants.ScoringLevel;
 import frc.robot.commands.AlignToAprilTagParallel;
 import frc.robot.commands.AlignToAprilTagSequential;
 import frc.robot.commands.ApproachAprilTag;
@@ -38,6 +41,7 @@ import frc.robot.subsystems.DeepClimbSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
+import java.lang.invoke.ConstantBootstraps;
 import java.util.Vector;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -104,7 +108,10 @@ public class RobotContainer {
 
   private final CurrentBot currentBotState = CurrentBot.COMP;
 
-  public SendableChooser<Command> m_chooser;
+  public SendableChooser<StartingPosition> m_startingLocationChooser;
+  public SendableChooser<ScoringLevel> m_scoreLevelChooser;
+  public SendableChooser<BopHeight> m_bopHeightChooser;
+
 
   Timer timer = new Timer();
   double time = 0.0;
@@ -223,7 +230,7 @@ public class RobotContainer {
     tab.add("L3 height",
         new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L3Height))
         .withWidget(BuiltInWidgets.kCommand);
-    tab.add("ON", Commands.runOnce(() -> m_LEDSubsystem.setLEDColor(0, 255, 0, 0)));
+    tab.add("ON", Commands.runOnce(() -> m_LEDSubsystem.setLEDColor(0, 0, 255, 0)));
     tab.add("Flow", Commands.runOnce(() -> m_LEDSubsystem.setLEDSFlowing(0, 0, 255, 0)));
     tab.add("Blink", Commands.runOnce(() -> m_LEDSubsystem.setLEDSBlinking(0, 0, 255, 0)));
     tab.add("OFF", Commands.runOnce(() -> m_LEDSubsystem.setLEDColor(0, 0, 0, 0)));
@@ -254,8 +261,9 @@ public class RobotContainer {
             m_drivetrainSubsystem.gyro.getYaw().getValueAsDouble(), true, false)));
   }
 
-  private Command oneCoralAuto(StartingPosition startingPosition) {
-    Pose2d scoringPose = m_drivetrainSubsystem.getThisPose();
+  private Command oneCoralAuto(StartingPosition startingPosition, ScoringLevel scoringLevel, BopHeight bopHeight) {
+    Pose2d scoringPose;
+    double scoringHeight;
     switch (startingPosition) {
       case redLeft:
         m_drivetrainSubsystem.resetPose(AutoConstants.redLeftStartingPose);
@@ -280,35 +288,95 @@ public class RobotContainer {
       case blueRight:
         m_drivetrainSubsystem.resetPose(AutoConstants.blueRightStartingPose);
         scoringPose = AutoConstants.blueRightScoringPose;
+
+      default:
+        scoringPose = m_drivetrainSubsystem.getThisPose();
     }
 
-
-    return Commands.parallel(
-      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight),
-      new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
-      
-    .andThen(Commands.parallel(
-      new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5),
-      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L2Height)))
-
-    .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
+    switch (scoringLevel) {
+      case L1:
+        scoringHeight = Constants.L1Height;
+      case L2:
+        scoringHeight = Constants.L2Height;
+      default:
+        scoringHeight = Constants.L1Height;
+    }
+    
+    switch (bopHeight) {
+      case HIGH:
+        return Commands.parallel(
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight), 
+          new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
+        )
+        .andThen(Commands.parallel(
+          new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5), 
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
+        ))
+        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
+        .andThen(new BopAlgae(m_endEffectorSubsystem, Constants.highBopAlgae));
+      case LOW:
+        return Commands.parallel(
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight), 
+          new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
+        )
+        .andThen(Commands.parallel(
+          new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5), 
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
+        ))
+        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
+        .andThen(new BopAlgae(m_endEffectorSubsystem, Constants.lowBopAlgae));
+      case NO_BOP:
+        return Commands.parallel(
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight), 
+          new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
+        )
+        .andThen(Commands.parallel(
+          new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5), 
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
+        ))
+        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
+      default:
+        return Commands.parallel(
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight), 
+          new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
+        )
+        .andThen(Commands.parallel(
+          new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5), 
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
+        ))
+        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
+    }
   }
 
   private void configureAutoChooser() {
-    m_chooser = new SendableChooser<>();
-    SmartDashboard.putData("Auto", m_chooser);
-    m_chooser.addOption("Red Left", oneCoralAuto(StartingPosition.redLeft));
-    m_chooser.addOption("Red Middle", oneCoralAuto(StartingPosition.redMiddle));
-    m_chooser.addOption("Red Right", oneCoralAuto(StartingPosition.redRight));
-    m_chooser.addOption("Blue Left", oneCoralAuto(StartingPosition.blueLeft));
-    m_chooser.addOption("Blue Middle", oneCoralAuto(StartingPosition.blueMiddle));
-    m_chooser.addOption("Blue Right", oneCoralAuto(StartingPosition.blueRight));
+    m_startingLocationChooser = new SendableChooser<>();
+    m_scoreLevelChooser = new SendableChooser<>();
+    m_bopHeightChooser = new SendableChooser<>();
+
+    // Starting Position Chooser
+    SmartDashboard.putData("Starting Position", m_startingLocationChooser);
+    m_startingLocationChooser.addOption("Red Left", StartingPosition.redLeft);
+    m_startingLocationChooser.addOption("Red Middle", StartingPosition.redMiddle);
+    m_startingLocationChooser.addOption("Red Right", StartingPosition.redRight);
+
+    m_startingLocationChooser.addOption("Blue Left", StartingPosition.blueLeft);
+    m_startingLocationChooser.addOption("Blue Left", StartingPosition.blueMiddle);
+    m_startingLocationChooser.addOption("Blue Left", StartingPosition.blueRight);
+
+    // Scoring Level Chooser
+    SmartDashboard.putData("Scoring Level", m_scoreLevelChooser);
+    m_scoreLevelChooser.addOption("L1", ScoringLevel.L1);
+    m_scoreLevelChooser.addOption("L2", ScoringLevel.L2);
+
+    // Bop Height Chooser
+    SmartDashboard.putData("Bop Height", m_bopHeightChooser);
+    m_bopHeightChooser.addOption("Bop High", BopHeight.HIGH);
+    m_bopHeightChooser.addOption("Bop Low", BopHeight.LOW);
+    m_bopHeightChooser.addOption("No Bop", BopHeight.NO_BOP);
   }
 
   // Auto command
   public Command getAutonomousCommand() {
-    // return oneCoralAuto();
-    return m_chooser.getSelected();
-    // return new InstantCommand();
+    return Commands.runOnce(() -> oneCoralAuto(m_startingLocationChooser.getSelected(), m_scoreLevelChooser.getSelected(), m_bopHeightChooser.getSelected()));
   }
 }

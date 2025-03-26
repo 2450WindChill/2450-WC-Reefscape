@@ -30,7 +30,7 @@ public class CoralIntake extends Command {
 
     currentBeamBreakState = verticalBeamBreak.get();
 
-    addRequirements(m_endEffectorSubsystem, m_ledsubsystem);
+    addRequirements(m_endEffectorSubsystem);
   }
 
   public void initialize() {

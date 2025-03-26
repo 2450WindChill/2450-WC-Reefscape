@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.NoSuchElementException;
+
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.ColorFlowAnimation;
@@ -55,9 +57,14 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void setAllianceColor() {
-        if (DriverStation.getAlliance().get() == Alliance.Red) {
-            candle.setLEDs(255, 0, 0);
-        } else {
+        candle.clearAnimation(0);
+        try {
+            if (DriverStation.getAlliance().orElseThrow() == Alliance.Red) {
+                candle.setLEDs(255, 0, 0);
+            } else {
+                candle.setLEDs(0, 0, 255);
+            }
+        } catch (NoSuchElementException e) {
             candle.setLEDs(0, 0, 255);
         }
     }

@@ -89,6 +89,7 @@ public class Robot extends TimedRobot {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
     m_robotContainer.m_drivetrainSubsystem.resetMods();
+    m_robotContainer.m_LEDSubsystem.setAllianceColor();
   }
 
   /** This function is called periodically during test mode. */

@@ -24,13 +24,13 @@ public class CoralOuttake extends Command {
     m_ledSubsystem = ledSubsystem;
     m_speed = speed;
 
-    addRequirements(m_endEffectorSubsystem, m_ledSubsystem);
+    addRequirements(m_endEffectorSubsystem);
   }
 
   @Override
   public void initialize() {
     m_endEffectorSubsystem.getEndAffectorMotor().set(m_speed);
-    m_ledSubsystem.setLEDSBlinking(0, 0, 0, 255);
+    m_ledSubsystem.setLEDSBlinking(255, 0, 255, 0);
   }
 
   @Override

@@ -63,7 +63,7 @@ public final class Constants {
   public static final double L2Height = -49.750;
   public static final double L1Height = -33.749;
   public static final double resetHeight = -5.85;
-  public static final double intakeHeight = -4.673828125;
+  public static final double intakeHeight = -4.213;
 
   public static final double lowBopAlgae = -40.677;
   public static final double highBopAlgae = -67.102;
@@ -277,6 +277,17 @@ public final class Constants {
       blueLeft,
       blueMiddle,
       blueRight;
+    }
+
+    public static enum ScoringLevel {
+      L1,
+      L2;
+    }
+
+    public static enum BopHeight {
+      HIGH,
+      LOW,
+      NO_BOP;
     }
 
     public static final Pose2d redRightStartingPose = new Pose2d(0, 0, new Rotation2d());

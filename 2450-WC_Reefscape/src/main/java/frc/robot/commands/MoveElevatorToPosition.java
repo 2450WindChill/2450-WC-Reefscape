@@ -19,21 +19,22 @@ import frc.robot.subsystems.LEDSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class MoveElevatorToPosition extends Command {
-  private final LEDSubsystem m_ledsubsystem;
+  private final LEDSubsystem m_ledSubsystem;
   private final EndEffectorSubsystem m_endEffectorSubsystem;
   private final CoralSubsystem m_coralSubsystem;
   private double m_target;
 
   public MoveElevatorToPosition(CoralSubsystem coralSubsystem, EndEffectorSubsystem endEffectorSubsystem, LEDSubsystem ledsubsystem, double target) {
-    m_ledsubsystem = ledsubsystem;
+    m_ledSubsystem = ledsubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
     m_coralSubsystem = coralSubsystem;
     m_target = target;
-    addRequirements(m_ledsubsystem);
+    addRequirements(m_coralSubsystem);
   }
 
   public void initialize() {
     m_coralSubsystem.setPIDGoal(m_target);
+    m_ledSubsystem.setAllianceColor();
   }
 
   public void execute() {
@@ -42,12 +43,14 @@ public class MoveElevatorToPosition extends Command {
   public void end(boolean interrupted) {
     m_coralSubsystem.getElevatorMotorFx().set(0);
 
-    if (m_target == Constants.intakeHeight) {
-      m_ledsubsystem.setLEDColor(0, 255, 0, 0);
-    }
-
-    if (m_target == Constants.L1Height || m_target == Constants.L2Height || m_target == Constants.L3Height) {
-      m_ledsubsystem.setLEDColor(0, 0, 0, 255);
+    if (!m_endEffectorSubsystem.getVerticalBeamBreak().get()) {
+      m_ledSubsystem.setAllianceColor();
+    } else if (m_target == Constants.intakeHeight) {
+      m_ledSubsystem.setLEDColor(0, 255, 0, 0);
+    } else if (m_target == Constants.L1Height || m_target == Constants.L2Height || m_target == Constants.L3Height) {
+      m_ledSubsystem.setLEDColor(255, 0, 255, 0);
+    } else {
+      m_ledSubsystem.setAllianceColor();
     }
   }
 
