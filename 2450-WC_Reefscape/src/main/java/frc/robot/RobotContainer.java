@@ -140,8 +140,8 @@ public class RobotContainer {
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
     dr_bButton.onTrue(Commands
         .runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(13.18, 0.5, new Rotation2d(Math.toRadians(-180))))));
-    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(11.9, 2.2, new Rotation2d(Math.toRadians(-180))),
-        () -> dr_bButton.getAsBoolean()));
+    // dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(11.9, 2.2, new Rotation2d(Math.toRadians(-180))),
+    //     () -> dr_bButton.getAsBoolean()));
 
     dr_leftBumper.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));
     dr_minusButton.onTrue(new KillDriveCommands(m_drivetrainSubsystem));
@@ -160,14 +160,14 @@ public class RobotContainer {
           Constants.L2Height));
       op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
           Constants.L3Height));
-      op_rightBumper.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.2));
-      op_RightDpad.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.03));
-      op_leftBumper.onTrue(new CoralIntake(m_endEffectorSubsystem, 0.2));
+      op_rightBumper.onTrue(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
+      op_RightDpad.onTrue(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.03));
+      op_leftBumper.onTrue(new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
 
       op_startButton.onTrue(new KillOperatorCommands(m_coralSubsystem, m_endEffectorSubsystem));
 
-      dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
-      dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
+      // dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
+      // dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
 
       // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601, ()
       // -> dr_bButton.getAsBoolean()));
@@ -212,7 +212,7 @@ public class RobotContainer {
 
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
 
-    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, -25))
+    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, -25))
         .withWidget(BuiltInWidgets.kCommand);
     tab.add("L1 height",
         new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L1Height))
@@ -284,14 +284,14 @@ public class RobotContainer {
 
 
     return Commands.parallel(
-      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight),
-      new CoralIntake(m_endEffectorSubsystem, 0.2))
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight),
+      new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
       
     .andThen(Commands.parallel(
-      new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton),
-      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L2Height)))
+      new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5),
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L2Height)))
 
-    .andThen(new CoralOuttake(m_endEffectorSubsystem, 0.2));
+    .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
   }
 
   private void configureAutoChooser() {
