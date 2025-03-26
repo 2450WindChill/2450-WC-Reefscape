@@ -19,8 +19,8 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.Constants.SwerveMode;
-import frc.robot.Constants.autoConstants.ReefDirection;
-import frc.robot.Constants.autoConstants.ReefLevel;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.AutoConstants.StartingPosition;
 import frc.robot.commands.AlignToAprilTagSequential;
 import frc.robot.commands.BopAlgaeWithTriggers;
 import frc.robot.commands.ClimberMovement;
@@ -29,6 +29,8 @@ import frc.robot.commands.CoralOuttake;
 import frc.robot.commands.DeepClimbCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ElevatorMovement;
+import frc.robot.commands.KillDriveCommands;
+import frc.robot.commands.KillOperatorCommands;
 import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.commands.MoveToPose;
 import frc.robot.subsystems.CoralSubsystem;
@@ -43,6 +45,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -78,6 +81,7 @@ public class RobotContainer {
   public final JoystickButton dr_bButton = new JoystickButton(m_driverController, Button.kB.value);
   public final JoystickButton dr_xButton = new JoystickButton(m_driverController, Button.kX.value);
   public final JoystickButton dr_yButton = new JoystickButton(m_driverController, Button.kY.value);
+  public final JoystickButton dr_minusButton = new JoystickButton(m_driverController, Button.kBack.value);
 
   public final JoystickButton dr_leftBumper = new JoystickButton(m_driverController, Button.kLeftBumper.value);
   public final JoystickButton dr_rightBumper = new JoystickButton(m_driverController, Button.kRightBumper.value);
@@ -95,6 +99,8 @@ public class RobotContainer {
 
   public final JoystickButton op_leftBumper = new JoystickButton(m_operatorController, Button.kLeftBumper.value);
   public final JoystickButton op_rightBumper = new JoystickButton(m_operatorController, Button.kRightBumper.value);
+
+  public final JoystickButton op_startButton = new JoystickButton(m_operatorController, Button.kStart.value);
 
   private final CurrentBot currentBotState = CurrentBot.COMP;
 
@@ -130,43 +136,15 @@ public class RobotContainer {
   }
 
   private void configureControllerBindings() {
-    // new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.5).onTrue(new
-    // AlignToAprilTagSequential(
-    // m_visionSubsystem, m_drivetrainSubsystem,
-    // -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT,
-    // () -> (dr_startButton.getAsBoolean()), 4));
-
-    // new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.5).onTrue(new
-    // AlignToAprilTagSequential(
-    // m_visionSubsystem, m_drivetrainSubsystem,
-    // -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT,
-    // () -> (dr_startButton.getAsBoolean()), 4));
-
     // Driver Bindings
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
-
-    // dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroPose()));
-
-    // dr_xButton.onTrue(
-    // new MoveToPose(m_drivetrainSubsystem, new Pose2d(0, 0, new
-    // Rotation2d(Math.toRadians(0))), () -> dr_bButton.getAsBoolean()));
-    // dr_bButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new
-    // Pose2d(14.81, 1.46, new Rotation2d(Math.toRadians(118))))));
     dr_bButton.onTrue(Commands
         .runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(13.18, 0.5, new Rotation2d(Math.toRadians(-180))))));
-    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem,
-        new Pose2d(13.647, 3.11, new Rotation2d(Math.toRadians(120))), () -> dr_bButton.getAsBoolean(), 3));
+    dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(11.9, 2.2, new Rotation2d(Math.toRadians(-180))),
+        () -> dr_bButton.getAsBoolean()));
 
-    dr_yButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));
-
-    // dr_xButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem,
-    // m_drivetrainSubsystem,
-    // -Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () ->
-    // (dr_startButton.getAsBoolean()), 4));
-    // dr_bButton.onTrue(new AlignToAprilTagSequential(m_visionSubsystem,
-    // m_drivetrainSubsystem,
-    // Constants.VisionConstants.postOffset, 0.7, Camera.FRONT, () ->
-    // (dr_startButton.getAsBoolean()), 4));
+    dr_leftBumper.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));
+    dr_minusButton.onTrue(new KillDriveCommands(m_drivetrainSubsystem));
 
     // Only use operator buttons if using the comp robot
     if (currentBotState == CurrentBot.COMP) {
@@ -182,9 +160,14 @@ public class RobotContainer {
           Constants.L2Height));
       op_bButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
           Constants.L3Height));
-      op_rightBumper.onTrue(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
-      op_RightDpad.onTrue(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.03));
-      op_leftBumper.onTrue(new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
+      op_rightBumper.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.2));
+      op_RightDpad.onTrue(new CoralOuttake(m_endEffectorSubsystem, 0.03));
+      op_leftBumper.onTrue(new CoralIntake(m_endEffectorSubsystem, 0.2));
+
+      op_startButton.onTrue(new KillOperatorCommands(m_coralSubsystem, m_endEffectorSubsystem));
+
+      dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
+      dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
 
       // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601, ()
       // -> dr_bButton.getAsBoolean()));
@@ -228,24 +211,8 @@ public class RobotContainer {
     }
 
     ShuffleboardTab tab = Shuffleboard.getTab("Default");
-    tab.add("SquareToAprilTag",
-        new SquareToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, Camera.FRONT,
-            () -> (dr_startButton.getAsBoolean())))
-        .withWidget(BuiltInWidgets.kCommand);
-    tab.add("StrafeToAprilTag",
-        new StrafeToAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 0, Camera.FRONT,
-            () -> (dr_startButton.getAsBoolean())))
-        .withWidget(BuiltInWidgets.kCommand);
-    tab.add("ApproachAprilTag",
-        new ApproachAprilTag(m_visionSubsystem, m_drivetrainSubsystem, 1.3, Camera.FRONT,
-            () -> (dr_startButton.getAsBoolean())))
-        .withWidget(BuiltInWidgets.kCommand);
-    tab.add("AlignToAprilTag",
-        new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem, 0, 1.3, Camera.FRONT,
-            () -> (dr_startButton.getAsBoolean()), 4))
-        .withWidget(BuiltInWidgets.kCommand);
 
-    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, -25))
+    tab.add("Intake height", new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, -25))
         .withWidget(BuiltInWidgets.kCommand);
     tab.add("L1 height",
         new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L1Height))
@@ -287,85 +254,61 @@ public class RobotContainer {
             m_drivetrainSubsystem.gyro.getYaw().getValueAsDouble(), true, false)));
   }
 
-  private Command oneCoralL2Auto() {
-    return Commands.parallel(
-        new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight),
-        new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
-        .andThen(Commands.parallel(
-            new MoveToPose(m_drivetrainSubsystem, Constants.autoRedPose, dr_aButton, 3),
-            new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L2Height)))
-        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
-  }
+  private Command oneCoralAuto(StartingPosition startingPosition) {
+    Pose2d scoringPose = m_drivetrainSubsystem.getThisPose();
+    switch (startingPosition) {
+      case redLeft:
+        m_drivetrainSubsystem.resetPose(AutoConstants.redLeftStartingPose);
+        scoringPose = AutoConstants.redLeftScoringPose;
 
-  private Command oneCoralL1Auto() {
-    return Commands.runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(10.5, 0.22, new Rotation2d(0))))
-        .andThen(Commands.parallel(
-            new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
-                Constants.intakeHeight),
-            new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)))
-        .andThen(Commands.parallel(
-            new MoveToPose(m_drivetrainSubsystem, Constants.autoRedPose, dr_aButton, 3),
-            new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L2Height)))
-        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.05));
-  }
+      case redMiddle:
+        m_drivetrainSubsystem.resetPose(AutoConstants.redMiddleStartingPose);
+        scoringPose = AutoConstants.redMiddleScoringPose;
 
-  private Command scoreCoral(ReefDirection direction, ReefLevel level) {
-    double strafeOffset = Constants.VisionConstants.postOffset;
-    double height;
-    if (direction == ReefDirection.LEFT) {
-      strafeOffset = strafeOffset * -1;
+      case redRight:
+        m_drivetrainSubsystem.resetPose(AutoConstants.redRightStartingPose);
+        scoringPose = AutoConstants.redRightScoringPose;
+
+      case blueLeft:
+        m_drivetrainSubsystem.resetPose(AutoConstants.blueLeftStartingPose);
+        scoringPose = AutoConstants.blueLeftScoringPose;
+
+      case blueMiddle:
+        m_drivetrainSubsystem.resetPose(AutoConstants.blueMiddleStartingPose);
+        scoringPose = AutoConstants.blueMiddleScoringPose;
+
+      case blueRight:
+        m_drivetrainSubsystem.resetPose(AutoConstants.blueRightStartingPose);
+        scoringPose = AutoConstants.blueRightScoringPose;
     }
 
-    switch (level) {
-      case L1:
-        height = Constants.L1Height;
-      case L2:
-        height = Constants.L2Height;
-      case L3:
-        height = Constants.L3Height;
-      default:
-        height = Constants.L1Height;
-    }
 
     return Commands.parallel(
-        new AlignToAprilTagSequential(m_visionSubsystem, m_drivetrainSubsystem,
-            strafeOffset, 2, Camera.FRONT, () -> (dr_startButton.getAsBoolean()), 2),
-        new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, height))
-        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.5));
-  }
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.intakeHeight),
+      new CoralIntake(m_endEffectorSubsystem, 0.2))
+      
+    .andThen(Commands.parallel(
+      new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton),
+      new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, Constants.L2Height)))
 
-  private Command intakePreLoad() {
-    return new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight);
-    // .andThen(new FullCoralIntake(m_coralSubsystem, m_endEffectorSubsystem, 0.2,
-    // 0.25));
+    .andThen(new CoralOuttake(m_endEffectorSubsystem, 0.2));
   }
 
   private void configureAutoChooser() {
     m_chooser = new SendableChooser<>();
-    SmartDashboard.putData("Auto Mode", m_chooser);
-    // m_chooser.addOption("Autonomous", scoreCoral(ReefDirection.LEFT,
-    // ReefLevel.L2));
+    SmartDashboard.putData("Auto", m_chooser);
+    m_chooser.addOption("Red Left", oneCoralAuto(StartingPosition.redLeft));
+    m_chooser.addOption("Red Middle", oneCoralAuto(StartingPosition.redMiddle));
+    m_chooser.addOption("Red Right", oneCoralAuto(StartingPosition.redRight));
+    m_chooser.addOption("Blue Left", oneCoralAuto(StartingPosition.blueLeft));
+    m_chooser.addOption("Blue Middle", oneCoralAuto(StartingPosition.blueMiddle));
+    m_chooser.addOption("Blue Right", oneCoralAuto(StartingPosition.blueRight));
   }
 
   // Auto command
   public Command getAutonomousCommand() {
-    return oneCoralL1Auto();
-    // return scoreCoral(ReefDirection.LEFT, ReefLevel.L2);
-    // return m_chooser.getSelected();
+    // return oneCoralAuto();
+    return m_chooser.getSelected();
     // return new InstantCommand();
-    // return Commands.runOnce(() -> m_drivetrainSubsystem.drive(new
-    // Translation2d(0, 0.5),
-    // m_drivetrainSubsystem.gyro.getYaw().getValueAsDouble(),
-    // false,
-    // false))
-    // .andThen(new WaitCommand(4))
-    // .andThen(Commands.runOnce(() -> m_drivetrainSubsystem.drive(new
-    // Translation2d(0, 0),
-    // m_drivetrainSubsystem.gyro.getYaw().getValueAsDouble(),
-    // false,
-    // false))
-    // // .andThen(intakePreLoad())
-    // .andThen(scoreCoral(ReefDirection.LEFT, ReefLevel.L2)));
   }
-
 }

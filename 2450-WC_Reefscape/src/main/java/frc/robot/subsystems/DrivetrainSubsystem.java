@@ -160,6 +160,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 drivetrainPoseEstimator.addVisionMeasurement(
                           backEst.estimatedPose.toPose2d(), backEst.timestampSeconds, estStdDevs);
                     });
+
+    var leftVisionEst = m_visionSubystem.getLeftEstimatedGlobalPose();
+    leftVisionEst.ifPresent(
+              leftEst -> {
+                // Change our trust in the measurement based on the tags we can see
+                var estStdDevs = m_visionSubystem.getEstimationStdDevs();
+        
+                drivetrainPoseEstimator.addVisionMeasurement(
+                          leftEst.estimatedPose.toPose2d(), leftEst.timestampSeconds, estStdDevs);
+                    });
+
+    var rightVisionEst = m_visionSubystem.getRightEstimatedGlobalPose();
+    rightVisionEst.ifPresent(
+              rightEst -> {
+                // Change our trust in the measurement based on the tags we can see
+                var estStdDevs = m_visionSubystem.getEstimationStdDevs();
+        
+                drivetrainPoseEstimator.addVisionMeasurement(
+                          rightEst.estimatedPose.toPose2d(), rightEst.timestampSeconds, estStdDevs);
+                    });
               
     m_field.setRobotPose(getBotPose());
 
