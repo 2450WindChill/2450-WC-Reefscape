@@ -259,12 +259,12 @@ public final class Constants {
     public static final double leftCameraForwardOffset = Units.inchesToMeters(-4.63);
     public static final double leftCameraRightOffset = Units.inchesToMeters(-14.899);
     public static final double leftCameraUpOffest = Units.inchesToMeters(20.6);
-    public static final Rotation3d leftCameraRotation = new Rotation3d(0, 0, Math.PI/2);
+    public static final Rotation3d leftCameraRotation = new Rotation3d(Math.toRadians(1.81), 0, Math.PI/2);
 
     public static final double rightCameraForwardOffset = Units.inchesToMeters(7.62);
     public static final double rightCameraRightOffset = Units.inchesToMeters(0.853);
     public static final double rightCameraUpOffest = Units.inchesToMeters(30.758);
-    public static final Rotation3d rightCameraRotation = new Rotation3d(0, 0, (3*Math.PI)/2);
+    public static final Rotation3d rightCameraRotation = new Rotation3d(Math.toRadians(-7.679), 0, (3*Math.PI)/2);
 
     public static final double postOffset = Units.inchesToMeters(6.5);
   }
