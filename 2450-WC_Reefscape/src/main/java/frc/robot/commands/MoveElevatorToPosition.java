@@ -43,11 +43,11 @@ public class MoveElevatorToPosition extends Command {
     m_coralSubsystem.getElevatorMotorFx().set(0);
 
     if (m_target == Constants.intakeHeight) {
-      m_ledsubsystem.setLEDS(0, 255, 0, 0);
+      m_ledsubsystem.setLEDColor(0, 255, 0, 0);
     }
 
     if (m_target == Constants.L1Height || m_target == Constants.L2Height || m_target == Constants.L3Height) {
-      m_ledsubsystem.setLEDS(0, 0, 0, 255);
+      m_ledsubsystem.setLEDColor(0, 0, 0, 255);
     }
   }
 

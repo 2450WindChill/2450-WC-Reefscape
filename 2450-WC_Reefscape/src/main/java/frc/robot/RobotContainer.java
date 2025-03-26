@@ -124,6 +124,7 @@ public class RobotContainer {
     configureControllerBindings();
     configureAutoChooser();
     configureDashboardBindings();
+    m_LEDSubsystem.setAllianceColor();
 
     ShuffleboardTab tab = Shuffleboard.getTab("testing");
   }
@@ -255,9 +256,11 @@ public class RobotContainer {
     tab.add("L3 height",
         new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.L3Height))
         .withWidget(BuiltInWidgets.kCommand);
-    tab.add("LEDS", Commands.runOnce(() -> m_LEDSubsystem.setLEDS(255, 0, 0, 0)));
+    tab.add("ON", Commands.runOnce(() -> m_LEDSubsystem.setLEDColor(0, 255, 0, 0)));
+    tab.add("Flow", Commands.runOnce(() -> m_LEDSubsystem.setLEDSFlowing(0, 0, 255, 0)));
     tab.add("Blink", Commands.runOnce(() -> m_LEDSubsystem.setLEDSBlinking(0, 0, 255, 0)));
-    tab.add("OFF", Commands.runOnce(() -> m_LEDSubsystem.setLEDSBlinking(0, 0, 0, 0)));
+    tab.add("OFF", Commands.runOnce(() -> m_LEDSubsystem.setLEDColor(0, 0, 0, 0)));
+    tab.add("FIRE", Commands.runOnce(() -> m_LEDSubsystem.fireLEDS()));
   }
 
   // Basic auto for testing, backs up after a certain period of time

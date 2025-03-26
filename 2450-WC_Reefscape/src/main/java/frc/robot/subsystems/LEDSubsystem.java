@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
@@ -27,32 +28,31 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void fireLEDS() {
-        candle.configBrightnessScalar(1);
-        FireAnimation fireAnimation = new FireAnimation(1, 0.4, 68, 0.5, 0.5);
+        FireAnimation fireAnimation = new FireAnimation(1, 0.4, 308, 0.5, 0.5);
         candle.animate(fireAnimation);
     }
 
-    public void setLEDS(int r, int g, int b, int w) {
-        candle.configBrightnessScalar(1);
-        StrobeAnimation strobeAnimation = new StrobeAnimation(r, g, b, w, 0.0, 308);
-        candle.animate(strobeAnimation);
+    public void setLEDColor(int r, int g, int b, int w) {
+        candle.clearAnimation(0);
+        candle.setLEDs(r, g, b, w, 0, 308);
+        // candle.configBrightnessScalar(1);
+        // StrobeAnimation strobeAnimation = new StrobeAnimation(r, g, b, w, 0.0, 308);
+        // candle.animate(strobeAnimation);
     }
 
     public void setLEDSBlinking(int r, int g, int b, int w) {
         candle.configBrightnessScalar(1);
 
-        StrobeAnimation strobeAnimation = new StrobeAnimation(r, g, b, w, 0.03, 308);
+        StrobeAnimation strobeAnimation = new StrobeAnimation(r, g, b, w, 0.08, 308);
         candle.animate(strobeAnimation);
     }
 
-    public void setLEDSFlowing(int r, int g, int b) {
+    public void setLEDSFlowing(int r, int g, int b, int w) {
         candle.configBrightnessScalar(1);
 
-        ColorFlowAnimation colorFlowAnimation = new ColorFlowAnimation(r, g, b, 0, 0.5, 308, Direction.Forward);
+        ColorFlowAnimation colorFlowAnimation = new ColorFlowAnimation(r, g, b, w, 2, 308, Direction.Forward);
         candle.animate(colorFlowAnimation);
     }
-
-    
 
     public void setAllianceColor() {
         if (DriverStation.getAlliance().get() == Alliance.Red) {
