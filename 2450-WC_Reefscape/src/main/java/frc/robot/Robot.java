@@ -56,6 +56,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.m_drivetrainSubsystem.resetMods();
+    m_robotContainer.m_LEDSubsystem.setAllianceColor();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -70,6 +71,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_robotContainer.m_drivetrainSubsystem.resetMods();
+    m_robotContainer.m_LEDSubsystem.setAllianceColor();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

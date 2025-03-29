@@ -61,9 +61,9 @@ public final class Constants {
   /* Elevator heights */
   public static final double L3Height = -76.532;
   public static final double L2Height = -49.750;
-  public static final double L1Height = -33.749;
+  public static final double L1Height = -34.8;
   public static final double resetHeight = -5.85;
-  public static final double intakeHeight = -4.213;
+  public static final double intakeHeight = -4.673828125;
 
   public static final double lowBopAlgae = -40.677;
   public static final double highBopAlgae = -67.102;
@@ -269,6 +269,52 @@ public final class Constants {
     public static final double postOffset = Units.inchesToMeters(6.5);
   }
 
+  // Red Reef
+  public static final Pose2d sixL = new Pose2d(0, 0, new Rotation2d(Math.toRadians(120)));
+  public static final Pose2d sixR = new Pose2d(0, 0, new Rotation2d(Math.toRadians(120)));
+
+  public static final Pose2d sevenL = new Pose2d(14.332, 4.064, new Rotation2d(Math.toRadians(180)));
+  public static final Pose2d sevenR = new Pose2d(0, 0, new Rotation2d(Math.toRadians(180)));
+
+  public static final Pose2d eightL = new Pose2d(0, 0, new Rotation2d(Math.toRadians(240)));
+  public static final Pose2d eightR = new Pose2d(0, 0, new Rotation2d(Math.toRadians(240)));
+
+  public static final Pose2d nineL = new Pose2d(12.461, 5.140, new Rotation2d(Math.toRadians(300)));
+  public static final Pose2d nineR = new Pose2d(12.328698555928588, 5.282263286843504 , new Rotation2d(Math.toRadians(300)));
+
+  public static final Pose2d tenL = new Pose2d(11, 4, new Rotation2d(Math.toRadians(0)));
+  public static final Pose2d tenR = new Pose2d(0, 0, new Rotation2d(Math.toRadians(0)));
+
+  public static final Pose2d elevenL = new Pose2d(12.461, 2.904, new Rotation2d(Math.toRadians(60)));
+  public static final Pose2d elevenR = new Pose2d(12.656671731441598, 2.8486553405107125, new Rotation2d(Math.toRadians(60)));
+
+  // Blue Reef
+  public static final Pose2d twentytwoL = new Pose2d(5.080, 2.910, new Rotation2d(Math.toRadians(120)));
+  public static final Pose2d twentytwoR = new Pose2d(5.021161022485882, 2.8428338600186955, new Rotation2d(Math.toRadians(120)));
+
+  public static final Pose2d twentyoneL = new Pose2d(5.762, 4.132, new Rotation2d(Math.toRadians(180)));
+  public static final Pose2d twentyoneR = new Pose2d(0, 0, new Rotation2d(Math.toRadians(180)));
+
+  public static final Pose2d twentyL = new Pose2d(5.080, 4.971, new Rotation2d(Math.toRadians(240)));
+  public static final Pose2d twentyR = new Pose2d(5.087655498526834, 5.055960507335726, new Rotation2d(Math.toRadians(240)));
+
+  public static final Pose2d nineteenL = new Pose2d(0, 0, new Rotation2d(Math.toRadians(300)));
+  public static final Pose2d nineteenR = new Pose2d(0, 0, new Rotation2d(Math.toRadians(300)));
+
+  public static final Pose2d eighteenL = new Pose2d(0, 0, new Rotation2d(Math.toRadians(0)));
+  public static final Pose2d eighteenR = new Pose2d(0, 0, new Rotation2d(Math.toRadians(0)));
+
+  public static final Pose2d seventeenL = new Pose2d(0, 0, new Rotation2d(Math.toRadians(60)));
+  public static final Pose2d seventeenR = new Pose2d(0, 0, new Rotation2d(Math.toRadians(60)));
+
+  // Blue Human Player Stations
+  public static final Pose2d blueLeftHumanPlayerStation = new Pose2d(1.284467631702269, 7.124714658504404, new Rotation2d(Math.toRadians(115)));
+  public static final Pose2d blueRightHumanPlayerStation = new Pose2d(0, 0, new Rotation2d(Math.toRadians(205)));
+
+  // Red Human Player Stations
+  public static final Pose2d redLeftHumanPlayerStation = new Pose2d(16.282, 0.866, new Rotation2d(Math.toRadians(125)));
+  public static final Pose2d redRightHumanPlayerStation = new Pose2d(16.282, 7.130, new Rotation2d(Math.toRadians(55)));
+
   public static final class AutoConstants {
     public static enum StartingPosition {
       redLeft,
@@ -284,27 +330,27 @@ public final class Constants {
       L2;
     }
 
-    public static enum BopHeight {
-      HIGH,
-      LOW,
-      NO_BOP;
+    public static enum Modifier {
+      ONE_CORAL,
+      TWO_CORAL,
+      NO_SHOOT;
     }
 
-    public static final Pose2d redRightStartingPose = new Pose2d(0, 0, new Rotation2d());
-    public static final Pose2d redMiddleStartingPose = new Pose2d(0, 0, new Rotation2d());
-    public static final Pose2d redLeftStartingPose = new Pose2d(0, 0, new Rotation2d());
+    public static final Pose2d redRightStartingPose = new Pose2d(10.333, 7.584, new Rotation2d());
+    public static final Pose2d redMiddleStartingPose = new Pose2d(10.333, 4.132, new Rotation2d());
+    public static final Pose2d redLeftStartingPose = new Pose2d(10.333, 0.486, new Rotation2d());
 
-    public static final Pose2d redRightScoringPose = new Pose2d(0, 0, new Rotation2d(Math.toRadians(-60)));
-    public static final Pose2d redMiddleScoringPose = new Pose2d(0, 0, new Rotation2d());
-    public static final Pose2d redLeftScoringPose = new Pose2d(0, 0, new Rotation2d(Math.toRadians(60)));
+    public static final Pose2d redRightScoringPose = nineL;
+    public static final Pose2d redMiddleScoringPose = tenL;
+    public static final Pose2d redLeftScoringPose = elevenL;
 
-    public static final Pose2d blueRightStartingPose = new Pose2d(0, 0, new Rotation2d(Math.PI));
-    public static final Pose2d blueMiddleStartingPose = new Pose2d(0, 0, new Rotation2d(Math.PI));
-    public static final Pose2d blueLeftStartingPose = new Pose2d(0, 0, new Rotation2d(Math.PI));
+    public static final Pose2d blueRightStartingPose = new Pose2d(7.166, 0.486, new Rotation2d(Math.PI));
+    public static final Pose2d blueMiddleStartingPose = new Pose2d(7.166, 4.132, new Rotation2d(Math.PI));
+    public static final Pose2d blueLeftStartingPose = new Pose2d(7.166, 7.584, new Rotation2d(Math.PI));
 
-    public static final Pose2d blueRightScoringPose = new Pose2d(0, 0, new Rotation2d(Math.toRadians(60)));
-    public static final Pose2d blueMiddleScoringPose = new Pose2d(0, 0, new Rotation2d());
-    public static final Pose2d blueLeftScoringPose = new Pose2d(0, 0, new Rotation2d(Math.toRadians(-60)));
+    public static final Pose2d blueRightScoringPose = twentytwoL;
+    public static final Pose2d blueMiddleScoringPose = twentyoneL;
+    public static final Pose2d blueLeftScoringPose = twentyL;
   }
 
   public static enum Camera {

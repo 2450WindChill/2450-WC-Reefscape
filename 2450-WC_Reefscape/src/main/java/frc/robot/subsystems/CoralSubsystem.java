@@ -43,6 +43,7 @@ public class CoralSubsystem extends SubsystemBase {
     private DigitalInput bottomHallSensor = new DigitalInput(Constants.bottomHallSensorChannel);
     private DigitalInput intakeHallSensor = new DigitalInput(Constants.intakeHallSensorChannel);
     private DigitalInput topHallSensor = new DigitalInput(Constants.topHallSensorChannel);
+    private DigitalInput test = new DigitalInput(9);
 
     private Trigger intakeHallTrigger = new Trigger(bottomHallSensor::get);
 
@@ -70,6 +71,10 @@ public class CoralSubsystem extends SubsystemBase {
 
     public boolean getBottomHallSensor() {
         return bottomHallSensor.get();
+    }
+
+    public boolean getTopHallSensor()  {
+        return topHallSensor.get();
     }
 
     // public boolean getElevatorHighSwitch() {
@@ -107,6 +112,9 @@ public class CoralSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Bottom Hall Mark", bottomHallSensor.get());
         SmartDashboard.putBoolean("Intake Hall Mark", intakeHallSensor.get());
         SmartDashboard.putBoolean("Top Hall Mark", topHallSensor.get());
+
+        // Test
+        SmartDashboard.putBoolean("Test", test.get());
 
         // if (!elevatorLowSwitch.get()) {
         // // zeroElevatorMotor();

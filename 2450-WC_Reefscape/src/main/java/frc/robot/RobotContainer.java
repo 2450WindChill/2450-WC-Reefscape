@@ -8,7 +8,7 @@ import frc.robot.Constants.Camera;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.CurrentBot;
 import frc.robot.Constants.AutoConstants.StartingPosition;
-import frc.robot.Constants.AutoConstants.BopHeight;
+import frc.robot.Constants.AutoConstants.Modifier;
 import frc.robot.Constants.AutoConstants.ScoringLevel;
 import frc.robot.commands.AlignToAprilTagParallel;
 import frc.robot.commands.AlignToAprilTagSequential;
@@ -36,6 +36,7 @@ import frc.robot.commands.KillDriveCommands;
 import frc.robot.commands.KillOperatorCommands;
 import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.commands.MoveToPose;
+import frc.robot.commands.TimedDrive;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DeepClimbSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -110,7 +111,7 @@ public class RobotContainer {
 
   public SendableChooser<StartingPosition> m_startingLocationChooser;
   public SendableChooser<ScoringLevel> m_scoreLevelChooser;
-  public SendableChooser<BopHeight> m_bopHeightChooser;
+  public SendableChooser<Modifier> m_bopHeightChooser;
 
 
   Timer timer = new Timer();
@@ -145,19 +146,14 @@ public class RobotContainer {
   private void configureControllerBindings() {
     // Driver Bindings
     dr_aButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
-    dr_bButton.onTrue(Commands
-        .runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(13.18, 0.5, new Rotation2d(Math.toRadians(-180))))));
-    // dr_xButton.onTrue(new MoveToPose(m_drivetrainSubsystem, new Pose2d(11.9, 2.2, new Rotation2d(Math.toRadians(-180))),
-    //     () -> dr_bButton.getAsBoolean()));
+    // dr_bButton.onTrue(Commands
+    //     .runOnce(() -> m_drivetrainSubsystem.resetPose(new Pose2d(13.18, 0.5, new Rotation2d(Math.toRadians(-180))))));
 
-    dr_leftBumper.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));
-    dr_minusButton.onTrue(new KillDriveCommands(m_drivetrainSubsystem));
+    dr_yButton.onTrue(Commands.runOnce(() -> m_drivetrainSubsystem.resetMods()));
+    // dr_minusButton.onTrue(new KillDriveCommands(m_drivetrainSubsystem));
 
     // Only use operator buttons if using the comp robot
     if (currentBotState == CurrentBot.COMP) {
-      // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.601, 0.099, ()
-      // -> dr_bButton.getAsBoolean()));
-
       // Operator Bindings
       op_aButton.onTrue(new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem,
           Constants.intakeHeight));
@@ -173,16 +169,18 @@ public class RobotContainer {
 
       op_startButton.onTrue(new KillOperatorCommands(m_coralSubsystem, m_endEffectorSubsystem));
 
-      // dr_leftBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "out", 0.05));
-      // dr_rightBumper.whileTrue(new ClimberMovement(m_deepClimbSubsystem, "in", 0.05));
-
-      // dr_yButton.onTrue(new DeepClimbCommand(m_deepClimbSubsystem, 0.099, 0.601, ()
-      // -> dr_bButton.getAsBoolean()));
-
       op_UpDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "up", 0.15));
+
       op_DownDpad.whileTrue(new ElevatorMovement(m_coralSubsystem, "down", 0.15));
-      op_LeftDpad.whileTrue(bopLowAlgaeSequence());
-      op_RightDpad.whileTrue(bopHighAlgaeSequence());
+                
+
+      op_LeftDpad.onTrue(Commands.runOnce(() -> m_LEDSubsystem.blinkAllianceColor()))
+                .whileTrue(bopLowAlgaeSequence())
+                .onFalse(Commands.runOnce(() -> m_LEDSubsystem.setAllianceColor()));
+
+      op_RightDpad.onTrue(Commands.runOnce(() -> m_LEDSubsystem.blinkAllianceColor()))
+                  .whileTrue(bopHighAlgaeSequence())
+                  .onFalse(Commands.runOnce(() -> m_LEDSubsystem.setAllianceColor()));
 
       m_endEffectorSubsystem.setDefaultCommand(
           new BopAlgaeWithTriggers(
@@ -202,13 +200,13 @@ public class RobotContainer {
   private Command bopLowAlgaeSequence() {
     return Commands.parallel(
         new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.lowBopAlgae),
-        new BopAlgae(m_endEffectorSubsystem, 0.2));
+        new BopAlgae(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
   }
 
   private Command bopHighAlgaeSequence() {
     return Commands.parallel(
         new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.highBopAlgae),
-        new BopAlgae(m_endEffectorSubsystem, 0.2));
+        new BopAlgae(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
   }
 
   private void configureDashboardBindings() {
@@ -261,87 +259,123 @@ public class RobotContainer {
             m_drivetrainSubsystem.gyro.getYaw().getValueAsDouble(), true, false)));
   }
 
-  private Command oneCoralAuto(StartingPosition startingPosition, ScoringLevel scoringLevel, BopHeight bopHeight) {
+  private Command autoBuilder(StartingPosition startingPosition, ScoringLevel scoringLevel, Modifier bopHeight) {
     Pose2d scoringPose;
     double scoringHeight;
+    Pose2d intakingPose;
+    Pose2d secondScoringPose;
     switch (startingPosition) {
       case redLeft:
+        m_drivetrainSubsystem.setGyro(180);
         m_drivetrainSubsystem.resetPose(AutoConstants.redLeftStartingPose);
         scoringPose = AutoConstants.redLeftScoringPose;
+        intakingPose = Constants.redLeftHumanPlayerStation;
+        secondScoringPose = Constants.sevenL;
+        break;
 
       case redMiddle:
+        m_drivetrainSubsystem.setGyro(180);
         m_drivetrainSubsystem.resetPose(AutoConstants.redMiddleStartingPose);
-        scoringPose = AutoConstants.redMiddleScoringPose;
+        scoringPose = intakingPose = secondScoringPose = AutoConstants.redMiddleScoringPose;
+        break;
 
       case redRight:
+        m_drivetrainSubsystem.setGyro(180);
         m_drivetrainSubsystem.resetPose(AutoConstants.redRightStartingPose);
         scoringPose = AutoConstants.redRightScoringPose;
+        intakingPose = Constants.redRightHumanPlayerStation;
+        secondScoringPose = Constants.sevenL;
+      break;
 
       case blueLeft:
+        m_drivetrainSubsystem.setGyro(0);
         m_drivetrainSubsystem.resetPose(AutoConstants.blueLeftStartingPose);
-        scoringPose = AutoConstants.blueLeftScoringPose;
+        scoringPose = intakingPose = AutoConstants.blueLeftScoringPose;
+        secondScoringPose = Constants.seventeenL;
+      break;
 
       case blueMiddle:
+      m_drivetrainSubsystem.setGyro(0);
         m_drivetrainSubsystem.resetPose(AutoConstants.blueMiddleStartingPose);
-        scoringPose = AutoConstants.blueMiddleScoringPose;
+        scoringPose = intakingPose = secondScoringPose = AutoConstants.blueMiddleScoringPose;
+        break;
 
       case blueRight:
+        m_drivetrainSubsystem.setGyro(0);
         m_drivetrainSubsystem.resetPose(AutoConstants.blueRightStartingPose);
-        scoringPose = AutoConstants.blueRightScoringPose;
+        scoringPose = intakingPose = AutoConstants.blueRightScoringPose;
+        secondScoringPose = Constants.seventeenL;
+        break;
 
       default:
-        scoringPose = m_drivetrainSubsystem.getThisPose();
+        scoringPose = intakingPose = secondScoringPose = m_drivetrainSubsystem.getThisPose();
     }
 
     switch (scoringLevel) {
       case L1:
         scoringHeight = Constants.L1Height;
+        break;
+
       case L2:
         scoringHeight = Constants.L2Height;
+        break;
+
       default:
-        scoringHeight = Constants.L1Height;
+        scoringHeight = Constants.intakeHeight;
+        break;
     }
     
     switch (bopHeight) {
-      case HIGH:
+      case ONE_CORAL:
         return Commands.parallel(
-          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight), 
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight), 
           new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
         )
         .andThen(Commands.parallel(
-          new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5), 
-          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
-        ))
-        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
-        .andThen(new BopAlgae(m_endEffectorSubsystem, Constants.highBopAlgae));
-      case LOW:
-        return Commands.parallel(
-          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight), 
-          new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
-        )
-        .andThen(Commands.parallel(
-          new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5), 
-          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
-        ))
-        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
-        .andThen(new BopAlgae(m_endEffectorSubsystem, Constants.lowBopAlgae));
-      case NO_BOP:
-        return Commands.parallel(
-          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight), 
-          new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
-        )
-        .andThen(Commands.parallel(
-          new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5), 
+          new MoveToPose(m_drivetrainSubsystem, scoringPose, 5), 
           new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
         ))
         .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
-      default:
+
+      case TWO_CORAL:
         return Commands.parallel(
-          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight), 
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight), 
           new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
         )
         .andThen(Commands.parallel(
-          new MoveToPose(m_drivetrainSubsystem, scoringPose, dr_aButton, 5), 
+          new MoveToPose(m_drivetrainSubsystem, scoringPose, 3), 
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
+        ))
+        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
+        .andThen(
+          Commands.parallel(
+             new MoveToPose(m_drivetrainSubsystem, intakingPose, 5),
+             new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight),
+             new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
+          )
+        .andThen(
+          Commands.parallel(
+            new MoveToPose(m_drivetrainSubsystem, secondScoringPose, 3),
+            new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
+          )
+        .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2))
+        ));
+
+      case NO_SHOOT:
+        return new WaitCommand(7)
+        .andThen(Commands.parallel(
+            new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight), 
+            new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
+          ))
+        .andThen(new MoveToPose(m_drivetrainSubsystem, scoringPose, 5));
+
+      default:
+        return Commands.parallel(
+          new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, Constants.intakeHeight), 
+          new CoralIntake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2)
+        )
+        .andThen(Commands.parallel(
+          new MoveToPose(m_drivetrainSubsystem, scoringPose, 5), 
           new MoveElevatorToPosition(m_coralSubsystem, m_endEffectorSubsystem, m_LEDSubsystem, scoringHeight)
         ))
         .andThen(new CoralOuttake(m_endEffectorSubsystem, m_LEDSubsystem, 0.2));
@@ -360,8 +394,8 @@ public class RobotContainer {
     m_startingLocationChooser.addOption("Red Right", StartingPosition.redRight);
 
     m_startingLocationChooser.addOption("Blue Left", StartingPosition.blueLeft);
-    m_startingLocationChooser.addOption("Blue Left", StartingPosition.blueMiddle);
-    m_startingLocationChooser.addOption("Blue Left", StartingPosition.blueRight);
+    m_startingLocationChooser.addOption("Blue Middle", StartingPosition.blueMiddle);
+    m_startingLocationChooser.addOption("Blue Right", StartingPosition.blueRight);
 
     // Scoring Level Chooser
     SmartDashboard.putData("Scoring Level", m_scoreLevelChooser);
@@ -370,13 +404,14 @@ public class RobotContainer {
 
     // Bop Height Chooser
     SmartDashboard.putData("Bop Height", m_bopHeightChooser);
-    m_bopHeightChooser.addOption("Bop High", BopHeight.HIGH);
-    m_bopHeightChooser.addOption("Bop Low", BopHeight.LOW);
-    m_bopHeightChooser.addOption("No Bop", BopHeight.NO_BOP);
+    m_bopHeightChooser.addOption("One Coral", Modifier.ONE_CORAL);
+    m_bopHeightChooser.addOption("No Bop", Modifier.TWO_CORAL);
+    m_bopHeightChooser.addOption("No Shoot", Modifier.NO_SHOOT);
   }
 
   // Auto command
   public Command getAutonomousCommand() {
-    return Commands.runOnce(() -> oneCoralAuto(m_startingLocationChooser.getSelected(), m_scoreLevelChooser.getSelected(), m_bopHeightChooser.getSelected()));
+    return autoBuilder(m_startingLocationChooser.getSelected(), m_scoreLevelChooser.getSelected(), m_bopHeightChooser.getSelected())
+    .andThen(Commands.runOnce(() -> m_drivetrainSubsystem.zeroGyro()));
   }
 }

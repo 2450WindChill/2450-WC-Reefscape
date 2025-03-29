@@ -24,6 +24,8 @@ public class MoveElevatorToPosition extends Command {
   private final CoralSubsystem m_coralSubsystem;
   private double m_target;
 
+  boolean goingDown;
+
   public MoveElevatorToPosition(CoralSubsystem coralSubsystem, EndEffectorSubsystem endEffectorSubsystem, LEDSubsystem ledsubsystem, double target) {
     m_ledSubsystem = ledsubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
@@ -35,6 +37,7 @@ public class MoveElevatorToPosition extends Command {
   public void initialize() {
     m_coralSubsystem.setPIDGoal(m_target);
     m_ledSubsystem.setAllianceColor();
+    goingDown = (m_coralSubsystem.getElevatorMotorFx().get() < m_target);
   }
 
   public void execute() {
@@ -54,9 +57,22 @@ public class MoveElevatorToPosition extends Command {
     }
   }
 
+  // public boolean isFinished() {
+  //   return m_coralSubsystem.goalReached(m_target) || !m_endEffectorSubsystem.getVerticalBeamBreak().get();
+  // }
+// }
+
   public boolean isFinished() {
-    return m_coralSubsystem.goalReached(m_target) || !m_endEffectorSubsystem.getVerticalBeamBreak().get();
-  }
+    if (goingDown) {
+      return m_coralSubsystem.goalReached(m_target)
+          || (!m_endEffectorSubsystem.getVerticalBeamBreak().get() && m_endEffectorSubsystem.getHorizontalBeamBreak().get())
+          || !m_coralSubsystem.getBottomHallSensor();
+    } else {
+      return m_coralSubsystem.goalReached(m_target)
+          || (!m_endEffectorSubsystem.getVerticalBeamBreak().get() && m_endEffectorSubsystem.getHorizontalBeamBreak().get())
+          || !m_coralSubsystem.getTopHallSensor();
+    }
+}
 }
 
 

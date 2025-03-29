@@ -56,6 +56,22 @@ public class LEDSubsystem extends SubsystemBase {
         candle.animate(colorFlowAnimation);
     }
 
+    public void blinkAllianceColor() {
+        candle.clearAnimation(0);
+        StrobeAnimation strobeAnimation;
+        try {
+            if (DriverStation.getAlliance().orElseThrow() == Alliance.Red) {
+                strobeAnimation = new StrobeAnimation(255, 0, 0, 0, 0.08, 308);
+            } else {
+                strobeAnimation = new StrobeAnimation(0, 0, 255, 0, 0.08, 308);
+            }
+        } catch (NoSuchElementException e) {
+            strobeAnimation = new StrobeAnimation(0, 0, 255, 0, 0.08, 308);
+        }
+
+        candle.animate(strobeAnimation);
+    }
+
     public void setAllianceColor() {
         candle.clearAnimation(0);
         try {

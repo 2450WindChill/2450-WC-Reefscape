@@ -26,7 +26,11 @@ public class BopAlgaeWithTriggers extends Command {
 
     public void execute() {
         double fS = (m_backwardSpeed.getAsDouble() - m_forwardSpeed.getAsDouble()) * 0.5;
-        m_EndEffectorSubsystem.setEndAffectorSpeed(fS);
+        if ((fS < 0) && !m_EndEffectorSubsystem.getVerticalBeamBreak().get()) {
+            m_EndEffectorSubsystem.setEndAffectorSpeed(0);
+        } else {
+            m_EndEffectorSubsystem.setEndAffectorSpeed(fS);
+        }
     }
 
     public void end(boolean interrupted) {

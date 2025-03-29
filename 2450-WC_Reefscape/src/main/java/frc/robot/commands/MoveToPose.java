@@ -20,8 +20,6 @@ public class MoveToPose extends Command {
     ProfiledPIDController yController = new ProfiledPIDController(3, 0, 0, new Constraints(Constants.maxSpeed, 2));
     ProfiledPIDController rotController = new ProfiledPIDController(6, 0, 0, new Constraints(Constants.maxAngularVelocity, 4));
 
-    BooleanSupplier m_overrideSupplier;
-
     double driveTolerance = 0.02;
     double rotTolerance = Math.toRadians(2);
 
@@ -37,9 +35,8 @@ public class MoveToPose extends Command {
 
     boolean rotIsInverted;
 
-    public MoveToPose(DrivetrainSubsystem drivetrainSubsystem, Pose2d target, BooleanSupplier overrideSupplier, double time) {
+    public MoveToPose(DrivetrainSubsystem drivetrainSubsystem, Pose2d target, double time) {
         m_drivetrainSubsystem = drivetrainSubsystem;
-        m_overrideSupplier = overrideSupplier;
         xTarget = target.getX();
         yTarget = target.getY();
         rotTarget = target.getRotation().getRadians();
@@ -81,7 +78,7 @@ public class MoveToPose extends Command {
         ySpeed = yController.calculate(currPose.getY());
         rotSpeed = -rotController.calculate(currPose.getRotation().getRadians());
 
-        m_drivetrainSubsystem.drive(new Translation2d(xSpeed, ySpeed), rotSpeed, false, false);
+        m_drivetrainSubsystem.drive(new Translation2d(xSpeed * 0.7, ySpeed * 0.7), rotSpeed * 0.7, false, false);
 
         System.out.println("X at goal: " + xController.atGoal() + " Y at goal: " + yController.atGoal() + " Rot at goal: " + rotController.atGoal());
     }
@@ -91,7 +88,7 @@ public class MoveToPose extends Command {
             return true;
         }
         // return false;
-        return (xController.atGoal() && yController.atGoal() && rotController.atGoal()) || m_overrideSupplier.getAsBoolean();
+        return (xController.atGoal() && yController.atGoal() && rotController.atGoal());
     }
 
     public void end(boolean isFinished) {
