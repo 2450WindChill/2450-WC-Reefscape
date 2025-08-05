@@ -66,11 +66,14 @@ public class DefaultDriveCommand extends Command {
   @Override
   public void execute() {
     double translationVal = translationLimiter.calculate(
-        MathUtil.applyDeadband(translationSupplier.getAsDouble(), Constants.stickDeadband));
+        MathUtil.applyDeadband(translationSupplier.getAsDouble(), Constants.stickDeadband)) * 0.10;
     double strafeVal = strafeLimiter.calculate(
-        MathUtil.applyDeadband(strafeSupplier.getAsDouble(), Constants.stickDeadband));
+        MathUtil.applyDeadband(strafeSupplier.getAsDouble(), Constants.stickDeadband)) * 0.10;
     double rotationVal = rotationLimiter.calculate(
-        MathUtil.applyDeadband(rotationSupplier.getAsDouble(), Constants.stickDeadband));
+        MathUtil.applyDeadband(rotationSupplier.getAsDouble(), Constants.stickDeadband)) * 0.10;
+
+
+      
 
     int pov = m_POVSupplier.getAsInt();
     double forwardSpeed = 0.0;
